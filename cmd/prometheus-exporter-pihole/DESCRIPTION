@@ -1,1 +1,1 @@
-Exports pi-hole results as prometheus metrics on a configured interval.
+Exports pi-hole summaries as prometheus metrics on a configured interval.

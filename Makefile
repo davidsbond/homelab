@@ -38,7 +38,3 @@ has-changes:
 # Compiles go source code
 build:
 	./scripts/build.sh
-
-# Reduces binary size
-pack:
-	./scripts/pack.sh

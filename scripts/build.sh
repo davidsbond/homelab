@@ -25,3 +25,10 @@ for dir in $(find ${DIR}/cmd -name 'main.go' -print0 | xargs -0 -n1 dirname | so
 "-X 'pkg.dsb.dev/environment.ApplicationDescription=${APP_DESCRIPTION}'" \
     -o ${OUTPUT} ${dir}
 done
+
+DIR=$(pwd)
+BIN_DIR=${DIR}/bin
+
+# Compress all generated binaries with UPX (https://upx.github.io/)
+BINARIES=$(find ${BIN_DIR} -type f | xargs -0 -n1 | sort | uniq)
+upx -q ${BINARIES}
