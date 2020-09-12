@@ -4,6 +4,7 @@ package pihole
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -35,6 +36,10 @@ type (
 	}
 )
 
+// ErrStatus is the error given when an HTTP call to the pihole returns an error
+// status code.
+var ErrStatus = errors.New("unexpected status code")
+
 // New creates a new instance of the PiHole type that will make requests against the
 // given url.
 func New(urlStr string) (*PiHole, error) {
@@ -43,12 +48,24 @@ func New(urlStr string) (*PiHole, error) {
 		return nil, err
 	}
 
-	return &PiHole{
+	pi := &PiHole{
 		url: u,
 		http: &http.Client{
 			Timeout: time.Second * 10,
 		},
-	}, nil
+	}
+
+	return pi, pi.Ping()
+}
+
+// Ping returns a non-nil error if the pihole appears to be
+// down.
+func (pi *PiHole) Ping() error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	_, err := pi.Summary(ctx)
+	return err
 }
 
 // Summary returns the pihole summary.
@@ -85,6 +102,10 @@ func (pi *PiHole) do(req *http.Request, out interface{}) error {
 		return fmt.Errorf("failed to perform HTTP request: %w", err)
 	}
 	defer closers.Close(res.Body)
+
+	if res.StatusCode < http.StatusOK || res.StatusCode > http.StatusIMUsed {
+		return fmt.Errorf("%w: %v", ErrStatus, res.StatusCode)
+	}
 
 	if out != nil {
 		if err := json.NewDecoder(res.Body).Decode(out); err != nil {

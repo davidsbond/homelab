@@ -40,9 +40,10 @@ var frequency time.Duration
 
 func run(ctx context.Context) error {
 	metrics.Register(latency, upload, download)
+	tester := speedtest.New()
 
 	return cron.Every(ctx, frequency, func(ctx context.Context) error {
-		results, err := speedtest.New().Test(ctx)
+		results, err := tester.Test(ctx)
 		if err != nil {
 			return err
 		}

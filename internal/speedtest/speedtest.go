@@ -4,6 +4,7 @@ package speedtest
 import (
 	"context"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"math"
@@ -16,12 +17,17 @@ import (
 	"golang.org/x/sync/errgroup"
 	"pkg.dsb.dev/closers"
 	"pkg.dsb.dev/distance"
+	"pkg.dsb.dev/health"
 )
 
 const (
 	baseURL      = "https://speedtest.net"
 	randomURIFmt = "/speedtest/random%vx%v.jpg"
 )
+
+// ErrStatus is the error given when an HTTP call to speedtest.net returns an error
+// status code.
+var ErrStatus = errors.New("unexpected status code")
 
 type (
 	// The Tester type is responsible for performing internet speed tests.
@@ -39,11 +45,14 @@ type (
 
 // New returns a new instance of the Tester type that can perform a speed test.
 func New() *Tester {
-	return &Tester{
+	ts := &Tester{
 		http: &http.Client{
 			Timeout: time.Minute * 10,
 		},
 	}
+
+	health.AddCheck("speedtest", ts.Ping)
+	return ts
 }
 
 // Test performs a speed test and returns the results. Can be cancelled using the given context.
@@ -84,6 +93,16 @@ func (t *Tester) Test(ctx context.Context) (Results, error) {
 		Download: download,
 		Upload:   upload,
 	}, nil
+}
+
+// Ping returns a non-nil error if speedtest.net appears to be
+// down.
+func (t *Tester) Ping() error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	_, err := t.client(ctx)
+	return err
 }
 
 func (t *Tester) client(ctx context.Context) (Client, error) {
@@ -348,6 +367,10 @@ func (t *Tester) do(req *http.Request, out interface{}) error {
 		return fmt.Errorf("failed to perform HTTP request: %w", err)
 	}
 	defer closers.Close(res.Body)
+
+	if res.StatusCode < http.StatusOK || res.StatusCode > http.StatusIMUsed {
+		return fmt.Errorf("%w: %v", ErrStatus, res.StatusCode)
+	}
 
 	if out != nil {
 		if err := xml.NewDecoder(res.Body).Decode(out); err != nil {
