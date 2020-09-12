@@ -1,4 +1,4 @@
-.DEFAULT_GOAL := all
+.DEFAULT_GOAL := build
 
 # Downloads and vendors dependencies
 modules:
@@ -38,3 +38,6 @@ has-changes:
 # Compiles go source code
 build:
 	./scripts/build.sh
+
+docker:
+	./scripts/docker.sh
