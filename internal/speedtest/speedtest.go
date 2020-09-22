@@ -93,7 +93,7 @@ func (t *Tester) Test(ctx context.Context) (Results, error) {
 	}
 
 	return Results{
-		Latency:  float64(latency),
+		Latency:  float64(latency.Milliseconds()),
 		Download: download,
 		Upload:   upload,
 	}, nil
