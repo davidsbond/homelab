@@ -8,38 +8,38 @@ const (
 )
 
 var (
-	percentageAvailable = prometheus.NewGauge(prometheus.GaugeOpts{
+	percentageAvailable = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Subsystem: subsystem,
 		Name:      "percentage_bytes_available",
 		Help:      "Available storage space expressed as a percentage.",
-	})
+	}, []string{"drive"})
 
-	percentageUsed = prometheus.NewGauge(prometheus.GaugeOpts{
+	percentageUsed = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Subsystem: subsystem,
 		Name:      "percentage_bytes_used",
 		Help:      "Used storage space expressed as a percentage.",
-	})
+	}, []string{"drive"})
 
-	total = prometheus.NewGauge(prometheus.GaugeOpts{
+	total = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Subsystem: subsystem,
 		Name:      "bytes_total",
 		Help:      "Total storage size expressed in bytes.",
-	})
+	}, []string{"drive"})
 
-	available = prometheus.NewGauge(prometheus.GaugeOpts{
+	available = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Subsystem: subsystem,
 		Name:      "bytes_available",
 		Help:      "Available storage space expressed in bytes.",
-	})
+	}, []string{"drive"})
 
-	used = prometheus.NewGauge(prometheus.GaugeOpts{
+	used = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: namespace,
 		Subsystem: subsystem,
 		Name:      "bytes_used",
 		Help:      "Used storage space expressed in bytes.",
-	})
+	}, []string{"drive"})
 )

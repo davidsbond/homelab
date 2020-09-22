@@ -16,6 +16,7 @@ import (
 
 const (
 	defaultFrequency = time.Minute * 5
+	defaultDrive     = "/"
 )
 
 func main() {
@@ -34,7 +35,7 @@ func main() {
 				Usage:       "Drive to return statistics for",
 				EnvVars:     []string{"DRIVE"},
 				Destination: &drive,
-				Required:    true,
+				Value:       defaultDrive,
 			},
 		),
 	)
@@ -65,11 +66,11 @@ func run(ctx context.Context) error {
 			return err
 		}
 
-		percentageAvailable.Set(results.PercentageAvailable)
-		percentageUsed.Set(results.PercentageUsed)
-		total.Set(results.Total)
-		available.Set(results.Available)
-		used.Set(results.Used)
+		percentageAvailable.WithLabelValues(drive).Set(results.PercentageAvailable)
+		percentageUsed.WithLabelValues(drive).Set(results.PercentageUsed)
+		total.WithLabelValues(drive).Set(results.Total)
+		available.WithLabelValues(drive).Set(results.Available)
+		used.WithLabelValues(drive).Set(results.Used)
 		return nil
 	})
 }

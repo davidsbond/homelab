@@ -4,6 +4,10 @@ package cron
 import (
 	"context"
 	"time"
+
+	"github.com/opentracing/opentracing-go"
+
+	"pkg.dsb.dev/tracing"
 )
 
 type (
@@ -19,11 +23,47 @@ func Every(ctx context.Context, freq time.Duration, fn Action) error {
 	for {
 		select {
 		case <-ctx.Done():
-			return nil
+			return ctx.Err()
 		case <-ticker.C:
+			span, ctx := opentracing.StartSpanFromContext(ctx, "cron-run")
+			span.SetTag("cron.frequency", freq)
 			if err := fn(ctx); err != nil {
-				return err
+				span.Finish()
+				return tracing.WithError(span, err)
 			}
+
+			span.Finish()
+		}
+	}
+}
+
+// At executes fn at the desired time. Aims to have an accuracy of within a second.
+func At(ctx context.Context, at time.Time, fn Action) error {
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case ts := <-ticker.C:
+			dur := time.Date(
+				at.Year(), at.Month(), at.Day(), ts.Hour(),
+				ts.Minute(), ts.Second(), ts.Nanosecond(), ts.Location(),
+			).Sub(at)
+
+			if dur >= time.Second || dur <= -time.Second {
+				continue
+			}
+
+			span, ctx := opentracing.StartSpanFromContext(ctx, "cron-run")
+			span.SetTag("cron.at", at)
+			if err := fn(ctx); err != nil {
+				span.Finish()
+				return tracing.WithError(span, err)
+			}
+
+			span.Finish()
 		}
 	}
 }
