@@ -1,0 +1,81 @@
+version: "3.3"
+
+services:
+  # THIRD PARTY SERVICES
+  prometheus:
+    image: prom/prometheus:latest
+    restart: on-failure
+    ports:
+    - "9090:9090"
+    configs:
+      - prometheus.yaml
+    command:
+      - "--config.file"
+      - "/prometheus.yaml"
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus.yaml:/prometheus.yaml
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+    - "16686:16686"
+    environment:
+      SPAN_STORAGE_TYPE: badger
+      BADGER_EPHEMERAL: "false"
+      BADGER_DIRECTORY_VALUE: /badger
+      BADGER_DIRECTORY_KEY: /badger/key
+    restart: on-failure
+    volumes:
+      - jaeger_data:/badger
+
+  pihole:
+    image: pihole/pihole:latest
+    ports:
+#      - "53:53/tcp"
+#      - "53:53/udp"
+      - "67:67/udp"
+      - "80:80/tcp"
+      - "443:443/tcp"
+    environment:
+      TZ: 'Etc/GMT'
+    volumes:
+      - pihole_data:/etc/pihole/
+      - pihole_dnsmasq_data:/etc/dnsmasq.d/
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+
+  # PROMETHEUS EXPORTERS
+  prometheus-exporter-speedtest:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    command: /bin/prometheus-exporter-speedtest
+    restart: on-failure
+    depends_on:
+      - jaeger
+      - prometheus
+
+  prometheus-exporter-pihole:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    command: /bin/prometheus-exporter-pihole
+    environment:
+      PIHOLE_URL: http://pihole:80
+    restart: on-failure
+    depends_on:
+      - pihole
+      - jaeger
+      - prometheus
+
+configs:
+  prometheus.yaml:
+    file: ./prometheus.yaml
+
+volumes:
+  jaeger_data: {}
+  prometheus_data: {}
+  pihole_data: {}
+  pihole_dnsmasq_data: {}
