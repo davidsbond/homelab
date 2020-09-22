@@ -17,4 +17,10 @@ var Flags = []cli.Flag{
 		Destination: &config.environment,
 		Value:       "development",
 	},
+	&cli.StringFlag{
+		Name:        "monitoring-dsn",
+		Usage:       "DSN to use for sending reports to sentry",
+		EnvVars:     []string{"MONITORING_DSN"},
+		Destination: &config.dsn,
+	},
 }

@@ -25,7 +25,7 @@ type (
 // New creates a new instance of the Monitor type and sets up the connection to the monitoring
 // provider.
 func New() (io.Closer, error) {
-	if config.disabled {
+	if config.disabled || config.dsn == "" {
 		return closers.Noop, nil
 	}
 

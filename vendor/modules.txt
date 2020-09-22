@@ -478,7 +478,7 @@ mvdan.cc/interfacer/check
 mvdan.cc/lint
 # mvdan.cc/unparam v0.0.0-20190720180237-d51796306d8f
 mvdan.cc/unparam/check
-# pkg.dsb.dev v0.0.0-20200921213831-dc653d889d2d
+# pkg.dsb.dev v0.0.0-20200922210856-76db78894783
 ## explicit
 pkg.dsb.dev/app
 pkg.dsb.dev/closers

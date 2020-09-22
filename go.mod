@@ -10,5 +10,5 @@ require (
 	github.com/urfave/cli/v2 v2.2.0
 	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 	mvdan.cc/gofumpt v0.0.0-20200802201014-ab5a8192947d
-	pkg.dsb.dev v0.0.0-20200921213831-dc653d889d2d
+	pkg.dsb.dev v0.0.0-20200922210856-76db78894783
 )

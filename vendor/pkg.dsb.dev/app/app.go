@@ -63,7 +63,8 @@ func New(opts ...Option) *App {
 
 // Run the application.
 func (a *App) Run() error {
-	ctx := environment.NewContext()
+	ctx, cancel := context.WithCancel(environment.NewContext())
+	defer cancel()
 
 	action := a.inner.Action
 	a.inner.Action = func(c *cli.Context) error {
