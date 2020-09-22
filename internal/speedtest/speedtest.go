@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/opentracing/opentracing-go"
 	"golang.org/x/sync/errgroup"
 	"pkg.dsb.dev/closers"
 	"pkg.dsb.dev/distance"
@@ -57,6 +58,9 @@ func New() *Tester {
 
 // Test performs a speed test and returns the results. Can be cancelled using the given context.
 func (t *Tester) Test(ctx context.Context) (Results, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "speedtest")
+	defer span.Finish()
+
 	client, err := t.client(ctx)
 	if err != nil {
 		return Results{}, fmt.Errorf("failed to get client: %w", err)
@@ -128,6 +132,9 @@ func (t *Tester) servers(ctx context.Context) ([]Server, error) {
 }
 
 func (t *Tester) latency(ctx context.Context, server Server) (time.Duration, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "speedtest-latency")
+	defer span.Finish()
+
 	const uri = "/speedtest/latency.txt"
 	const attempts = 3
 
@@ -155,10 +162,14 @@ func (t *Tester) latency(ctx context.Context, server Server) (time.Duration, err
 		}
 	}
 
+	span.SetTag("speedtest.latency", latency)
 	return latency, nil
 }
 
 func (t *Tester) downloadSpeed(ctx context.Context, server Server, latency time.Duration) (float64, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "speedtest-download")
+	defer span.Finish()
+
 	u, err := url.Parse(server.URL)
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse server URL: %w", err)
@@ -201,10 +212,15 @@ func (t *Tester) downloadSpeed(ctx context.Context, server Server, latency time.
 
 	reqMB := sizes[weight] * sizes[weight] * 2 / 1000 / 1000
 	dlSpeed := float64(reqMB) * 8 * float64(workload) / end.Sub(start).Seconds()
+
+	span.SetTag("speedtest.download_speed", dlSpeed)
 	return dlSpeed, nil
 }
 
 func (t *Tester) uploadSpeed(ctx context.Context, server Server, latency time.Duration) (float64, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "speedtest-upload")
+	defer span.Finish()
+
 	u, err := url.Parse(server.URL)
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse server URL: %w", err)
@@ -247,6 +263,8 @@ func (t *Tester) uploadSpeed(ctx context.Context, server Server, latency time.Du
 
 	reqMB := float64(sizes[weight]) / 1000
 	ulSpeed := reqMB * 8 * float64(workload) / end.Sub(start).Seconds()
+
+	span.SetTag("speedtest.upload_speed", ulSpeed)
 	return ulSpeed, nil
 }
 
