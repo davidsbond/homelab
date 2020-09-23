@@ -61,9 +61,33 @@ services:
       - "traefik.http.services.jaeger.loadbalancer.server.port=16686"
       - "traefik.http.routers.jaeger.entrypoints=http"
 
+  grafana:
+    hostname: grafana
+    container_name: grafana
+    image: grafana/grafana:latest
+    restart: always
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ROOT_URL=http://grafana.localhost
+      - GF_PATHS_PROVISIONING=/provisioning
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - grafana_provisioning_data:/provisioning
+    depends_on:
+      - prometheus
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.localhost`)"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.http.routers.grafana.entrypoints=http"
+
 volumes:
   prometheus_data: {}
   jaeger_data: {}
+  grafana_data: {}
+  grafana_provisioning_data: {}
 
 networks:
   default:
