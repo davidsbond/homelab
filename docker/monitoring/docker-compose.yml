@@ -1,6 +1,8 @@
 version: "3.3"
 services:
   prometheus:
+    container_name: prometheus
+    hostname: prometheus
     image: prom/prometheus:latest
     restart: on-failure
     command:
@@ -15,9 +17,9 @@ services:
       - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
       - "traefik.http.routers.prometheus.entrypoints=http"
 
-  nodeexporter:
-    hostname: nodeexporter
-    container_name: nodeexporter
+  node-exporter:
+    hostname: node-exporter
+    container_name: node-exporter
     image: prom/node-exporter:v1.0.1
     restart: always
     volumes:
@@ -42,6 +44,8 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
 
   jaeger:
+    container_name: jaeger
+    hostname: jaeger
     image: jaegertracing/all-in-one:latest
     environment:
       SPAN_STORAGE_TYPE: badger

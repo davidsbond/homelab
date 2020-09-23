@@ -1,8 +1,8 @@
 version: "3.3"
 services:
   home-assistant:
-    hostname: homeassistant
-    container_name: homeassistant
+    hostname: home-assistant
+    container_name: home-assistant
     image: homeassistant/home-assistant:stable
     restart: always
     volumes:

@@ -1,6 +1,8 @@
 version: "3.3"
 services:
   pihole:
+    container_name: pihole
+    hostname: pihole
     image: pihole/pihole:latest
     environment:
       TZ: 'Europe/London'
