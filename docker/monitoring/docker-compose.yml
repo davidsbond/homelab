@@ -1,0 +1,67 @@
+version: "3.3"
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    restart: on-failure
+    command:
+      - "--config.file"
+      - "/prometheus.yaml"
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus/prometheus.yaml:/prometheus.yaml
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.localhost`)"
+      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+      - "traefik.http.routers.prometheus.entrypoints=http"
+
+  nodeexporter:
+    hostname: nodeexporter
+    container_name: nodeexporter
+    image: prom/node-exporter:v1.0.1
+    restart: always
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+
+  cadvisor:
+    hostname: cadvisor
+    container_name: cadvisor
+    image: gcr.io/google-containers/cadvisor:latest
+    restart: always
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      SPAN_STORAGE_TYPE: badger
+      BADGER_EPHEMERAL: "false"
+      BADGER_DIRECTORY_VALUE: /badger
+      BADGER_DIRECTORY_KEY: /badger/key
+    restart: on-failure
+    volumes:
+      - jaeger_data:/badger
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jaeger.rule=Host(`jaeger.localhost`)"
+      - "traefik.http.services.jaeger.loadbalancer.server.port=16686"
+      - "traefik.http.routers.jaeger.entrypoints=http"
+
+volumes:
+  prometheus_data: {}
+  jaeger_data: {}
+
+networks:
+  default:
+    external:
+      name: traefik_internal

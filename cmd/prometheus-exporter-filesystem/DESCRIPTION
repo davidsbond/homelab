@@ -1,1 +1,0 @@
-Exports local filesystem statistics as prometheus metrics on a configured interval.

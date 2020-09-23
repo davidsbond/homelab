@@ -1,0 +1,22 @@
+version: "3.3"
+services:
+  prometheus-exporter-speedtest:
+    build:
+      dockerfile: Dockerfile
+      context: ../..
+    command: /bin/prometheus-exporter-speedtest
+    restart: on-failure
+
+  prometheus-exporter-pihole:
+    build:
+      dockerfile: Dockerfile
+      context: ../..
+    command: /bin/prometheus-exporter-pihole
+    environment:
+      PIHOLE_URL: http://pihole
+    restart: on-failure
+
+networks:
+  default:
+    external:
+      name: traefik_internal

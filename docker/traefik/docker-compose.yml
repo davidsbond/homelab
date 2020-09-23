@@ -1,0 +1,34 @@
+version: "3.3"
+services:
+  traefik:
+    image: traefik:v2.2
+    container_name: traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.http.address=:80"
+      - "--entrypoints.https.address=:443"
+      - "--metrics.prometheus=true"
+      - "--metrics.prometheus.buckets=0.1,0.3,1.2,5.0"
+      - "--tracing.jaeger=true"
+      - "--tracing.jaeger.localAgentHostPort=jaeger:6831"
+      - "--tracing.jaeger.samplingServerUrl=http://jaeger:5778"
+    networks:
+      - internal
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+      - "traefik.http.routers.traefik.entrypoints=http"
+      - "traefik.http.routers.http-all.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.http-all.entrypoints=http"
+
+networks:
+  internal:
+    driver: bridge

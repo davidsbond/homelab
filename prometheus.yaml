@@ -1,7 +1,0 @@
-scrape_configs:
-  - job_name: homelab
-    metrics_path: /__/metrics
-    static_configs:
-      - targets:
-          - prometheus-exporter-speedtest:8081
-          - prometheus-exporter-pihole:8081

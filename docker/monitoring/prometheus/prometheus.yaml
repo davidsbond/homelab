@@ -1,0 +1,39 @@
+scrape_configs:
+  - job_name: traefik
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - traefik:8080
+
+  - job_name: prometheus
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - localhost:9090
+
+  - job_name: nodeexporter
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - nodeexporter:9100
+
+  - job_name: cadvisor
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - cadvisor:8080
+
+  - job_name: jaeger
+    metrics_path: /metrics
+    scrape_interval: 15s
+    static_configs:
+      - targets:
+          - jaeger:14269
+
+  - job_name: homelab
+    metrics_path: /__/metrics
+    scrape_interval: 5m
+    static_configs:
+      - targets:
+          - prometheus-exporter-speedtest:8081
+          - prometheus-exporter-pihole:8081

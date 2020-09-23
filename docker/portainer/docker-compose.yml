@@ -1,0 +1,26 @@
+version: "3.3"
+services:
+  portainer:
+    hostname: portainer
+    container_name: portainer
+    image: portainer/portainer:latest
+    restart: always
+    environment:
+      - TZ=Europe/London
+    command: -H unix:///var/run/docker.sock --no-auth
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.localhost`)"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+      - "traefik.http.routers.portainer.entrypoints=http"
+
+volumes:
+  portainer_data: {}
+
+networks:
+  default:
+    external:
+      name: traefik_internal
