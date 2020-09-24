@@ -20,7 +20,7 @@ services:
   node-exporter:
     hostname: node-exporter
     container_name: node-exporter
-    image: prom/node-exporter:v1.0.1
+    image: prom/node-exporter:latest
     restart: always
     volumes:
       - /proc:/host/proc:ro
