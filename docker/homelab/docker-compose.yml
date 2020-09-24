@@ -3,6 +3,7 @@ services:
   prometheus-exporter-speedtest:
     hostname: prometheus-exporter-speedtest
     container_name: prometheus-exporter-speedtest
+    image: prometheus-exporter-speedtest:latest
     build:
       dockerfile: Dockerfile
       context: ../..
@@ -12,6 +13,7 @@ services:
   prometheus-exporter-pihole:
     hostname: prometheus-exporter-pihole
     container_name: prometheus-exporter-pihole
+    image: prometheus-exporter-pihole:latest
     build:
       dockerfile: Dockerfile
       context: ../..
@@ -23,6 +25,7 @@ services:
   prometheus-exporter-weather:
     hostname: prometheus-exporter-weather
     container_name: prometheus-exporter-weather
+    image: prometheus-exporter-weather:latest
     build:
       dockerfile: Dockerfile
       context: ../..
