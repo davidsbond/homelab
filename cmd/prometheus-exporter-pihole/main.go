@@ -24,7 +24,7 @@ func main() {
 		app.WithFlags(
 			&cli.DurationFlag{
 				Name:        "frequency",
-				Usage:       "How often to run the speed test",
+				Usage:       "How often to query the pi-hole",
 				EnvVars:     []string{"FREQUENCY"},
 				Value:       defaultFrequency,
 				Destination: &frequency,

@@ -20,6 +20,18 @@ services:
       PIHOLE_URL: http://pihole
     restart: on-failure
 
+  prometheus-exporter-weather:
+    hostname: prometheus-exporter-weather
+    container_name: prometheus-exporter-weather
+    build:
+      dockerfile: Dockerfile
+      context: ../..
+    command: /bin/prometheus-exporter-weather
+    environment:
+      API_KEY: ${WEATHER_API_KEY}
+      LOCATION: ${WEATHER_LOCATION}
+    restart: on-failure
+
 networks:
   default:
     external:

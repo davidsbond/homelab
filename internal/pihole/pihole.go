@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"pkg.dsb.dev/health"
+
 	"pkg.dsb.dev/closers"
 )
 
@@ -55,6 +57,7 @@ func New(urlStr string) (*PiHole, error) {
 		},
 	}
 
+	health.AddCheck(urlStr, pi.Ping)
 	return pi, pi.Ping()
 }
 

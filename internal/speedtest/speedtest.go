@@ -52,7 +52,7 @@ func New() *Tester {
 		},
 	}
 
-	health.AddCheck("speedtest", ts.Ping)
+	health.AddCheck("speedtest.net", ts.Ping)
 	return ts
 }
 
