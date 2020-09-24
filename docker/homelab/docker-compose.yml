@@ -35,6 +35,16 @@ services:
       LOCATION: ${WEATHER_LOCATION}
     restart: on-failure
 
+  prometheus-exporter-coronavirus:
+    hostname: prometheus-exporter-coronavirus
+    container_name: prometheus-exporter-coronavirus
+    image: prometheus-exporter-coronavirus:latest
+    build:
+      dockerfile: Dockerfile
+      context: ../..
+    command: /bin/prometheus-exporter-coronavirus
+    restart: on-failure
+
 networks:
   default:
     external:

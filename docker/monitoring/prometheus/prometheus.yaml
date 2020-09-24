@@ -30,7 +30,7 @@ scrape_configs:
       - targets:
           - jaeger:14269
 
-  - job_name: homelab
+  - job_name: exporters
     metrics_path: /__/metrics
     scrape_interval: 5m
     static_configs:
@@ -38,3 +38,4 @@ scrape_configs:
           - prometheus-exporter-speedtest:8081
           - prometheus-exporter-pihole:8081
           - prometheus-exporter-weather:8081
+          - prometheus-exporter-coronavirus:8081

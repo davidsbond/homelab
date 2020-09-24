@@ -7,7 +7,9 @@
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
+        "limit": 100,
         "name": "Annotations & Alerts",
+        "showIn": 0,
         "type": "dashboard"
       }
     ]
@@ -808,6 +810,81 @@
       "timeShift": null,
       "title": "Memory",
       "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "datasource": "Prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "id": 34,
+      "panels": [],
+      "title": "Coronavirus Statistics",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Daily numbers taken from government coronavirus API",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 32,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.0",
+      "targets": [
+        {
+          "expr": "coronavirus_stats_case_count",
+          "interval": "",
+          "legendFormat": "Cases",
+          "refId": "A"
+        },
+        {
+          "expr": "coronavirus_stats_death_count",
+          "interval": "",
+          "legendFormat": "Deaths",
+          "refId": "B"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Daily Coronavirus Numbers",
+      "type": "stat"
     }
   ],
   "refresh": "5m",
@@ -825,5 +902,5 @@
   "timezone": "",
   "title": "Homelab",
   "uid": "JyztozFMk",
-  "version": 15
+  "version": 17
 }
