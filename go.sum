@@ -1219,8 +1219,8 @@ mvdan.cc/lint v0.0.0-20170908181259-adc824a0674b h1:DxJ5nJdkhDlLok9K6qO+5290kphD
 mvdan.cc/lint v0.0.0-20170908181259-adc824a0674b/go.mod h1:2odslEg/xrtNQqCYg2/jCoyKnw3vv5biOc3JnIcYfL4=
 mvdan.cc/unparam v0.0.0-20190720180237-d51796306d8f h1:Cq7MalBHYACRd6EesksG1Q8EoIAKOsiZviGKbOLIej4=
 mvdan.cc/unparam v0.0.0-20190720180237-d51796306d8f/go.mod h1:4G1h5nDURzA3bwVMZIVpwbkw+04kSxk3rAtzlimaUJw=
-pkg.dsb.dev v0.0.0-20200922210856-76db78894783 h1:GynX7Idyr4vzbePlj3LK4IDqt6YOyfwBExdsUaH/dgk=
-pkg.dsb.dev v0.0.0-20200922210856-76db78894783/go.mod h1:HdpfGrdlbhwo2EZEAJ8HkyKYuH57fMoBiQhF7SihFvo=
+pkg.dsb.dev v0.0.0-20200924170206-3d47fcccd86d h1:CaOhmMO7SEX6jLJ2fWxJX9+ECS9Dh3IKH2wWCl8R8hw=
+pkg.dsb.dev v0.0.0-20200924170206-3d47fcccd86d/go.mod h1:HdpfGrdlbhwo2EZEAJ8HkyKYuH57fMoBiQhF7SihFvo=
 rsc.io/binaryregexp v0.2.0/go.mod h1:qTv7/COck+e2FymRvadv62gMdZztPaShugOCi3I+8D8=
 rsc.io/quote/v3 v3.1.0/go.mod h1:yEA65RcK8LyAZtP9Kv3t0HmxON59tX3rD+tICJqUlj0=
 rsc.io/sampler v1.3.0/go.mod h1:T1hPZKmBbMNahiBKFy5HrXp6adAjACjK9JXDnKaTXpA=
