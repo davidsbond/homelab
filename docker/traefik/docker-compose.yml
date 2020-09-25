@@ -14,6 +14,8 @@ services:
       - "--tracing.jaeger=true"
       - "--tracing.jaeger.localAgentHostPort=jaeger:6831"
       - "--tracing.jaeger.samplingServerUrl=http://jaeger:5778"
+      - "--accesslog=true"
+      - "--accesslog.filepath=/access_log/access.log"
     networks:
       - internal
     ports:
@@ -21,6 +23,7 @@ services:
       - "443:443"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - traefik_access_log_data:/access_log
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
@@ -28,6 +31,9 @@ services:
       - "traefik.http.routers.traefik.entrypoints=http"
       - "traefik.http.routers.http-all.rule=hostregexp(`{host:.+}`)"
       - "traefik.http.routers.http-all.entrypoints=http"
+
+volumes:
+  traefik_access_log_data: {}
 
 networks:
   internal:
