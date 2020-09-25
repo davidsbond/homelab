@@ -14,6 +14,8 @@ services:
       retries: 3
     command: /bin/prometheus-exporter-speedtest
     restart: on-failure
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
 
   prometheus-exporter-pihole:
     hostname: prometheus-exporter-pihole
@@ -31,6 +33,8 @@ services:
     environment:
       PIHOLE_URL: http://pihole
     restart: on-failure
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
 
   prometheus-exporter-weather:
     hostname: prometheus-exporter-weather
@@ -49,6 +53,8 @@ services:
       API_KEY: ${WEATHER_API_KEY}
       LOCATION: ${WEATHER_LOCATION}
     restart: on-failure
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
 
   prometheus-exporter-coronavirus:
     hostname: prometheus-exporter-coronavirus
@@ -64,6 +70,8 @@ services:
       retries: 3
     command: /bin/prometheus-exporter-coronavirus
     restart: on-failure
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
 
 networks:
   default:

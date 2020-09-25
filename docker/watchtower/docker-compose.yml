@@ -4,6 +4,8 @@ services:
     hostname: watchtower
     container_name: watchtower
     image: containrrr/watchtower:latest
+    environment:
+      WATCHTOWER_CLEANUP: "true"
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
