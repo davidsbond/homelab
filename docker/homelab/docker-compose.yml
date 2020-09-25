@@ -7,6 +7,11 @@ services:
     build:
       dockerfile: Dockerfile
       context: ../..
+    healthcheck:
+      test: [ "CMD", "/bin/prometheus-exporter-speedtest", "check" ]
+      interval: 60s
+      timeout: 60s
+      retries: 3
     command: /bin/prometheus-exporter-speedtest
     restart: on-failure
 
@@ -17,6 +22,11 @@ services:
     build:
       dockerfile: Dockerfile
       context: ../..
+    healthcheck:
+      test: [ "CMD", "/bin/prometheus-exporter-pihole", "check" ]
+      interval: 60s
+      timeout: 60s
+      retries: 3
     command: /bin/prometheus-exporter-pihole
     environment:
       PIHOLE_URL: http://pihole
@@ -29,6 +39,11 @@ services:
     build:
       dockerfile: Dockerfile
       context: ../..
+    healthcheck:
+      test: [ "CMD", "/bin/prometheus-exporter-weather", "check" ]
+      interval: 60s
+      timeout: 60s
+      retries: 3
     command: /bin/prometheus-exporter-weather
     environment:
       API_KEY: ${WEATHER_API_KEY}
@@ -42,6 +57,11 @@ services:
     build:
       dockerfile: Dockerfile
       context: ../..
+    healthcheck:
+      test: [ "CMD", "/bin/prometheus-exporter-coronavirus", "check" ]
+      interval: 60s
+      timeout: 60s
+      retries: 3
     command: /bin/prometheus-exporter-coronavirus
     restart: on-failure
 
