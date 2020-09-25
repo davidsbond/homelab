@@ -90,7 +90,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "weather_stats_temperature",
+          "expr": "avg by (instance) (weather_stats_temperature)",
           "interval": "",
           "legendFormat": "Temperature",
           "refId": "A"
@@ -155,7 +155,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "weather_stats_uv_index",
+          "expr": "avg by (instance) (weather_stats_uv_index)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -219,7 +219,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "weather_stats_humidity",
+          "expr": "avg by (instance) (weather_stats_humidity)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -237,7 +237,7 @@
         "defaults": {
           "custom": {},
           "mappings": [],
-          "max": 20,
+          "max": 40,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -247,8 +247,16 @@
                 "value": null
               },
               {
-                "color": "red",
+                "color": "yellow",
                 "value": 10
+              },
+              {
+                "color": "orange",
+                "value": 20
+              },
+              {
+                "color": "red",
+                "value": 30
               }
             ]
           },
@@ -277,7 +285,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "weather_stats_wind_speed",
+          "expr": "avg by (instance) (weather_stats_wind_speed)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -339,7 +347,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "weather_stats_precipitation",
+          "expr": "avg by (instance) (weather_stats_precipitation)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -401,7 +409,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "weather_stats_pressure",
+          "expr": "avg by (instance) (weather_stats_pressure)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -474,7 +482,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "network_speed_latency",
+          "expr": "avg by (instance) (network_speed_latency)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -537,7 +545,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "network_speed_download",
+          "expr": "avg by (instance) (network_speed_download)",
           "interval": "",
           "legendFormat": "Download",
           "refId": "A"
@@ -599,7 +607,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "network_speed_upload",
+          "expr": "avg by (instance) (network_speed_upload)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -655,13 +663,13 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "pihole_summary_ads_blocked",
+          "expr": "avg by (instance) (pihole_summary_ads_blocked)",
           "interval": "",
           "legendFormat": "Ads Blocked",
           "refId": "A"
         },
         {
-          "expr": "pihole_summary_domains_blocked",
+          "expr": "avg by (instance) (pihole_summary_domains_blocked)",
           "interval": "",
           "legendFormat": "Domains Blocked",
           "refId": "B"
@@ -869,13 +877,13 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "coronavirus_stats_case_count",
+          "expr": "avg by (instance) (coronavirus_stats_case_count)",
           "interval": "",
           "legendFormat": "Cases",
           "refId": "A"
         },
         {
-          "expr": "coronavirus_stats_death_count",
+          "expr": "avg by (instance) (coronavirus_stats_death_count)",
           "interval": "",
           "legendFormat": "Deaths",
           "refId": "B"
@@ -902,5 +910,5 @@
   "timezone": "",
   "title": "Homelab",
   "uid": "JyztozFMk",
-  "version": 18
+  "version": 19
 }
