@@ -241,7 +241,7 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 12,
+        "w": 4,
         "x": 12,
         "y": 1
       },
@@ -278,6 +278,124 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "Pihole",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Bytes up/down scraped from the BT home hub",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "id": 38,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.0",
+      "targets": [
+        {
+          "expr": "avg by (instance) (homehub_stats_bytes_down)",
+          "interval": "",
+          "legendFormat": "Down",
+          "refId": "A"
+        },
+        {
+          "expr": "avg by (instance) (homehub_stats_bytes_up)",
+          "interval": "",
+          "legendFormat": "Up",
+          "refId": "B"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Homehub Bytes (Up/Down)",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Current uptime of the BT home hub",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "id": 40,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.0",
+      "targets": [
+        {
+          "expr": "avg by (instance) (homehub_stats_uptime)",
+          "interval": "",
+          "legendFormat": "Seconds",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Homehub Uptime",
       "type": "stat"
     },
     {
@@ -420,7 +538,7 @@
       "type": "stat"
     },
     {
-      "datasource": null,
+      "datasource": "Prometheus",
       "description": "Percentage of CPU usage",
       "fieldConfig": {
         "defaults": {
@@ -961,12 +1079,12 @@
     "list": []
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Homelab",
   "uid": "JyztozFMk",
-  "version": 20
+  "version": 21
 }
