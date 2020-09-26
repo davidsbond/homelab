@@ -73,6 +73,25 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
 
+  prometheus-exporter-homehub:
+    hostname: prometheus-exporter-homehub
+    container_name: prometheus-exporter-homehub
+    image: prometheus-exporter-homehub:latest
+    build:
+      dockerfile: Dockerfile
+      context: ../..
+    healthcheck:
+      test: [ "CMD", "/bin/prometheus-exporter-homehub", "check" ]
+      interval: 60s
+      timeout: 60s
+      retries: 3
+    command: /bin/prometheus-exporter-homehub
+    environment:
+      HOMEHUB_URL: ${HOMEHUB_URL}
+    restart: on-failure
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
+
 networks:
   default:
     external:
