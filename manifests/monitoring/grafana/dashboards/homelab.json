@@ -201,7 +201,7 @@
       }
     },
     {
-      "collapsed": true,
+      "collapsed": false,
       "datasource": "Prometheus",
       "gridPos": {
         "h": 1,
@@ -210,626 +210,33 @@
         "y": 7
       },
       "id": 18,
-      "panels": [
-        {
-          "datasource": "Prometheus",
-          "description": "Network latency taken from speedtest.net",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [],
-              "max": 250,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 40
-                  }
-                ]
-              },
-              "unit": "ms"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 4,
-            "x": 0,
-            "y": 8
-          },
-          "id": 4,
-          "options": {
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true
-          },
-          "pluginVersion": "7.2.0",
-          "targets": [
-            {
-              "expr": "avg by (instance) (network_speed_latency)",
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Network Latency",
-          "type": "gauge"
-        },
-        {
-          "datasource": "Prometheus",
-          "description": "Download speed taken from speedtest.net",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "#EAB839",
-                    "value": 20
-                  },
-                  {
-                    "color": "green",
-                    "value": 45
-                  }
-                ]
-              },
-              "unit": "Mbits"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 4,
-            "x": 4,
-            "y": 8
-          },
-          "id": 2,
-          "options": {
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true
-          },
-          "pluginVersion": "7.2.0",
-          "targets": [
-            {
-              "expr": "avg by (instance) (network_speed_download)",
-              "interval": "",
-              "legendFormat": "Download",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Download Speed",
-          "type": "gauge"
-        },
-        {
-          "datasource": "Prometheus",
-          "description": "Upload speed results from speedtest.net",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "orange",
-                    "value": 15
-                  },
-                  {
-                    "color": "green",
-                    "value": 20
-                  }
-                ]
-              },
-              "unit": "Mbits"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 4,
-            "x": 8,
-            "y": 8
-          },
-          "id": 16,
-          "options": {
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true
-          },
-          "pluginVersion": "7.2.0",
-          "targets": [
-            {
-              "expr": "avg by (instance) (network_speed_upload)",
-              "interval": "",
-              "legendFormat": "",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Upload Speed",
-          "type": "gauge"
-        },
-        {
-          "datasource": "Prometheus",
-          "description": "Summary data scraped from pihole",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [],
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "none"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 4,
-            "x": 12,
-            "y": 8
-          },
-          "id": 6,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "textMode": "auto"
-          },
-          "pluginVersion": "7.2.0",
-          "targets": [
-            {
-              "expr": "avg by (instance) (pihole_summary_ads_blocked)",
-              "interval": "",
-              "legendFormat": "Ads Blocked",
-              "refId": "A"
-            },
-            {
-              "expr": "avg by (instance) (pihole_summary_domains_blocked)",
-              "interval": "",
-              "legendFormat": "Domains Blocked",
-              "refId": "B"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Pihole",
-          "type": "stat"
-        },
-        {
-          "datasource": "Prometheus",
-          "description": "Bytes up/down scraped from the BT home hub",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [],
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 4,
-            "x": 16,
-            "y": 8
-          },
-          "id": 38,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "textMode": "auto"
-          },
-          "pluginVersion": "7.2.0",
-          "targets": [
-            {
-              "expr": "avg by (instance) (homehub_stats_bytes_down)",
-              "interval": "",
-              "legendFormat": "Down",
-              "refId": "A"
-            },
-            {
-              "expr": "avg by (instance) (homehub_stats_bytes_up)",
-              "interval": "",
-              "legendFormat": "Up",
-              "refId": "B"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Homehub Bytes (Up/Down)",
-          "type": "stat"
-        },
-        {
-          "datasource": "Prometheus",
-          "description": "Current uptime of the BT home hub",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [],
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "s"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 4,
-            "x": 20,
-            "y": 8
-          },
-          "id": 40,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "none",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "textMode": "auto"
-          },
-          "pluginVersion": "7.2.0",
-          "targets": [
-            {
-              "expr": "avg by (instance) (homehub_stats_uptime)",
-              "interval": "",
-              "legendFormat": "Seconds",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Homehub Uptime",
-          "type": "stat"
-        }
-      ],
+      "panels": [],
       "title": "Network Statistics",
       "type": "row"
     },
     {
-      "collapsed": true,
       "datasource": "Prometheus",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 8
-      },
-      "id": 28,
-      "panels": [
-        {
-          "datasource": "Prometheus",
-          "description": "Metrics about the local filesystem",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [],
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 6,
-            "x": 0,
-            "y": 9
-          },
-          "id": 8,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "textMode": "auto"
-          },
-          "pluginVersion": "7.2.0",
-          "targets": [
-            {
-              "expr": "node_filesystem_size_bytes{mountpoint=\"/\"} - node_filesystem_free_bytes{mountpoint=\"/\"}",
-              "interval": "",
-              "legendFormat": "Used",
-              "refId": "B"
-            },
-            {
-              "expr": "node_filesystem_free_bytes{mountpoint=\"/\"}",
-              "instant": false,
-              "interval": "",
-              "legendFormat": "Free",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Storage",
-          "type": "stat"
-        },
-        {
-          "datasource": "Prometheus",
-          "description": "Memory usage",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [],
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 6,
-            "x": 6,
-            "y": 9
-          },
-          "id": 10,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "textMode": "auto"
-          },
-          "pluginVersion": "7.2.0",
-          "targets": [
-            {
-              "expr": "node_memory_Active_bytes",
-              "interval": "",
-              "legendFormat": "Used",
-              "refId": "A"
-            },
-            {
-              "expr": "node_memory_MemTotal_bytes - node_memory_Active_bytes",
-              "interval": "",
-              "legendFormat": "Free",
-              "refId": "B"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Memory",
-          "type": "stat"
-        },
-        {
-          "datasource": "Prometheus",
-          "description": "Percentage of CPU usage",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [],
-              "max": 100,
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 25
-                  },
-                  {
-                    "color": "orange",
-                    "value": 50
-                  },
-                  {
-                    "color": "red",
-                    "value": 75
-                  }
-                ]
-              },
-              "unit": "percent"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 5,
-            "w": 12,
-            "x": 12,
-            "y": 9
-          },
-          "id": 36,
-          "options": {
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showThresholdLabels": false,
-            "showThresholdMarkers": true
-          },
-          "pluginVersion": "7.2.0",
-          "targets": [
-            {
-              "expr": "rate(node_cpu_seconds_total{mode=\"user\"}[30s]) * 100",
-              "interval": "",
-              "legendFormat": "CPU {{cpu}}",
-              "refId": "A"
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "CPU Usage",
-          "type": "gauge"
-        }
-      ],
-      "title": "Machine Statistics",
-      "type": "row"
-    },
-    {
-      "collapsed": false,
-      "datasource": "Prometheus",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 9
-      },
-      "id": 20,
-      "panels": [],
-      "title": "Weather Statistics",
-      "type": "row"
-    },
-    {
-      "datasource": "Prometheus",
-      "description": "Current temperature from weatherapi.com",
+      "description": "Network latency taken from speedtest.net",
       "fieldConfig": {
         "defaults": {
           "custom": {},
           "mappings": [],
-          "max": 34,
+          "max": 250,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue",
+                "color": "green",
                 "value": null
               },
               {
-                "color": "yellow",
-                "value": 10
-              },
-              {
-                "color": "orange",
-                "value": 20
-              },
-              {
                 "color": "red",
-                "value": 25
+                "value": 40
               }
             ]
           },
-          "unit": "celsius"
+          "unit": "ms"
         },
         "overrides": []
       },
@@ -837,9 +244,9 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 10
+        "y": 8
       },
-      "id": 12,
+      "id": 4,
       "options": {
         "orientation": "horizontal",
         "reduceOptions": {
@@ -855,47 +262,44 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "avg by (instance) (weather_stats_temperature)",
+          "expr": "avg by (instance) (network_speed_latency)",
           "interval": "",
-          "legendFormat": "Temperature",
+          "legendFormat": "",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Temperature",
+      "title": "Network Latency",
       "type": "gauge"
     },
     {
       "datasource": "Prometheus",
-      "description": "Current UV Index",
+      "description": "Download speed taken from speedtest.net",
       "fieldConfig": {
         "defaults": {
           "custom": {},
           "mappings": [],
-          "max": 14,
+          "max": 100,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "yellow",
+                "color": "red",
                 "value": null
               },
               {
-                "color": "orange",
-                "value": 6
+                "color": "#EAB839",
+                "value": 20
               },
               {
-                "color": "red",
-                "value": 8
-              },
-              {
-                "color": "purple",
-                "value": 11
+                "color": "green",
+                "value": 45
               }
             ]
-          }
+          },
+          "unit": "Mbits"
         },
         "overrides": []
       },
@@ -903,10 +307,11 @@
         "h": 5,
         "w": 4,
         "x": 4,
-        "y": 10
+        "y": 8
       },
-      "id": 14,
+      "id": 2,
       "options": {
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -920,46 +325,44 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "avg by (instance) (weather_stats_uv_index)",
+          "expr": "avg by (instance) (network_speed_download)",
           "interval": "",
-          "legendFormat": "",
+          "legendFormat": "Download",
           "refId": "A"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "UV Index",
+      "title": "Download Speed",
       "type": "gauge"
     },
     {
       "datasource": "Prometheus",
-      "description": "Current humidity from weatherapi.com",
+      "description": "Upload speed results from speedtest.net",
       "fieldConfig": {
         "defaults": {
           "custom": {},
           "mappings": [],
+          "max": 100,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "red",
                 "value": null
               },
               {
-                "color": "yellow",
-                "value": 70
-              },
-              {
                 "color": "orange",
-                "value": 80
+                "value": 15
               },
               {
-                "color": "red",
-                "value": 90
+                "color": "green",
+                "value": 20
               }
             ]
           },
-          "unit": "percent"
+          "unit": "Mbits"
         },
         "overrides": []
       },
@@ -967,9 +370,9 @@
         "h": 5,
         "w": 4,
         "x": 8,
-        "y": 10
+        "y": 8
       },
-      "id": 22,
+      "id": 16,
       "options": {
         "reduceOptions": {
           "calcs": [
@@ -984,7 +387,7 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "avg by (instance) (weather_stats_humidity)",
+          "expr": "avg by (instance) (network_speed_upload)",
           "interval": "",
           "legendFormat": "",
           "refId": "A"
@@ -992,17 +395,16 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Humidity",
+      "title": "Upload Speed",
       "type": "gauge"
     },
     {
       "datasource": "Prometheus",
-      "description": "Wind speed result from weatherapi.com",
+      "description": "Summary data scraped from pihole",
       "fieldConfig": {
         "defaults": {
           "custom": {},
           "mappings": [],
-          "max": 20,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1010,14 +412,10 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 10
               }
             ]
           },
-          "unit": "velocitymph"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -1025,202 +423,12 @@
         "h": 5,
         "w": 4,
         "x": 12,
-        "y": 10
+        "y": 8
       },
-      "id": 24,
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "7.2.0",
-      "targets": [
-        {
-          "expr": "avg by (instance) (weather_stats_wind_speed)",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Wind Speed",
-      "type": "gauge"
-    },
-    {
-      "datasource": "Prometheus",
-      "description": "Precipitation statistics from weatherapi.com",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "max": 9,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 3
-              },
-              {
-                "color": "red",
-                "value": 6
-              }
-            ]
-          },
-          "unit": "lengthmm"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 16,
-        "y": 10
-      },
-      "id": 26,
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "7.2.0",
-      "targets": [
-        {
-          "expr": "avg by (instance) (weather_stats_precipitation)",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Precipitation",
-      "type": "gauge"
-    },
-    {
-      "datasource": "Prometheus",
-      "description": "Pressure statistics from weatherapi.com",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "max": 2000,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 1015
-              },
-              {
-                "color": "red",
-                "value": 1500
-              }
-            ]
-          },
-          "unit": "pressurembar"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 20,
-        "y": 10
-      },
-      "id": 30,
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "7.2.0",
-      "targets": [
-        {
-          "expr": "avg by (instance) (weather_stats_pressure)",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Pressure",
-      "type": "gauge"
-    },
-    {
-      "collapsed": false,
-      "datasource": "Prometheus",
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 15
-      },
-      "id": 34,
-      "panels": [],
-      "title": "Coronavirus Statistics",
-      "type": "row"
-    },
-    {
-      "datasource": "Prometheus",
-      "description": "Daily numbers taken from government coronavirus API",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 0,
-        "y": 16
-      },
-      "id": 32,
+      "id": 6,
       "options": {
         "colorMode": "value",
-        "graphMode": "none",
+        "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
@@ -1235,25 +443,825 @@
       "pluginVersion": "7.2.0",
       "targets": [
         {
-          "expr": "avg by (instance) (coronavirus_stats_case_count)",
+          "expr": "avg by (instance) (pihole_summary_ads_blocked)",
           "interval": "",
-          "legendFormat": "Cases",
+          "legendFormat": "Ads Blocked",
           "refId": "A"
         },
         {
-          "expr": "avg by (instance) (coronavirus_stats_death_count)",
+          "expr": "avg by (instance) (pihole_summary_domains_blocked)",
           "interval": "",
-          "legendFormat": "Deaths",
+          "legendFormat": "Domains Blocked",
           "refId": "B"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Daily Coronavirus Numbers",
+      "title": "Pihole",
       "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Bytes up/down scraped from the BT home hub",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 16,
+        "y": 8
+      },
+      "id": 38,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.0",
+      "targets": [
+        {
+          "expr": "avg by (instance) (homehub_stats_bytes_down)",
+          "interval": "",
+          "legendFormat": "Down",
+          "refId": "A"
+        },
+        {
+          "expr": "avg by (instance) (homehub_stats_bytes_up)",
+          "interval": "",
+          "legendFormat": "Up",
+          "refId": "B"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Homehub Bytes (Up/Down)",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Current uptime of the BT home hub",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 20,
+        "y": 8
+      },
+      "id": 40,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.2.0",
+      "targets": [
+        {
+          "expr": "avg by (instance) (homehub_stats_uptime)",
+          "interval": "",
+          "legendFormat": "Seconds",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Homehub Uptime",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "datasource": "Prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 28,
+      "panels": [],
+      "title": "Machine Statistics",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Metrics about the local filesystem",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 25
+              },
+              {
+                "color": "orange",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 14
+      },
+      "id": 8,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "7.2.0",
+      "targets": [
+        {
+          "expr": "(sum(node_filesystem_size_bytes) - sum(node_filesystem_free_bytes)) / sum(node_filesystem_size_bytes) * 100",
+          "interval": "",
+          "legendFormat": "Used",
+          "refId": "B"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Storage",
+      "type": "gauge"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Memory usage",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 25
+              },
+              {
+                "color": "orange",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 14
+      },
+      "id": 10,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "7.2.0",
+      "targets": [
+        {
+          "expr": "100 * (1 - ((node_memory_MemFree_bytes + node_memory_Cached_bytes + node_memory_Buffers_bytes) / node_memory_MemTotal_bytes))",
+          "interval": "",
+          "legendFormat": "Used",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Memory",
+      "type": "gauge"
+    },
+    {
+      "datasource": "Prometheus",
+      "description": "Percentage of CPU usage",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 25
+              },
+              {
+                "color": "orange",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 75
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 14
+      },
+      "id": 36,
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "7.2.0",
+      "targets": [
+        {
+          "expr": "rate(node_cpu_seconds_total{mode=\"user\"}[30s]) * 100",
+          "interval": "",
+          "legendFormat": "CPU {{cpu}}",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "CPU Usage",
+      "type": "gauge"
+    },
+    {
+      "collapsed": true,
+      "datasource": "Prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 20,
+      "panels": [
+        {
+          "datasource": "Prometheus",
+          "description": "Current temperature from weatherapi.com",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "max": 34,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "blue",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 10
+                  },
+                  {
+                    "color": "orange",
+                    "value": 20
+                  },
+                  {
+                    "color": "red",
+                    "value": 25
+                  }
+                ]
+              },
+              "unit": "celsius"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 0,
+            "y": 15
+          },
+          "id": 12,
+          "options": {
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "7.2.0",
+          "targets": [
+            {
+              "expr": "avg by (instance) (weather_stats_temperature)",
+              "interval": "",
+              "legendFormat": "Temperature",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Temperature",
+          "type": "gauge"
+        },
+        {
+          "datasource": "Prometheus",
+          "description": "Current UV Index",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "max": 14,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "yellow",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 6
+                  },
+                  {
+                    "color": "red",
+                    "value": 8
+                  },
+                  {
+                    "color": "purple",
+                    "value": 11
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 4,
+            "y": 15
+          },
+          "id": 14,
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "7.2.0",
+          "targets": [
+            {
+              "expr": "avg by (instance) (weather_stats_uv_index)",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "UV Index",
+          "type": "gauge"
+        },
+        {
+          "datasource": "Prometheus",
+          "description": "Current humidity from weatherapi.com",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 70
+                  },
+                  {
+                    "color": "orange",
+                    "value": 80
+                  },
+                  {
+                    "color": "red",
+                    "value": 90
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 8,
+            "y": 15
+          },
+          "id": 22,
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "7.2.0",
+          "targets": [
+            {
+              "expr": "avg by (instance) (weather_stats_humidity)",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Humidity",
+          "type": "gauge"
+        },
+        {
+          "datasource": "Prometheus",
+          "description": "Wind speed result from weatherapi.com",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "max": 20,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 10
+                  }
+                ]
+              },
+              "unit": "velocitymph"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 12,
+            "y": 15
+          },
+          "id": 24,
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "7.2.0",
+          "targets": [
+            {
+              "expr": "avg by (instance) (weather_stats_wind_speed)",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Wind Speed",
+          "type": "gauge"
+        },
+        {
+          "datasource": "Prometheus",
+          "description": "Precipitation statistics from weatherapi.com",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "max": 9,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 3
+                  },
+                  {
+                    "color": "red",
+                    "value": 6
+                  }
+                ]
+              },
+              "unit": "lengthmm"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 16,
+            "y": 15
+          },
+          "id": 26,
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "7.2.0",
+          "targets": [
+            {
+              "expr": "avg by (instance) (weather_stats_precipitation)",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Precipitation",
+          "type": "gauge"
+        },
+        {
+          "datasource": "Prometheus",
+          "description": "Pressure statistics from weatherapi.com",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "max": 2000,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 1015
+                  },
+                  {
+                    "color": "red",
+                    "value": 1500
+                  }
+                ]
+              },
+              "unit": "pressurembar"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 20,
+            "y": 15
+          },
+          "id": 30,
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "7.2.0",
+          "targets": [
+            {
+              "expr": "avg by (instance) (weather_stats_pressure)",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Pressure",
+          "type": "gauge"
+        }
+      ],
+      "title": "Weather Statistics",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "Prometheus",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 34,
+      "panels": [
+        {
+          "datasource": "Prometheus",
+          "description": "Daily numbers taken from government coronavirus API",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 0,
+            "y": 11
+          },
+          "id": 32,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "7.2.0",
+          "targets": [
+            {
+              "expr": "avg by (instance) (coronavirus_stats_case_count)",
+              "interval": "",
+              "legendFormat": "Cases",
+              "refId": "A"
+            },
+            {
+              "expr": "avg by (instance) (coronavirus_stats_death_count)",
+              "interval": "",
+              "legendFormat": "Deaths",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Daily Coronavirus Numbers",
+          "type": "stat"
+        }
+      ],
+      "title": "Coronavirus Statistics",
+      "type": "row"
     }
   ],
-  "refresh": "5s",
+  "refresh": "30s",
   "schemaVersion": 26,
   "style": "dark",
   "tags": [],
@@ -1261,12 +1269,12 @@
     "list": []
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Homelab",
   "uid": "JyztozFMk",
-  "version": 24
+  "version": 25
 }
