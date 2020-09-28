@@ -40,3 +40,4 @@ scrape_configs:
           - prometheus-exporter-weather:8081
           - prometheus-exporter-coronavirus:8081
           - prometheus-exporter-homehub:8081
+          - prometheus-exporter-worldping:8081

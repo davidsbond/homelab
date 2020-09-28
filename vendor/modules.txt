@@ -31,6 +31,9 @@ github.com/go-critic/go-critic/checkers
 github.com/go-critic/go-critic/checkers/internal/astwalk
 github.com/go-critic/go-critic/checkers/internal/lintutil
 github.com/go-critic/go-critic/framework/linter
+# github.com/go-ping/ping v0.0.0-20200918120429-e8ae07c3cec8
+## explicit
+github.com/go-ping/ping
 # github.com/go-toolsmith/astcast v1.0.0
 github.com/go-toolsmith/astcast
 # github.com/go-toolsmith/astcopy v1.0.0
@@ -319,6 +322,13 @@ golang.org/x/mod/internal/lazyregexp
 golang.org/x/mod/modfile
 golang.org/x/mod/module
 golang.org/x/mod/semver
+# golang.org/x/net v0.0.0-20200904194848-62affa334b73
+golang.org/x/net/bpf
+golang.org/x/net/icmp
+golang.org/x/net/internal/iana
+golang.org/x/net/internal/socket
+golang.org/x/net/ipv4
+golang.org/x/net/ipv6
 # golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
 ## explicit
 golang.org/x/sync/errgroup

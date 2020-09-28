@@ -215,6 +215,90 @@
       "type": "row"
     },
     {
+      "circleMaxSize": "5",
+      "circleMinSize": "5",
+      "colors": [
+        "#73BF69",
+        "#FADE2A",
+        "#FF9830",
+        "#F2495C"
+      ],
+      "datasource": "Prometheus",
+      "decimals": 0,
+      "description": "Ping times for different servers across the world",
+      "esMetric": "Count",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": null,
+            "filterable": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "hideEmpty": false,
+      "hideZero": false,
+      "id": 48,
+      "initialZoom": "4",
+      "locationData": "countries",
+      "mapCenter": "custom",
+      "mapCenterLatitude": "54.2190057",
+      "mapCenterLongitude": "-13.4237337",
+      "maxDataPoints": 1,
+      "mouseWheelZoom": true,
+      "pluginVersion": "7.2.0",
+      "showLegend": true,
+      "stickyLabels": false,
+      "tableQueryOptions": {
+        "geohashField": "geohash",
+        "labelField": "country_code",
+        "latitudeField": "",
+        "longitudeField": "",
+        "metricField": "world_ping_average_rtt",
+        "queryType": "coordinates"
+      },
+      "targets": [
+        {
+          "expr": "sum by (country_code) (world_ping_average_rtt)",
+          "hide": false,
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{country_code}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": "40, 80, 120 ",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "World Ping Times",
+      "transformations": [],
+      "type": "grafana-worldmap-panel",
+      "unitPlural": "Milliseconds",
+      "unitSingle": "",
+      "unitSingular": "Millisecond",
+      "valueName": "current"
+    },
+    {
       "datasource": "Prometheus",
       "description": "Network latency taken from speedtest.net",
       "fieldConfig": {
@@ -244,7 +328,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 8
+        "y": 15
       },
       "id": 4,
       "options": {
@@ -307,7 +391,7 @@
         "h": 5,
         "w": 4,
         "x": 4,
-        "y": 8
+        "y": 15
       },
       "id": 2,
       "options": {
@@ -370,7 +454,7 @@
         "h": 5,
         "w": 4,
         "x": 8,
-        "y": 8
+        "y": 15
       },
       "id": 16,
       "options": {
@@ -423,7 +507,7 @@
         "h": 5,
         "w": 4,
         "x": 12,
-        "y": 8
+        "y": 15
       },
       "id": 6,
       "options": {
@@ -485,7 +569,7 @@
         "h": 5,
         "w": 4,
         "x": 16,
-        "y": 8
+        "y": 15
       },
       "id": 38,
       "options": {
@@ -547,7 +631,7 @@
         "h": 5,
         "w": 4,
         "x": 20,
-        "y": 8
+        "y": 15
       },
       "id": 40,
       "options": {
@@ -585,7 +669,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 20
       },
       "id": 28,
       "panels": [],
@@ -630,7 +714,7 @@
         "h": 5,
         "w": 6,
         "x": 0,
-        "y": 14
+        "y": 21
       },
       "id": 8,
       "options": {
@@ -697,7 +781,7 @@
         "h": 5,
         "w": 6,
         "x": 6,
-        "y": 14
+        "y": 21
       },
       "id": 10,
       "options": {
@@ -763,7 +847,7 @@
         "h": 5,
         "w": 12,
         "x": 12,
-        "y": 14
+        "y": 21
       },
       "id": 36,
       "options": {
@@ -798,7 +882,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 26
       },
       "id": 20,
       "panels": [
@@ -1191,7 +1275,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 27
       },
       "id": 34,
       "panels": [
@@ -1269,12 +1353,12 @@
     "list": []
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Homelab",
   "uid": "JyztozFMk",
-  "version": 25
+  "version": 28
 }

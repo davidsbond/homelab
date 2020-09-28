@@ -3,6 +3,7 @@ module github.com/davidsbond/homelab
 go 1.15
 
 require (
+	github.com/go-ping/ping v0.0.0-20200918120429-e8ae07c3cec8
 	github.com/golangci/golangci-lint v1.31.0
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/prometheus/client_golang v1.7.1
