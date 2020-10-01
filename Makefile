@@ -39,5 +39,5 @@ has-changes:
 build:
 	./scripts/build.sh
 
-docker-build:
+docker:
 	./scripts/docker.sh
