@@ -1,21 +1,33 @@
 version: "3.3"
 services:
-  portainer:
-    hostname: portainer
-    container_name: portainer
-    image: portainer/portainer:latest
-    restart: always
-    environment:
-      - TZ=Europe/London
-    command: -H unix:///var/run/docker.sock --no-auth
+  # Portainer agent running on each node in the swarm
+  agent:
+    image: portainer/agent
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.platform.os == linux]
+
+  # Portainer UI running on the manager node
+  portainer:
+    hostname: portainer
+    image: portainer/portainer-ce
+    command: -H tcp://tasks.agent:9001 --tlsskipverify
+    environment:
+      - TZ=Europe/London
+    volumes:
       - portainer_data:/data
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.portainer.rule=Host(`portainer.localhost`)"
-      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
-      - "traefik.http.routers.portainer.entrypoints=http"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.portainer.rule=Host(`portainer.localhost`)"
+        - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+        - "traefik.http.routers.portainer.entrypoints=http"
 
 volumes:
   portainer_data: {}

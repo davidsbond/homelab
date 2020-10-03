@@ -1,27 +1,34 @@
 version: "3.3"
 services:
+  # Prometheus running on the manager node
   prometheus:
-    container_name: prometheus
     hostname: prometheus
     image: prom/prometheus:latest
-    restart: on-failure
+    configs:
+      - source: prometheus
+        target: /etc/prometheus/prometheus.yml
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.prometheus.rule=Host(`prometheus.localhost`)"
+        - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+        - "traefik.http.routers.prometheus.entrypoints=http"
     command:
       - "--config.file"
-      - "/prometheus.yaml"
+      - "/etc/prometheus/prometheus.yml"
     volumes:
       - prometheus_data:/prometheus
-      - ./prometheus/prometheus.yaml:/prometheus.yaml
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.prometheus.rule=Host(`prometheus.localhost`)"
-      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
-      - "traefik.http.routers.prometheus.entrypoints=http"
 
+  # Node exporter running on each node in the swarm
   node-exporter:
     hostname: node-exporter
-    container_name: node-exporter
     image: prom/node-exporter:latest
-    restart: always
+    deploy:
+      mode: global
+    environment:
+      - NODE_ID={{.Node.ID}}
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -32,11 +39,12 @@ services:
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
 
+  # Container metrics exporter running on each node in the swarm
   cadvisor:
     hostname: cadvisor
-    container_name: cadvisor
     image: gcr.io/google-containers/cadvisor:latest
-    restart: always
+    deploy:
+      mode: global
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
@@ -44,7 +52,6 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
 
   jaeger:
-    container_name: jaeger
     hostname: jaeger
     image: jaegertracing/all-in-one:latest
     environment:
@@ -52,20 +59,28 @@ services:
       BADGER_EPHEMERAL: "false"
       BADGER_DIRECTORY_VALUE: /badger
       BADGER_DIRECTORY_KEY: /badger/key
-    restart: on-failure
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.jaeger.rule=Host(`jaeger.localhost`)"
+        - "traefik.http.services.jaeger.loadbalancer.server.port=16686"
+        - "traefik.http.routers.jaeger.entrypoints=http"
     volumes:
       - jaeger_data:/badger
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.jaeger.rule=Host(`jaeger.localhost`)"
-      - "traefik.http.services.jaeger.loadbalancer.server.port=16686"
-      - "traefik.http.routers.jaeger.entrypoints=http"
 
   grafana:
     hostname: grafana
-    container_name: grafana
     image: grafana/grafana:latest
-    restart: always
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.grafana.rule=Host(`grafana.localhost`)"
+        - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+        - "traefik.http.routers.grafana.entrypoints=http"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
@@ -77,11 +92,6 @@ services:
       - grafana_provisioning_data:/provisioning
     depends_on:
       - prometheus
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.grafana.rule=Host(`grafana.localhost`)"
-      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
-      - "traefik.http.routers.grafana.entrypoints=http"
 
 volumes:
   prometheus_data: {}
@@ -93,3 +103,7 @@ networks:
   default:
     external:
       name: traefik_internal
+
+configs:
+  prometheus:
+    file: ./prometheus/prometheus.yaml

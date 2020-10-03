@@ -2,17 +2,16 @@ version: "3.3"
 services:
   home-assistant:
     hostname: home-assistant
-    container_name: home-assistant
     image: homeassistant/home-assistant:stable
-    restart: always
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - home_assistant_data:/config
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.homeassistant.rule=Host(`homeassistant.localhost`)"
-      - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
-      - "traefik.http.routers.homeassistant.entrypoints=http"
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.homeassistant.rule=Host(`homeassistant.localhost`)"
+        - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
+        - "traefik.http.routers.homeassistant.entrypoints=http"
 
 volumes:
   home_assistant_data: {}
