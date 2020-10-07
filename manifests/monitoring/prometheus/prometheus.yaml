@@ -33,13 +33,13 @@ scrape_configs:
       - targets:
           - jaeger:14269
 
-#  - job_name: exporters
-#    metrics_path: /__/metrics
-#    static_configs:
-#      - targets:
-#          - prometheus-exporter-speedtest:8081
-#          - prometheus-exporter-pihole:8081
-#          - prometheus-exporter-weather:8081
-#          - prometheus-exporter-coronavirus:8081
-#          - prometheus-exporter-homehub:8081
-#          - prometheus-exporter-worldping:8081
+  - job_name: exporters
+    metrics_path: /__/metrics
+    static_configs:
+      - targets:
+          - prometheus-exporter-speedtest:8081
+          - prometheus-exporter-pihole:8081
+          - prometheus-exporter-weather:8081
+          - prometheus-exporter-coronavirus:8081
+          - prometheus-exporter-homehub:8081
+          - prometheus-exporter-worldping:8081

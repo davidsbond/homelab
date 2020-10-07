@@ -5,11 +5,10 @@ Monorepo for my personal homelab. It contains applications and docker manifests 
 ## Getting started
 
 This assumes you have [go](https://golang.org/), [docker](https://www.docker.com/) & [make](https://www.gnu.org/software/make/manual/make.html) 
-installed.
+installed along with docker's [buildx](https://docs.docker.com/buildx/working-with-buildx/) plugin.
 
 * Clone the repository
 * Install golang tools using `make install-tools`
-* Install [upx](https://upx.github.io/)
 * Run `make` to build all binaries
 
 ## Project structure
@@ -18,7 +17,6 @@ installed.
 * `internal` - Packages used throughout the application code
 * `manifests` - Docker compose manifests to run all my homelab applications
 * `vendor` - Vendored third-party code
-
 
 ## Third party applications
 
@@ -34,7 +32,6 @@ Here's a list of third-party applications I'm using alongside my custom applicat
 * [jaeger](https://www.jaegertracing.io/) - For tracing my applications
 * [node-exporter](https://github.com/prometheus/node_exporter) - For monitoring the host environment and exporting stats as prometheus metrics
 * [cadvisor](https://github.com/google/cadvisor) - For monitoring my docker containers and exporting stats as prometheus metrics
-* [watchtower](https://containrrr.dev/watchtower/) - For keeping all my containers up-to-date
 
 ## Prometheus exporters
 
