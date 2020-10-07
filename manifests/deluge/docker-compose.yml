@@ -13,7 +13,7 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.deluge.rule=Host(`deluge.localhost`)"
+        - "traefik.http.routers.deluge.rule=Host(`deluge.homelab`)"
         - "traefik.http.services.deluge.loadbalancer.server.port=8112"
         - "traefik.http.routers.deluge.entrypoints=http"
 
