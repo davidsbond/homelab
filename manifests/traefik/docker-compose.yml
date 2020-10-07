@@ -6,6 +6,14 @@ services:
     deploy:
       placement:
         constraints: [node.role == manager]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik_internal"
+        - "traefik.http.routers.traefik.rule=Host(`traefik.homelab`)"
+        - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+        - "traefik.http.routers.traefik.entrypoints=http"
+        - "traefik.http.routers.http-all.rule=hostregexp(`{host:.+}`)"
+        - "traefik.http.routers.http-all.entrypoints=http"
     command:
       - "--log.level=DEBUG"
       - "--api.insecure=true"
@@ -25,19 +33,10 @@ services:
       - internal
     ports:
       - "80:80"
-      - "8080:8080"
       - "443:443"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - traefik_access_log_data:/access_log
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=internal"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
-      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
-      - "traefik.http.routers.traefik.entrypoints=http"
-      - "traefik.http.routers.http-all.rule=hostregexp(`{host:.+}`)"
-      - "traefik.http.routers.http-all.entrypoints=http"
 
 volumes:
   traefik_access_log_data: {}

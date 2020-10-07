@@ -12,7 +12,7 @@ services:
         constraints: [node.role == manager]
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.prometheus.rule=Host(`prometheus.localhost`)"
+        - "traefik.http.routers.prometheus.rule=Host(`prometheus.homelab`)"
         - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
         - "traefik.http.routers.prometheus.entrypoints=http"
     command:
@@ -42,7 +42,8 @@ services:
   # Container metrics exporter running on each node in the swarm
   cadvisor:
     hostname: cadvisor
-    image: gcr.io/google-containers/cadvisor:latest
+    # Normal cAdvisor doesn't work on ARM.
+    image: unibaktr/cadvisor
     deploy:
       mode: global
     volumes:
@@ -64,7 +65,7 @@ services:
         constraints: [node.role == manager]
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.jaeger.rule=Host(`jaeger.localhost`)"
+        - "traefik.http.routers.jaeger.rule=Host(`jaeger.homelab`)"
         - "traefik.http.services.jaeger.loadbalancer.server.port=16686"
         - "traefik.http.routers.jaeger.entrypoints=http"
     volumes:
@@ -78,7 +79,7 @@ services:
         constraints: [node.role == manager]
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.grafana.rule=Host(`grafana.localhost`)"
+        - "traefik.http.routers.grafana.rule=Host(`grafana.homelab`)"
         - "traefik.http.services.grafana.loadbalancer.server.port=3000"
         - "traefik.http.routers.grafana.entrypoints=http"
     environment:
