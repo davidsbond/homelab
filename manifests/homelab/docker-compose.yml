@@ -31,9 +31,8 @@ services:
       timeout: 60s
       retries: 3
     command: /bin/prometheus-exporter-weather
-    environment:
-      API_KEY: ${WEATHER_API_KEY}
-      LOCATION: ${WEATHER_LOCATION}
+    env_file:
+      - .env
 
   prometheus-exporter-coronavirus:
     hostname: prometheus-exporter-coronavirus
@@ -54,12 +53,12 @@ services:
       timeout: 60s
       retries: 3
     command: /bin/prometheus-exporter-homehub
-    environment:
-      HOMEHUB_URL: ${HOMEHUB_URL}
+    env_file:
+      - .env
 
   prometheus-exporter-worldping:
     hostname: prometheus-exporter-worldping
-    image: ghcr.io/davidsbond/homelab
+    image: ghcr.io/davidsbond/homelab:latest
     environment:
       PRIVILEGED: "true"
     healthcheck:
