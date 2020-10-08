@@ -8,6 +8,11 @@ scrape_configs:
       - targets:
           - traefik:8080
 
+  - job_name: alertmanager
+    static_configs:
+      - targets:
+          - alertmanager:9093
+
   - job_name: prometheus
     static_configs:
       - targets:
@@ -43,3 +48,9 @@ scrape_configs:
           - prometheus-exporter-coronavirus:8081
           - prometheus-exporter-homehub:8081
           - prometheus-exporter-worldping:8081
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093

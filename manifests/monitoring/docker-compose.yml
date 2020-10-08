@@ -90,7 +90,28 @@ services:
       - GF_PATHS_PROVISIONING=/provisioning
     volumes:
       - grafana_data:/var/lib/grafana
-      - grafana_provisioning_data:/provisioning
+    depends_on:
+      - prometheus
+
+  alertmanager:
+    hostname: alertmanager
+    image: prom/alertmanager
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.alertmanager.rule=Host(`alerts.homelab`)"
+        - "traefik.http.services.alertmanager.loadbalancer.server.port=9093"
+        - "traefik.http.routers.alertmanager.entrypoints=http"
+    configs:
+      - source: alertmanager
+        target: /etc/alertmanager/alertmanager.yml
+    volumes:
+      - alertmanager_data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
     depends_on:
       - prometheus
 
@@ -98,7 +119,7 @@ volumes:
   prometheus_data: {}
   jaeger_data: {}
   grafana_data: {}
-  grafana_provisioning_data: {}
+  alertmanager_data: {}
 
 networks:
   default:
@@ -108,3 +129,5 @@ networks:
 configs:
   prometheus:
     file: ./prometheus/prometheus.yaml
+  alertmanager:
+    file: ./alertmanager/alertmanager.yaml
