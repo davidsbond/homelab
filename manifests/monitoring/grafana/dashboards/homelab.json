@@ -201,7 +201,7 @@
       }
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": "Prometheus",
       "gridPos": {
         "h": 1,
@@ -210,457 +210,458 @@
         "y": 7
       },
       "id": 18,
-      "panels": [],
+      "panels": [
+        {
+          "circleMaxSize": "5",
+          "circleMinSize": "5",
+          "colors": [
+            "#73BF69",
+            "#FADE2A",
+            "#FF9830",
+            "#F2495C"
+          ],
+          "datasource": "Prometheus",
+          "decimals": 0,
+          "description": "Ping times for different servers across the world",
+          "esMetric": "Count",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": null,
+                "filterable": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 8
+          },
+          "hideEmpty": false,
+          "hideZero": false,
+          "id": 48,
+          "initialZoom": "4",
+          "locationData": "countries",
+          "mapCenter": "custom",
+          "mapCenterLatitude": "54.2190057",
+          "mapCenterLongitude": "-13.4237337",
+          "maxDataPoints": 1,
+          "mouseWheelZoom": true,
+          "pluginVersion": "7.2.0",
+          "showLegend": true,
+          "stickyLabels": false,
+          "tableQueryOptions": {
+            "geohashField": "geohash",
+            "labelField": "country_code",
+            "latitudeField": "",
+            "longitudeField": "",
+            "metricField": "world_ping_average_rtt",
+            "queryType": "coordinates"
+          },
+          "targets": [
+            {
+              "expr": "sum by (country_code) (world_ping_average_rtt)",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "{{country_code}}",
+              "refId": "A"
+            }
+          ],
+          "thresholds": "40, 80, 120 ",
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "World Ping Times",
+          "transformations": [],
+          "type": "grafana-worldmap-panel",
+          "unitPlural": "Milliseconds",
+          "unitSingle": "",
+          "unitSingular": "Millisecond",
+          "valueName": "current"
+        },
+        {
+          "datasource": "Prometheus",
+          "description": "Network latency taken from speedtest.net",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "max": 250,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 40
+                  }
+                ]
+              },
+              "unit": "ms"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 0,
+            "y": 15
+          },
+          "id": 4,
+          "options": {
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "7.2.1",
+          "targets": [
+            {
+              "expr": "avg by (instance) (network_speed_latency)",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Network Latency",
+          "type": "gauge"
+        },
+        {
+          "datasource": "Prometheus",
+          "description": "Download speed taken from speedtest.net",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "#EAB839",
+                    "value": 20
+                  },
+                  {
+                    "color": "green",
+                    "value": 45
+                  }
+                ]
+              },
+              "unit": "Mbits"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 4,
+            "y": 15
+          },
+          "id": 2,
+          "options": {
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "7.2.1",
+          "targets": [
+            {
+              "expr": "avg by (instance) (network_speed_download)",
+              "interval": "",
+              "legendFormat": "Download",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Download Speed",
+          "type": "gauge"
+        },
+        {
+          "datasource": "Prometheus",
+          "description": "Upload speed results from speedtest.net",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "max": 100,
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 15
+                  },
+                  {
+                    "color": "green",
+                    "value": 20
+                  }
+                ]
+              },
+              "unit": "Mbits"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 8,
+            "y": 15
+          },
+          "id": 16,
+          "options": {
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true
+          },
+          "pluginVersion": "7.2.1",
+          "targets": [
+            {
+              "expr": "avg by (instance) (network_speed_upload)",
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Upload Speed",
+          "type": "gauge"
+        },
+        {
+          "datasource": "Prometheus",
+          "description": "Summary data scraped from pihole",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 12,
+            "y": 15
+          },
+          "id": 6,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "7.2.1",
+          "targets": [
+            {
+              "expr": "avg by (instance) (pihole_summary_ads_blocked)",
+              "interval": "",
+              "legendFormat": "Ads Blocked",
+              "refId": "A"
+            },
+            {
+              "expr": "avg by (instance) (pihole_summary_domains_blocked)",
+              "interval": "",
+              "legendFormat": "Domains Blocked",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Pihole",
+          "type": "stat"
+        },
+        {
+          "datasource": "Prometheus",
+          "description": "Bytes up/down scraped from the BT home hub",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 16,
+            "y": 15
+          },
+          "id": 38,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "7.2.1",
+          "targets": [
+            {
+              "expr": "avg by (instance) (homehub_stats_bytes_down)",
+              "interval": "",
+              "legendFormat": "Down",
+              "refId": "A"
+            },
+            {
+              "expr": "avg by (instance) (homehub_stats_bytes_up)",
+              "interval": "",
+              "legendFormat": "Up",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Homehub Bytes (Up/Down)",
+          "type": "stat"
+        },
+        {
+          "datasource": "Prometheus",
+          "description": "Current uptime of the BT home hub",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 20,
+            "y": 15
+          },
+          "id": 40,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "7.2.1",
+          "targets": [
+            {
+              "expr": "avg by (instance) (homehub_stats_uptime)",
+              "interval": "",
+              "legendFormat": "Seconds",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Homehub Uptime",
+          "type": "stat"
+        }
+      ],
       "title": "Network Statistics",
       "type": "row"
-    },
-    {
-      "circleMaxSize": "5",
-      "circleMinSize": "5",
-      "colors": [
-        "#73BF69",
-        "#FADE2A",
-        "#FF9830",
-        "#F2495C"
-      ],
-      "datasource": "Prometheus",
-      "decimals": 0,
-      "description": "Ping times for different servers across the world",
-      "esMetric": "Count",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": null,
-            "filterable": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 8
-      },
-      "hideEmpty": false,
-      "hideZero": false,
-      "id": 48,
-      "initialZoom": "4",
-      "locationData": "countries",
-      "mapCenter": "custom",
-      "mapCenterLatitude": "54.2190057",
-      "mapCenterLongitude": "-13.4237337",
-      "maxDataPoints": 1,
-      "mouseWheelZoom": true,
-      "pluginVersion": "7.2.0",
-      "showLegend": true,
-      "stickyLabels": false,
-      "tableQueryOptions": {
-        "geohashField": "geohash",
-        "labelField": "country_code",
-        "latitudeField": "",
-        "longitudeField": "",
-        "metricField": "world_ping_average_rtt",
-        "queryType": "coordinates"
-      },
-      "targets": [
-        {
-          "expr": "sum by (country_code) (world_ping_average_rtt)",
-          "hide": false,
-          "instant": true,
-          "interval": "",
-          "legendFormat": "{{country_code}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": "40, 80, 120 ",
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "World Ping Times",
-      "transformations": [],
-      "type": "grafana-worldmap-panel",
-      "unitPlural": "Milliseconds",
-      "unitSingle": "",
-      "unitSingular": "Millisecond",
-      "valueName": "current"
-    },
-    {
-      "datasource": "Prometheus",
-      "description": "Network latency taken from speedtest.net",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "max": 250,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 40
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 0,
-        "y": 15
-      },
-      "id": 4,
-      "options": {
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "7.2.1",
-      "targets": [
-        {
-          "expr": "avg by (instance) (network_speed_latency)",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Network Latency",
-      "type": "gauge"
-    },
-    {
-      "datasource": "Prometheus",
-      "description": "Download speed taken from speedtest.net",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "#EAB839",
-                "value": 20
-              },
-              {
-                "color": "green",
-                "value": 45
-              }
-            ]
-          },
-          "unit": "Mbits"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 4,
-        "y": 15
-      },
-      "id": 2,
-      "options": {
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "7.2.1",
-      "targets": [
-        {
-          "expr": "avg by (instance) (network_speed_download)",
-          "interval": "",
-          "legendFormat": "Download",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Download Speed",
-      "type": "gauge"
-    },
-    {
-      "datasource": "Prometheus",
-      "description": "Upload speed results from speedtest.net",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 15
-              },
-              {
-                "color": "green",
-                "value": 20
-              }
-            ]
-          },
-          "unit": "Mbits"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 8,
-        "y": 15
-      },
-      "id": 16,
-      "options": {
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
-      },
-      "pluginVersion": "7.2.1",
-      "targets": [
-        {
-          "expr": "avg by (instance) (network_speed_upload)",
-          "interval": "",
-          "legendFormat": "",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Upload Speed",
-      "type": "gauge"
-    },
-    {
-      "datasource": "Prometheus",
-      "description": "Summary data scraped from pihole",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 12,
-        "y": 15
-      },
-      "id": 6,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.2.1",
-      "targets": [
-        {
-          "expr": "avg by (instance) (pihole_summary_ads_blocked)",
-          "interval": "",
-          "legendFormat": "Ads Blocked",
-          "refId": "A"
-        },
-        {
-          "expr": "avg by (instance) (pihole_summary_domains_blocked)",
-          "interval": "",
-          "legendFormat": "Domains Blocked",
-          "refId": "B"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Pihole",
-      "type": "stat"
-    },
-    {
-      "datasource": "Prometheus",
-      "description": "Bytes up/down scraped from the BT home hub",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 16,
-        "y": 15
-      },
-      "id": 38,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.2.1",
-      "targets": [
-        {
-          "expr": "avg by (instance) (homehub_stats_bytes_down)",
-          "interval": "",
-          "legendFormat": "Down",
-          "refId": "A"
-        },
-        {
-          "expr": "avg by (instance) (homehub_stats_bytes_up)",
-          "interval": "",
-          "legendFormat": "Up",
-          "refId": "B"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Homehub Bytes (Up/Down)",
-      "type": "stat"
-    },
-    {
-      "datasource": "Prometheus",
-      "description": "Current uptime of the BT home hub",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 4,
-        "x": 20,
-        "y": 15
-      },
-      "id": 40,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "7.2.1",
-      "targets": [
-        {
-          "expr": "avg by (instance) (homehub_stats_uptime)",
-          "interval": "",
-          "legendFormat": "Seconds",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Homehub Uptime",
-      "type": "stat"
     },
     {
       "collapsed": false,
@@ -669,7 +670,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 8
       },
       "id": 28,
       "panels": [],
@@ -717,10 +718,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 5,
-        "w": 7,
+        "h": 6,
+        "w": 12,
         "x": 0,
-        "y": 21
+        "y": 9
       },
       "hiddenSeries": false,
       "id": 8,
@@ -838,10 +839,10 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 5,
-        "w": 7,
-        "x": 7,
-        "y": 21
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 9
       },
       "hiddenSeries": false,
       "id": 10,
@@ -960,9 +961,9 @@
       "fillGradient": 0,
       "gridPos": {
         "h": 5,
-        "w": 10,
-        "x": 14,
-        "y": 21
+        "w": 12,
+        "x": 0,
+        "y": 15
       },
       "hiddenSeries": false,
       "id": 36,
@@ -1040,13 +1041,125 @@
       }
     },
     {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "description": "Node temperature",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 5,
+        "w": 12,
+        "x": 12,
+        "y": 15
+      },
+      "hiddenSeries": false,
+      "id": 50,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.2.1",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "avg by (instance) (node_hwmon_temp_celsius)",
+          "interval": "",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Temperature",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "decimals": null,
+          "format": "celsius",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "collapsed": false,
       "datasource": "Prometheus",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 20
       },
       "id": 20,
       "panels": [],
@@ -1091,7 +1204,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 27
+        "y": 21
       },
       "id": 12,
       "options": {
@@ -1157,7 +1270,7 @@
         "h": 5,
         "w": 4,
         "x": 4,
-        "y": 27
+        "y": 21
       },
       "id": 14,
       "options": {
@@ -1221,7 +1334,7 @@
         "h": 5,
         "w": 4,
         "x": 8,
-        "y": 27
+        "y": 21
       },
       "id": 22,
       "options": {
@@ -1279,7 +1392,7 @@
         "h": 5,
         "w": 4,
         "x": 12,
-        "y": 27
+        "y": 21
       },
       "id": 24,
       "options": {
@@ -1341,7 +1454,7 @@
         "h": 5,
         "w": 4,
         "x": 16,
-        "y": 27
+        "y": 21
       },
       "id": 26,
       "options": {
@@ -1403,7 +1516,7 @@
         "h": 5,
         "w": 4,
         "x": 20,
-        "y": 27
+        "y": 21
       },
       "id": 30,
       "options": {
@@ -1438,7 +1551,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 26
       },
       "id": 34,
       "panels": [],
@@ -1469,7 +1582,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 33
+        "y": 27
       },
       "id": 32,
       "options": {
@@ -1522,5 +1635,5 @@
   "timezone": "",
   "title": "Homelab",
   "uid": "JyztozFMk",
-  "version": 4
+  "version": 5
 }
