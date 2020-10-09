@@ -50,11 +50,13 @@ services:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
       - /sys:/sys:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
 
   jaeger:
     hostname: jaeger
-    image: jaegertracing/all-in-one:latest
+    image: querycapistio/all-in-one:1.12.0
     environment:
       SPAN_STORAGE_TYPE: badger
       BADGER_EPHEMERAL: "false"
