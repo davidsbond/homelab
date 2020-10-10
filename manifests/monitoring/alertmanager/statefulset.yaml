@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: alertmanager
+spec:
+  serviceName: alertmanager
+  selector:
+    matchLabels:
+      app: alertmanager
+  template:
+    metadata:
+      labels:
+        app: alertmanager
+    spec:
+      containers:
+        - name: alertmanager
+          image: prom/alertmanager
+          args:
+          - '--config.file=/etc/alertmanager/alertmanager.yaml'
+          - '--storage.path=/alertmanager'
+
+          readinessProbe:
+            httpGet:
+              path: /#/status
+              port: 9093
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+
+          volumeMounts:
+            # Alertmanager config
+            - name: config-volume
+              mountPath: /etc/alertmanager
+            # Alertmanager data
+            - name: alertmanager
+              mountPath: "/alertmanager"
+
+      volumes:
+        - name: config-volume
+          configMap:
+            defaultMode: 420
+            name: alertmanager
+
+  volumeClaimTemplates:
+    - metadata:
+        name: alertmanager
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi

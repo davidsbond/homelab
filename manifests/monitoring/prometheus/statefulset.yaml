@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: prometheus
+spec:
+  serviceName: prometheus
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        # Image and commands
+        image: prom/prometheus:latest
+        args:
+          - "--config.file"
+          - "/etc/prometheus/prometheus.yaml"
+
+        # Liveness check
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /-/healthy
+            port: 9090
+            scheme: HTTP
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 1
+
+        # Readiness check
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /-/ready
+            port: 9090
+            scheme: HTTP
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 1
+
+        volumeMounts:
+          # Prometheus config
+          - name: config-volume
+            mountPath: /etc/prometheus
+          # Prometheus data
+          - name: prometheus
+            mountPath: /prometheus
+
+      volumes:
+        # Prometheus config as volume
+        - name: config-volume
+          configMap:
+            defaultMode: 420
+            name: prometheus
+
+  volumeClaimTemplates:
+    - metadata:
+        name: prometheus
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
