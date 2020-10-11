@@ -25,6 +25,9 @@ spec:
       containers:
         - image: ghcr.io/davidsbond/homelab:latest
           name: prometheus-exporter-worldping
+          env:
+            - name: PRIVILEGED
+              value: "true"
           command:
             - /bin/prometheus-exporter-worldping
           readinessProbe:
