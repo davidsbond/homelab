@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: alertmanager
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  rules:
+    - host: alertmanager.homelab
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: alertmanager
+              servicePort: 3000

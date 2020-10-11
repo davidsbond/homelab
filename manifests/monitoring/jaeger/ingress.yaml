@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: jaeger
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  rules:
+    - host: jaeger.homelab
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: jaeger
+              servicePort: 16686

@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: prometheus
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  rules:
+    - host: prometheus.homelab
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: prometheus
+              servicePort: 9090

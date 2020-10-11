@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: grafana
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  rules:
+    - host: grafana.homelab
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: grafana
+              servicePort: 3000
