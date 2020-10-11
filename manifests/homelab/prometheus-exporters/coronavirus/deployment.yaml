@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-exporter-coronavirus
+  labels:
+    app: prometheus-exporter-coronavirus
+spec:
+  selector:
+    matchLabels:
+      app: prometheus-exporter-coronavirus
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: prometheus-exporter-coronavirus
+    spec:
+      imagePullSecrets:
+        - name: registry
+      containers:
+        - image: ghcr.io/davidsbond/homelab:latest
+          name: prometheus-exporter-coronavirus
+          command:
+            - /bin/prometheus-exporter-coronavirus
+          readinessProbe:
+            httpGet:
+              path: "/__/health"
+              port: 8081
+            initialDelaySeconds: 5

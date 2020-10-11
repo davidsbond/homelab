@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-exporter-worldping
+  labels:
+    app: prometheus-exporter-worldping
+spec:
+  selector:
+    matchLabels:
+      app: prometheus-exporter-worldping
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: prometheus-exporter-worldping
+    spec:
+      imagePullSecrets:
+        - name: registry
+      containers:
+        - image: ghcr.io/davidsbond/homelab:latest
+          name: prometheus-exporter-worldping
+          command:
+            - /bin/prometheus-exporter-worldping
+          readinessProbe:
+            httpGet:
+              path: "/__/health"
+              port: 8081
+            initialDelaySeconds: 5

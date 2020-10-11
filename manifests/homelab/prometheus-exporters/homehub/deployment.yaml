@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-exporter-homehub
+  labels:
+    app: prometheus-exporter-homehub
+spec:
+  selector:
+    matchLabels:
+      app: prometheus-exporter-homehub
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: prometheus-exporter-homehub
+    spec:
+      imagePullSecrets:
+        - name: registry
+      containers:
+        - image: ghcr.io/davidsbond/homelab:latest
+          name: prometheus-exporter-homehub
+          command:
+            - /bin/prometheus-exporter-homehub
+          env:
+            - name: HOMEHUB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: homehub
+                  key: homehub.url
+          readinessProbe:
+            httpGet:
+              path: "/__/health"
+              port: 8081
+            initialDelaySeconds: 5
