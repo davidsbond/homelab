@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: pihole
+spec:
+  rules:
+  - host: pihole.homelab
+    http:
+      paths:
+      - backend:
+          serviceName: pihole
+          servicePort: 8000
+        path: /
+

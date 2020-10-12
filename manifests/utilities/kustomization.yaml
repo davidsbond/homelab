@@ -5,4 +5,10 @@ namespace: utilities
 resources:
 - namespace.yaml
 - home-assistant
+- pihole
 - deluge
+
+secretGenerator:
+- name: pihole
+  envs:
+  - secrets/pihole
