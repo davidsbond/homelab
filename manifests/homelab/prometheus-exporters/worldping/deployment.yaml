@@ -28,6 +28,11 @@ spec:
         env:
         - name: PRIVILEGED
           value: 'true'
+        - name: TRACER_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: tracer.host
+              name: tracing
         command:
         - /bin/prometheus-exporter-worldping
         readinessProbe:

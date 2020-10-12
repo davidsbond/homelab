@@ -33,6 +33,11 @@ spec:
             secretKeyRef:
               name: homehub
               key: homehub.url
+        - name: TRACER_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: tracer.host
+              name: tracing
         readinessProbe:
           httpGet:
             path: /__/health

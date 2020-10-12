@@ -11,3 +11,8 @@ secretGenerator:
   type: kubernetes.io/dockerconfigjson
   files:
   - .dockerconfigjson=secrets/registry
+
+configMapGenerator:
+- name: tracing
+  envs:
+  - config/tracing

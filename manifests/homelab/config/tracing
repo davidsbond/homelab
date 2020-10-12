@@ -1,0 +1,1 @@
+tracer.host=jaeger.monitoring.svc.cluster.local:6831

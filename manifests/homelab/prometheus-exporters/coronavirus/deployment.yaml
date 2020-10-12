@@ -27,6 +27,12 @@ spec:
         name: prometheus-exporter-coronavirus
         command:
         - /bin/prometheus-exporter-coronavirus
+        env:
+        - name: TRACER_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: tracer.host
+              name: tracing
         readinessProbe:
           httpGet:
             path: /__/health

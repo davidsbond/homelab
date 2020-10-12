@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger
+spec:
+  selector:
+    app: jaeger
+  ports:
+  - protocol: TCP
+    name: query
+    port: 16686
+  - protocol: TCP
+    name: traces
+    port: 6831

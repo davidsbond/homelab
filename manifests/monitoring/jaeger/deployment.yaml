@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger
+  labels:
+    app: jaeger
+spec:
+  selector:
+    matchLabels:
+      app: jaeger
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: /metrics
+        prometheus.io/port: '14269'
+      labels:
+        app: jaeger
+    spec:
+      containers:
+      - image: querycapistio/all-in-one:1.20.0
+        name: jaeger
+        env:
+        - name: SPAN_STORAGE_TYPE
+          value: badger
+        - name: BADGER_EPHEMERAL
+          value: 'false'
+        - name: BADGER_DIRECTORY_VALUE
+          value: /badger
+        - name: BADGER_DIRECTORY_KEY
+          value: /badger/key
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 16686
+          initialDelaySeconds: 5
+        volumeMounts:
+        - mountPath: /badger
+          name: jaeger
+      volumes:
+      - name: jaeger
+        persistentVolumeClaim:
+          claimName: jaeger

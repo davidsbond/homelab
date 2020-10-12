@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: jaeger
+spec:
+  rules:
+  - host: jaeger.homelab
+    http:
+      paths:
+      - backend:
+          serviceName: jaeger
+          servicePort: 16686
+        path: /
+
