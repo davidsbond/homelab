@@ -1,6 +1,6 @@
 # homelab [![PkgGoDev](https://pkg.go.dev/badge/github.com/davidsbond/homelab)](https://pkg.go.dev/github.com/davidsbond/homelab) [![Go Report Card](https://goreportcard.com/badge/github.com/davidsbond/homelab)](https://goreportcard.com/report/github.com/davidsbond/homelab)
 
-Monorepo for my personal homelab. It contains applications and docker manifests for deployment.
+Monorepo for my personal homelab. It contains applications and kubernetes manifests for deployment.
 
 ## Getting started
 
@@ -25,13 +25,11 @@ Here's a list of third-party applications I'm using alongside my custom applicat
 * [deluge](https://deluge-torrent.org/) - For torrents
 * [home-assistant](https://www.home-assistant.io/) - For interfacing with my ring cameras
 * [pihole](https://pi-hole.net/) - For DNS and ad-blocking
-* [portainer](https://www.portainer.io/) - For managing all the docker containers
 * [traefik](https://traefik.io/) - For exposing services on the homelab, usually just their web-interfaces
 * [prometheus](https://prometheus.io/) - For scraping all my metrics
 * [grafana](https://grafana.com/) - For visualising all my metrics
 * [jaeger](https://www.jaegertracing.io/) - For tracing my applications
 * [node-exporter](https://github.com/prometheus/node_exporter) - For monitoring the host environment and exporting stats as prometheus metrics
-* [cadvisor](https://github.com/google/cadvisor) - For monitoring my docker containers and exporting stats as prometheus metrics
 
 ## Prometheus exporters
 
@@ -43,3 +41,4 @@ I've implemented several custom prometheus exporters in this repo that power my 
 * `speedtest` - Exports [speedtest](https://speedtest.net) results as prometheus metrics
 * `weather` - Exports current weather data as prometheus metrics
 * `worldping` - Exports world ping times for the local host as prometheus metrics
+* `home-assistant` - Proxies prometheus metrics from a home-assistant server.
