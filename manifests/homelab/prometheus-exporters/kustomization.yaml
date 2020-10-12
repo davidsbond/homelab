@@ -8,6 +8,7 @@ resources:
 - worldping
 - homehub
 - home-assistant
+- pihole
 
 secretGenerator:
 - name: weather
