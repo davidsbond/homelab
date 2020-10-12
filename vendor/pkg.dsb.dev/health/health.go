@@ -9,13 +9,16 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	grpc_health "google.golang.org/grpc/health/grpc_health_v1"
 
 	"pkg.dsb.dev/closers"
 	"pkg.dsb.dev/environment"
 )
 
 type (
-	health struct {
+	status struct {
 		Name        string    `json:"name"`
 		Description string    `json:"description"`
 		Version     string    `json:"version"`
@@ -37,14 +40,48 @@ var (
 	disabled bool
 )
 
-// Serve adds the health check endpoint to the given router.
-func Serve(r *mux.Router) {
+// RegisterGRPCHealthServer registers a gRPC health server implementation onto the
+// provided gRPC server.
+func RegisterGRPCHealthServer(svr *grpc.Server) *health.Server {
+	hsvr := health.NewServer()
+	grpc_health.RegisterHealthServer(svr, hsvr)
+	return hsvr
+}
+
+// ServeGRPC periodically updates the status of the health server based on the result of the current
+// health. If any components are marked as down, the status is changed to NOT_SERVING. This function
+// blocks until the provided context is cancelled.
+func ServeGRPC(ctx context.Context, svr *health.Server) error {
+	if disabled {
+		return nil
+	}
+
+	ticker := time.NewTicker(time.Minute)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		case <-ticker.C:
+			status := grpc_health.HealthCheckResponse_SERVING
+			if err := PerformCheck(ctx); err != nil {
+				status = grpc_health.HealthCheckResponse_NOT_SERVING
+			}
+
+			svr.SetServingStatus("health", status)
+		}
+	}
+}
+
+// ServeHTTP adds the status check endpoint to the given router.
+func ServeHTTP(r *mux.Router) {
 	if disabled {
 		return
 	}
 
 	r.HandleFunc("/__/health", func(w http.ResponseWriter, r *http.Request) {
-		h := &health{
+		h := &status{
 			Name:        environment.ApplicationName,
 			Description: environment.ApplicationDescription,
 			Version:     environment.Version,
@@ -75,7 +112,7 @@ func Serve(r *mux.Router) {
 	})
 }
 
-// AddCheck adds a health check to the health status. If the provided function returns
+// AddCheck adds a status check to the status status. If the provided function returns
 // an error the check is deemed unhealthy.
 func AddCheck(name string, fn func() error) {
 	checks = append(checks, &check{

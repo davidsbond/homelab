@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-exporter-home-assistant
+  labels:
+    app: prometheus-exporter-home-assistant
+spec:
+  selector:
+    matchLabels:
+      app: prometheus-exporter-home-assistant
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: /
+        prometheus.io/port: '80'
+      labels:
+        app: prometheus-exporter-home-assistant
+    spec:
+      imagePullSecrets:
+      - name: registry
+      containers:
+      - image: ghcr.io/davidsbond/homelab:latest
+        name: prometheus-exporter-home-assistant
+        command:
+        - /bin/prometheus-exporter-home-assistant
+        env:
+        - name: HOME_ASSISTANT_URL
+          value: http://home-assistant.utilities.svc.cluster.local:8123
+        - name: HOME_ASSISTANT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: home-assistant
+              key: home-assistant.token
+        readinessProbe:
+          httpGet:
+            path: /__/health
+            port: 8081
+          initialDelaySeconds: 5

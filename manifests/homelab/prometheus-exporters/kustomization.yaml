@@ -7,6 +7,7 @@ resources:
 - weather
 - worldping
 - homehub
+- home-assistant
 
 secretGenerator:
 - name: weather
@@ -15,3 +16,6 @@ secretGenerator:
 - name: homehub
   envs:
   - secrets/homehub
+- name: home-assistant
+  envs:
+  - secrets/home-assistant

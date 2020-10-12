@@ -16,6 +16,7 @@ import (
 
 	"pkg.dsb.dev/closers"
 	"pkg.dsb.dev/environment"
+	"pkg.dsb.dev/logging"
 )
 
 type (
@@ -51,7 +52,9 @@ func New() (io.Closer, error) {
 		jaeger.NewRemoteReporter(
 			sender,
 			jaeger.ReporterOptions.BufferFlushInterval(config.bufferFlushInterval),
+			jaeger.ReporterOptions.Logger(logging.JaegerLogger()),
 		),
+		jaeger.TracerOptions.Logger(logging.JaegerLogger()),
 	)
 
 	opentracing.SetGlobalTracer(tracer)

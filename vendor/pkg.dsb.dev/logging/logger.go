@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/sirupsen/logrus"
+	"github.com/uber/jaeger-client-go"
 )
 
 var level string
@@ -34,4 +35,25 @@ func WithField(k string, v interface{}) *logrus.Entry {
 // Info writes an info level log.
 func Info(args ...interface{}) {
 	logrus.Info(args...)
+}
+
+// Logger returns the global logger.
+func Logger() *logrus.Logger {
+	return logrus.StandardLogger()
+}
+
+type (
+	jaegerLogger struct {
+		*logrus.Logger
+	}
+)
+
+// JaegerLogger returns the standard logger as an implementation of jaeger.Logger.
+func JaegerLogger() jaeger.Logger {
+	return &jaegerLogger{Logger: Logger()}
+}
+
+// Error writes an error message to the log.
+func (l *jaegerLogger) Error(msg string) {
+	l.Logger.Error(msg)
 }

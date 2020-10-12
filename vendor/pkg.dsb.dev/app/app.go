@@ -130,7 +130,7 @@ func WithFlags(flags ...cli.Flag) Option {
 
 func operationalServer() *http.Server {
 	r := mux.NewRouter()
-	health.Serve(r)
+	health.ServeHTTP(r)
 	metrics.Serve(r)
 
 	return &http.Server{
