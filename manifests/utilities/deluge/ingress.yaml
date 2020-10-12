@@ -4,11 +4,11 @@ metadata:
   name: deluge
 spec:
   rules:
-    - host: deluge.homelab
-      http:
-        paths:
-          - backend:
-              serviceName: deluge
-              servicePort: 8112
-            path: /
+  - host: deluge.homelab
+    http:
+      paths:
+      - backend:
+          serviceName: deluge
+          servicePort: 8112
+        path: /
 

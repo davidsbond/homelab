@@ -17,22 +17,22 @@ spec:
         app: deluge
     spec:
       containers:
-        - image: linuxserver/deluge:latest
-          name: deluge
-          readinessProbe:
-            httpGet:
-              path: "/"
-              port: 8112
-            initialDelaySeconds: 5
-          volumeMounts:
-            - mountPath: /config
-              name: deluge-config
-            - mountPath: /downloads
-              name: deluge-download
+      - image: linuxserver/deluge:latest
+        name: deluge
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8112
+          initialDelaySeconds: 5
+        volumeMounts:
+        - mountPath: /config
+          name: deluge-config
+        - mountPath: /downloads
+          name: deluge-download
       volumes:
-        - name: deluge-config
-          persistentVolumeClaim:
-            claimName: deluge-config
-        - name: deluge-download
-          persistentVolumeClaim:
-            claimName: deluge-download
+      - name: deluge-config
+        persistentVolumeClaim:
+          claimName: deluge-config
+      - name: deluge-download
+        persistentVolumeClaim:
+          claimName: deluge-download

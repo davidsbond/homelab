@@ -17,17 +17,17 @@ spec:
         app: home-assistant
     spec:
       containers:
-        - image: homeassistant/home-assistant:latest
+      - image: homeassistant/home-assistant:latest
+        name: home-assistant
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8123
+          initialDelaySeconds: 5
+        volumeMounts:
+        - mountPath: /config
           name: home-assistant
-          readinessProbe:
-            httpGet:
-              path: "/"
-              port: 8123
-            initialDelaySeconds: 5
-          volumeMounts:
-            - mountPath: /config
-              name: home-assistant
       volumes:
-        - name: home-assistant
-          persistentVolumeClaim:
-            claimName: home-assistant
+      - name: home-assistant
+        persistentVolumeClaim:
+          claimName: home-assistant

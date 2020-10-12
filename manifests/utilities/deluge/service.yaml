@@ -6,6 +6,6 @@ spec:
   selector:
     app: deluge
   ports:
-    - protocol: TCP
-      name: http
-      port: 8112
+  - protocol: TCP
+    name: http
+    port: 8112

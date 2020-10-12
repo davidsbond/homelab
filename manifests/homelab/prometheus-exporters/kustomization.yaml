@@ -2,16 +2,16 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - coronavirus
-  - speedtest
-  - weather
-  - worldping
-  - homehub
+- coronavirus
+- speedtest
+- weather
+- worldping
+- homehub
 
 secretGenerator:
-  - name: weather
-    envs:
-      - secrets/weather
-  - name: homehub
-    envs:
-      - secrets/homehub
+- name: weather
+  envs:
+  - secrets/weather
+- name: homehub
+  envs:
+  - secrets/homehub

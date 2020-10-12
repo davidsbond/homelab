@@ -4,11 +4,11 @@ metadata:
   name: home-assistant
 spec:
   rules:
-    - host: homeassistant.homelab
-      http:
-        paths:
-          - backend:
-              serviceName: home-assistant
-              servicePort: 8123
-            path: /
+  - host: homeassistant.homelab
+    http:
+      paths:
+      - backend:
+          serviceName: home-assistant
+          servicePort: 8123
+        path: /
 

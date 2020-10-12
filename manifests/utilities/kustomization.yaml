@@ -3,6 +3,6 @@ kind: Kustomization
 namespace: utilities
 
 resources:
-  - namespace.yaml
-  - home-assistant
-  - deluge
+- namespace.yaml
+- home-assistant
+- deluge

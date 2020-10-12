@@ -3,11 +3,11 @@ kind: Kustomization
 namespace: homelab
 
 resources:
-  - namespace.yaml
-  - prometheus-exporters
+- namespace.yaml
+- prometheus-exporters
 
 secretGenerator:
-  - name: registry
-    type: kubernetes.io/dockerconfigjson
-    files:
-      - .dockerconfigjson=secrets/registry
+- name: registry
+  type: kubernetes.io/dockerconfigjson
+  files:
+  - .dockerconfigjson=secrets/registry

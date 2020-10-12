@@ -14,27 +14,27 @@ spec:
   template:
     metadata:
       annotations:
-        prometheus.io/scrape: "true"
+        prometheus.io/scrape: 'true'
         prometheus.io/path: /__/metrics
-        prometheus.io/port: "8081"
+        prometheus.io/port: '8081'
       labels:
         app: prometheus-exporter-homehub
     spec:
       imagePullSecrets:
-        - name: registry
+      - name: registry
       containers:
-        - image: ghcr.io/davidsbond/homelab:latest
-          name: prometheus-exporter-homehub
-          command:
-            - /bin/prometheus-exporter-homehub
-          env:
-            - name: HOMEHUB_URL
-              valueFrom:
-                secretKeyRef:
-                  name: homehub
-                  key: homehub.url
-          readinessProbe:
-            httpGet:
-              path: "/__/health"
-              port: 8081
-            initialDelaySeconds: 5
+      - image: ghcr.io/davidsbond/homelab:latest
+        name: prometheus-exporter-homehub
+        command:
+        - /bin/prometheus-exporter-homehub
+        env:
+        - name: HOMEHUB_URL
+          valueFrom:
+            secretKeyRef:
+              name: homehub
+              key: homehub.url
+        readinessProbe:
+          httpGet:
+            path: /__/health
+            port: 8081
+          initialDelaySeconds: 5
