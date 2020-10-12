@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: home-assistant
+spec:
+  rules:
+    - host: homeassistant.homelab
+      http:
+        paths:
+          - backend:
+              serviceName: home-assistant
+              servicePort: 8123
+            path: /
+
