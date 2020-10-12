@@ -9,6 +9,6 @@ spec:
   - protocol: TCP
     name: query
     port: 16686
-  - protocol: TCP
+  - protocol: UDP
     name: traces
     port: 6831
