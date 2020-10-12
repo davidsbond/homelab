@@ -15,7 +15,7 @@ installed along with docker's [buildx](https://docs.docker.com/buildx/working-wi
 
 * `cmd` - Entry points to any bespoke applications
 * `internal` - Packages used throughout the application code
-* `manifests` - Docker compose manifests to run all my homelab applications
+* `manifests` - Kubernetes manifests to run all my homelab applications
 * `vendor` - Vendored third-party code
 
 ## Third party applications
@@ -30,6 +30,7 @@ Here's a list of third-party applications I'm using alongside my custom applicat
 * [grafana](https://grafana.com/) - For visualising all my metrics
 * [jaeger](https://www.jaegertracing.io/) - For tracing my applications
 * [node-exporter](https://github.com/prometheus/node_exporter) - For monitoring the host environment and exporting stats as prometheus metrics
+* [helm](https://helm.sh/) - For installing non-trivial k8s applications, like the prometheus operator.
 
 ## Prometheus exporters
 
