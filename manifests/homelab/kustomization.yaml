@@ -16,3 +16,6 @@ configMapGenerator:
 - name: tracing
   envs:
   - config/tracing
+- name: prometheus
+  envs:
+  - config/prometheus

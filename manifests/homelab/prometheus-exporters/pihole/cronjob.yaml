@@ -1,0 +1,36 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: prometheus-exporter-pihole
+  labels:
+    app: prometheus-exporter-pihole
+spec:
+  schedule: 30 * * * *
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - image: ghcr.io/davidsbond/homelab:latest
+            name: prometheus-exporter-pihole
+            command:
+            - /bin/prometheus-exporter-pihole
+            env:
+            - name: TRACER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: tracer.host
+                  name: tracing
+            - name: METRICS_PUSH_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: push.gateway.url
+                  name: prometheus
+            - name: PIHOLE_URL
+              value: http://pihole.utilities.svc.cluster.local:8000
+            readinessProbe:
+              httpGet:
+                path: /__/health
+                port: 8081
+              initialDelaySeconds: 5
+          restartPolicy: OnFailure

@@ -1,0 +1,34 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: prometheus-exporter-coronavirus
+  labels:
+    app: prometheus-exporter-coronavirus
+spec:
+  schedule: 30 * * * *
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - image: ghcr.io/davidsbond/homelab:latest
+            name: prometheus-exporter-coronavirus
+            command:
+            - /bin/prometheus-exporter-coronavirus
+            env:
+            - name: TRACER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: tracer.host
+                  name: tracing
+            - name: METRICS_PUSH_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: push.gateway.url
+                  name: prometheus
+            readinessProbe:
+              httpGet:
+                path: /__/health
+                port: 8081
+              initialDelaySeconds: 5
+          restartPolicy: OnFailure

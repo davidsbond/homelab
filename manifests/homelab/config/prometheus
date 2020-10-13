@@ -1,0 +1,1 @@
+push.gateway.url=prometheus-pushgateway.monitoring.svc.cluster.local:9091
