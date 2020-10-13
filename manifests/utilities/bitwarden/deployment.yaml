@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bitwarden
+  labels:
+    app: bitwarden
+spec:
+  selector:
+    matchLabels:
+      app: bitwarden
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: bitwarden
+    spec:
+      containers:
+      - image: bitwardenrs/server:latest
+        name: bitwarden
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+        volumeMounts:
+        - mountPath: /data
+          name: bitwarden
+      volumes:
+      - name: bitwarden
+        persistentVolumeClaim:
+          claimName: bitwarden

@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: bitwarden
+spec:
+  tls:
+  - hosts:
+    - bitwarden.homelab
+    secretName: bitwarden
+  rules:
+  - host: bitwarden.homelab
+    http:
+      paths:
+      - backend:
+          serviceName: bitwarden
+          servicePort: 80
+        path: /
+

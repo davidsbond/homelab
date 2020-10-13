@@ -7,8 +7,14 @@ resources:
 - home-assistant
 - pihole
 - deluge
+- bitwarden
 
 secretGenerator:
 - name: pihole
   envs:
   - secrets/pihole
+- name: bitwarden
+  type: kubernetes.io/tls
+  files:
+  - secrets/tls.crt
+  - secrets/tls.key
