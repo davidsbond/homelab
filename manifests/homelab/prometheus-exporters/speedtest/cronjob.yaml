@@ -5,7 +5,7 @@ metadata:
   labels:
     app: prometheus-exporter-speedtest
 spec:
-  schedule: 0 */1 * * *
+  schedule: 0 * * * *
   jobTemplate:
     spec:
       template:

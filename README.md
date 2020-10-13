@@ -1,3 +1,11 @@
+<!-- ToC start -->
+# Table of Contents
+
+   1. [Project structure](#project-structure)
+   1. [Third party applications](#third-party-applications)
+   1. [Prometheus exporters](#prometheus-exporters)
+   1. [Environment](#environment)
+<!-- ToC end -->
 # homelab [![PkgGoDev](https://pkg.go.dev/badge/github.com/davidsbond/homelab)](https://pkg.go.dev/github.com/davidsbond/homelab) [![Go Report Card](https://goreportcard.com/badge/github.com/davidsbond/homelab)](https://goreportcard.com/report/github.com/davidsbond/homelab)
 
 Monorepo for my personal homelab. It contains applications and kubernetes manifests for deployment.
@@ -43,3 +51,11 @@ I've implemented several custom prometheus exporters in this repo that power my 
 * `weather` - Exports current weather data as prometheus metrics
 * `worldping` - Exports world ping times for the local host as prometheus metrics
 * `home-assistant` - Proxies prometheus metrics from a home-assistant server.
+
+## Environment
+
+* 4 [Raspberry Pi 4b](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) (8GB RAM)
+* Kubernetes via [k3s](https://k3s.io/)
+* [Zebra Bramble Cluster Case](https://www.c4labs.com/product/zebra-bramble-case-raspberry-pi-3-b-color-and-stack-options/) from [C4 Labs](https://www.c4labs.com/)
+
+![Cluster](img/1.jpg)
