@@ -14,6 +14,7 @@ import (
 
 func main() {
 	a := app.New(
+		app.WithFlags(),
 		app.WithRunner(run),
 	)
 
