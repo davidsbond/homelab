@@ -4,31 +4,18 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"time"
-
-	"github.com/davidsbond/homelab/internal/homehub"
 
 	"github.com/urfave/cli/v2"
 	"pkg.dsb.dev/app"
-	"pkg.dsb.dev/cron"
 	"pkg.dsb.dev/metrics"
-)
 
-const (
-	defaultFrequency = time.Hour / 4
+	"github.com/davidsbond/homelab/internal/homehub"
 )
 
 func main() {
 	a := app.New(
 		app.WithRunner(run),
 		app.WithFlags(
-			&cli.DurationFlag{
-				Name:        "frequency",
-				Usage:       "How often to scrape the homehub",
-				EnvVars:     []string{"FREQUENCY"},
-				Value:       defaultFrequency,
-				Destination: &frequency,
-			},
 			&cli.StringFlag{
 				Name:        "homehub-url",
 				Usage:       "The URL of the BT homehub",
@@ -45,27 +32,24 @@ func main() {
 	}
 }
 
-var (
-	frequency  time.Duration
-	homeHubURL string
-)
+var homeHubURL string
 
 func run(ctx context.Context) error {
 	metrics.Register(uptime, bytesUp, bytesDown)
+
 	hh, err := homehub.New(homeHubURL)
 	if err != nil {
 		return err
 	}
 
-	return cron.Every(ctx, frequency, func(ctx context.Context) error {
-		results, err := hh.Summary(ctx)
-		if err != nil {
-			return err
-		}
+	results, err := hh.Summary(ctx)
+	if err != nil {
+		return err
+	}
 
-		uptime.Set(results.Uptime)
-		bytesDown.Set(results.BytesDown)
-		bytesUp.Set(results.BytesUp)
-		return nil
-	})
+	uptime.Set(results.Uptime)
+	bytesDown.Set(results.BytesDown)
+	bytesUp.Set(results.BytesUp)
+
+	return metrics.Push()
 }

@@ -4,31 +4,18 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/urfave/cli/v2"
 	"pkg.dsb.dev/app"
-	"pkg.dsb.dev/cron"
 	"pkg.dsb.dev/metrics"
 
 	"github.com/davidsbond/homelab/internal/pihole"
-)
-
-const (
-	defaultFrequency = time.Hour / 2
 )
 
 func main() {
 	a := app.New(
 		app.WithRunner(run),
 		app.WithFlags(
-			&cli.DurationFlag{
-				Name:        "frequency",
-				Usage:       "How often to query the pi-hole",
-				EnvVars:     []string{"FREQUENCY"},
-				Value:       defaultFrequency,
-				Destination: &frequency,
-			},
 			&cli.StringFlag{
 				Name:        "pihole-url",
 				Usage:       "The URL of the pihole instance",
@@ -45,10 +32,7 @@ func main() {
 	}
 }
 
-var (
-	frequency time.Duration
-	piHoleURL string
-)
+var piHoleURL string
 
 func run(ctx context.Context) error {
 	metrics.Register(
@@ -68,20 +52,19 @@ func run(ctx context.Context) error {
 		return err
 	}
 
-	return cron.Every(ctx, frequency, func(ctx context.Context) error {
-		summary, err := ph.Summary(ctx)
-		if err != nil {
-			return err
-		}
+	summary, err := ph.Summary(ctx)
+	if err != nil {
+		return err
+	}
 
-		adsBlocked.Set(summary.AdsBlocked)
-		adsPercentage.Set(summary.AdsPercentage)
-		clientsEverSeen.Set(summary.ClientsEverSeen)
-		dnsQueries.Set(summary.DNSQueries)
-		domainsBlocked.Set(summary.DomainsBlocked)
-		queriesCached.Set(summary.QueriesCached)
-		uniqueClients.Set(summary.UniqueClients)
-		uniqueDomains.Set(summary.UniqueDomains)
-		return nil
-	})
+	adsBlocked.Set(summary.AdsBlocked)
+	adsPercentage.Set(summary.AdsPercentage)
+	clientsEverSeen.Set(summary.ClientsEverSeen)
+	dnsQueries.Set(summary.DNSQueries)
+	domainsBlocked.Set(summary.DomainsBlocked)
+	queriesCached.Set(summary.QueriesCached)
+	uniqueClients.Set(summary.UniqueClients)
+	uniqueDomains.Set(summary.UniqueDomains)
+
+	return metrics.Push()
 }

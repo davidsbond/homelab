@@ -4,30 +4,16 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"time"
 
-	"github.com/urfave/cli/v2"
 	"pkg.dsb.dev/app"
-	"pkg.dsb.dev/cron"
 	"pkg.dsb.dev/metrics"
 
 	"github.com/davidsbond/homelab/internal/speedtest"
 )
 
-const (
-	defaultFrequency = time.Hour / 2
-)
-
 func main() {
 	a := app.New(
 		app.WithRunner(run),
-		app.WithFlags(&cli.DurationFlag{
-			Name:        "frequency",
-			Usage:       "How often to run the speed test",
-			EnvVars:     []string{"FREQUENCY"},
-			Value:       defaultFrequency,
-			Destination: &frequency,
-		}),
 	)
 
 	if err := a.Run(); err != nil {
@@ -36,21 +22,17 @@ func main() {
 	}
 }
 
-var frequency time.Duration
-
 func run(ctx context.Context) error {
 	metrics.Register(latency, upload, download)
-	tester := speedtest.New()
 
-	return cron.Every(ctx, frequency, func(ctx context.Context) error {
-		results, err := tester.Test(ctx)
-		if err != nil {
-			return err
-		}
+	results, err := speedtest.New().Test(ctx)
+	if err != nil {
+		return err
+	}
 
-		latency.Set(results.Latency)
-		upload.Set(results.Upload)
-		download.Set(results.Download)
-		return nil
-	})
+	latency.Set(results.Latency)
+	upload.Set(results.Upload)
+	download.Set(results.Download)
+
+	return metrics.Push()
 }

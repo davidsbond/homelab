@@ -4,11 +4,14 @@ package metrics
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/prometheus/client_golang/prometheus/push"
 
+	"pkg.dsb.dev/environment"
 	"pkg.dsb.dev/logging"
 )
 
@@ -38,4 +41,24 @@ func AddSQLStats(db *sql.DB) {
 	if err := prometheus.Register(newSQLStatsCollector(db)); err != nil {
 		logging.WithError(err).Error("failed to register metrics")
 	}
+}
+
+var (
+	pushURL      string
+	errNoPushURL = errors.New("push gateway url not configured")
+)
+
+// Push all registered collectors to the configured push gateway.
+func Push() error {
+	if disabled {
+		return nil
+	}
+
+	if pushURL == "" {
+		return errNoPushURL
+	}
+
+	pc := push.New(pushURL, environment.ApplicationName).Gatherer(prometheus.DefaultGatherer)
+
+	return pc.Push()
 }

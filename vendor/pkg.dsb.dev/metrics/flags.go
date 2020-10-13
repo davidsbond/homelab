@@ -10,4 +10,10 @@ var Flags = []cli.Flag{
 		EnvVars:     []string{"METRICS_DISABLED"},
 		Destination: &disabled,
 	},
+	&cli.StringFlag{
+		Name:        "metrics-push-url",
+		Usage:       "URL of the prometheus push gateway, if set, metrics are pushed",
+		EnvVars:     []string{"METRICS_PUSH_URL"},
+		Destination: &pushURL,
+	},
 }
