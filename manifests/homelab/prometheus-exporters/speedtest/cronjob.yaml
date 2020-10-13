@@ -10,6 +10,8 @@ spec:
     spec:
       template:
         spec:
+          imagePullSecrets:
+          - name: registry
           containers:
           - image: ghcr.io/davidsbond/homelab:latest
             name: prometheus-exporter-speedtest
