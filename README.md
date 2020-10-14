@@ -39,6 +39,7 @@ Here's a list of third-party applications I'm using alongside my custom applicat
 * [jaeger](https://www.jaegertracing.io/) - For tracing my applications
 * [node-exporter](https://github.com/prometheus/node_exporter) - For monitoring the host environment and exporting stats as prometheus metrics
 * [helm](https://helm.sh/) - For installing non-trivial k8s applications, like the prometheus operator.
+* [minio](https://min.io/) - An S3 compatible API that sits in front of my NAS drive.
 
 ## Prometheus exporters
 
@@ -51,6 +52,7 @@ I've implemented several custom prometheus exporters in this repo that power my 
 * `weather` - Exports current weather data as prometheus metrics
 * `worldping` - Exports world ping times for the local host as prometheus metrics
 * `home-assistant` - Proxies prometheus metrics from a home-assistant server.
+* `synology` - Exports statistics from my [Synology DS115j](https://www.amazon.co.uk/Synology-DS115j-1TB-Desktop-Unit/dp/B00O8LLQBY) NAS.
 
 ## Environment
 
