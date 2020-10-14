@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  labels:
+    app: minio
+spec:
+  selector:
+    matchLabels:
+      app: minio
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: minio
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: /minio/prometheus/metrics
+        prometheus.io/port: '9000'
+    spec:
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: minio
+      containers:
+      - name: minio
+        image: minio/minio:RELEASE.2020-10-12T21-53-21Z-arm64
+        args:
+        - server
+        - /storage
+        env:
+        - name: MINIO_PROMETHEUS_AUTH_TYPE
+          value: public
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: minio.access_key
+              name: minio
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: minio.secret_key
+              name: minio
+        - name: MINIO_BROWSER
+          value: "on"
+        volumeMounts:
+        - name: storage
+          mountPath: /storage
+        livenessProbe:
+          httpGet:
+            path: /minio/health/live
+            port: 9000
+            scheme: HTTP
+        readinessProbe:
+          httpGet:
+            path: /minio/health/ready
+            port: 9000

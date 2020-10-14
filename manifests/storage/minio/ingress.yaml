@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: minio
+spec:
+  rules:
+  - host: minio.homelab
+    http:
+      paths:
+      - backend:
+          serviceName: minio
+          servicePort: 9000
+        path: /
+

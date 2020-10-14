@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minio
+spec:
+  storageClassName: nfs
+  volumeName: home-nas
+  resources:
+    requests:
+      storage: 100Gi
+  accessModes:
+  - ReadWriteOnce

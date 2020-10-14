@@ -60,4 +60,4 @@ I've implemented several custom prometheus exporters in this repo that power my 
 
 ![Cluster](img/cluster.jpg)
 
-![Diagram](img/diagram.png)
+![Diagram](img/diagram.jpg)

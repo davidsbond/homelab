@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: home-nas
+spec:
+  storageClassName: nfs
+  capacity:
+    storage: 100Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  mountOptions:
+  - soft
+  - nfsvers=3
+  nfs:
+    path: /volume1/k3s
+    server: 192.168.1.69
