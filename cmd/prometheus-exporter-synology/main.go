@@ -18,7 +18,7 @@ func main() {
 		app.WithFlags(
 			&cli.StringFlag{
 				Name:        "synology-url",
-				Usage:       "The URL of the Synology NASA",
+				Usage:       "The URL of the Synology NAS",
 				EnvVars:     []string{"SYNOLOGY_URL"},
 				Required:    true,
 				Destination: &synologyURL,

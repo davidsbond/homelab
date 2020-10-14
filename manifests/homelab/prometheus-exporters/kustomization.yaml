@@ -9,6 +9,7 @@ resources:
 - homehub
 - home-assistant
 - pihole
+- synology
 
 secretGenerator:
 - name: weather
@@ -20,3 +21,6 @@ secretGenerator:
 - name: home-assistant
   envs:
   - secrets/home-assistant
+- name: synology
+  envs:
+  - secrets/synology
