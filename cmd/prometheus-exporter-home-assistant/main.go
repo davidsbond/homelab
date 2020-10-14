@@ -62,7 +62,7 @@ func run(ctx context.Context) error {
 	return server.ServeHTTP(ctx, server.WithHandler(r))
 }
 
-func homeAssistantHandler(u *url.URL) http.HandlerFunc {
+func homeAssistantHandler(u fmt.Stringer) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		client := &http.Client{Timeout: time.Minute}
 

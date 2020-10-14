@@ -1,1 +1,1 @@
-Exports speedtest.net results as prometheus metrics on a configured interval.
+Exports speedtest.net results as prometheus metrics.

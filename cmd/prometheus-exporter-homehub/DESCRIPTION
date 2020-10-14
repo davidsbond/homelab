@@ -1,1 +1,1 @@
-Exports scraped metrics from a BT homehub as prometheus metrics on a configured interval.
+Exports scraped metrics from a BT homehub as prometheus metrics.
