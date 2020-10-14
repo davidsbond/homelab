@@ -58,4 +58,6 @@ I've implemented several custom prometheus exporters in this repo that power my 
 * Kubernetes via [k3s](https://k3s.io/)
 * [Zebra Bramble Cluster Case](https://www.c4labs.com/product/zebra-bramble-case-raspberry-pi-3-b-color-and-stack-options/) from [C4 Labs](https://www.c4labs.com/)
 
-![Cluster](img/1.jpg)
+![Cluster](img/cluster.jpg)
+
+![Diagram](img/diagram.png)
