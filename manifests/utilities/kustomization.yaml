@@ -9,6 +9,11 @@ resources:
 - deluge
 - bitwarden
 
+configMapGenerator:
+- name: tracing
+  envs:
+  - config/tracing
+
 patchesStrategicMerge:
   - overlays/bitwarden.yaml
   - overlays/home-assistant.yaml
