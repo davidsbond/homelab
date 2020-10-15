@@ -9,6 +9,11 @@ resources:
 - deluge
 - bitwarden
 
+patchesStrategicMerge:
+  - overlays/bitwarden.yaml
+  - overlays/home-assistant.yaml
+  - overlays/pihole.yaml
+
 secretGenerator:
 - name: pihole
   envs:
@@ -18,3 +23,6 @@ secretGenerator:
   files:
   - secrets/tls.crt
   - secrets/tls.key
+- name: minio
+  envs:
+  - secrets/minio

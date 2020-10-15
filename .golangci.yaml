@@ -26,3 +26,5 @@ linters:
 
 issues:
   exclude-use-default: false
+  exclude:
+    - G304

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: home-assistant
+spec:
+  template:
+    spec:
+      containers:
+      - image: ghcr.io/davidsbond/homelab:latest
+        name: volume-backup
+        command:
+          - /bin/volume-backup
+        env:
+          - name: BUCKET_DSN
+            value: s3://volumes?endpoint=minio.storage.svc.cluster.local:9000&region=none
+          - name: BUCKET_DIR
+            value: home-assistant
+          - name: VOLUME_DIR
+            value: /data
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                key: minio.access_key
+                name: minio
+          - name: AWS_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                key: minio.secret_key
+                name: minio
+        readinessProbe:
+          httpGet:
+            path: /__/health
+            port: 8081
+          initialDelaySeconds: 5
+        volumeMounts:
+          - mountPath: /data
+            name: home-assistant
