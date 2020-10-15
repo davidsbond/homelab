@@ -15,9 +15,9 @@ configMapGenerator:
   - config/tracing
 
 patchesStrategicMerge:
-  - overlays/bitwarden.yaml
-  - overlays/home-assistant.yaml
-  - overlays/pihole.yaml
+- overlays/bitwarden.yaml
+- overlays/home-assistant.yaml
+- overlays/pihole.yaml
 
 secretGenerator:
 - name: pihole
