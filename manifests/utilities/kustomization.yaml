@@ -26,3 +26,7 @@ secretGenerator:
 - name: minio
   envs:
   - secrets/minio
+- name: registry
+  type: kubernetes.io/dockerconfigjson
+  files:
+  - .dockerconfigjson=secrets/registry

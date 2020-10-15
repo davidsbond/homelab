@@ -5,6 +5,8 @@ metadata:
 spec:
   template:
     spec:
+      imagePullSecrets:
+      - name: registry
       containers:
       - image: ghcr.io/davidsbond/homelab:latest
         name: volume-backup
@@ -12,7 +14,7 @@ spec:
           - /bin/volume-backup
         env:
           - name: BUCKET_DSN
-            value: s3://volumes?endpoint=minio.storage.svc.cluster.local:9000&region=none
+            value: s3://volumes?endpoint=minio.storage.svc.cluster.local:9000&region=none&s3ForcePathStyle=true&disableSSL=true
           - name: BUCKET_DIR
             value: pihole
           - name: VOLUME_DIR
