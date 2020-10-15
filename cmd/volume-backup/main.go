@@ -72,7 +72,7 @@ func run(ctx context.Context) error {
 	defer closers.Close(bkt)
 
 	return cron.Every(ctx, frequency, func(ctx context.Context) error {
-		key := filepath.Join(bucketDir, time.Now().Format("2012-11-01.tar.gz"))
+		key := filepath.Join(bucketDir, time.Now().Format("2006-01-02.tar.gz"))
 		wr, err := bkt.NewWriter(ctx, key)
 		if err != nil {
 			return err
