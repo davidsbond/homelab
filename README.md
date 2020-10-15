@@ -1,9 +1,12 @@
 <!-- ToC start -->
 # Table of Contents
 
+   1. [Getting started](#getting-started)
    1. [Project structure](#project-structure)
    1. [Third party applications](#third-party-applications)
    1. [Prometheus exporters](#prometheus-exporters)
+   1. [Other tools](#other-tools)
+   1. [External services](#external-services)
    1. [Environment](#environment)
 <!-- ToC end -->
 # homelab [![PkgGoDev](https://pkg.go.dev/badge/github.com/davidsbond/homelab)](https://pkg.go.dev/github.com/davidsbond/homelab) [![Go Report Card](https://goreportcard.com/badge/github.com/davidsbond/homelab)](https://goreportcard.com/report/github.com/davidsbond/homelab)
@@ -24,6 +27,7 @@ installed along with docker's [buildx](https://docs.docker.com/buildx/working-wi
 * `cmd` - Entry points to any bespoke applications
 * `internal` - Packages used throughout the application code
 * `manifests` - Kubernetes manifests to run all my homelab applications
+* `scripts` - Bash scripts for working within the repository.
 * `vendor` - Vendored third-party code
 
 ## Third party applications
@@ -53,6 +57,20 @@ I've implemented several custom prometheus exporters in this repo that power my 
 * `worldping` - Exports world ping times for the local host as prometheus metrics
 * `home-assistant` - Proxies prometheus metrics from a home-assistant server.
 * `synology` - Exports statistics from my [Synology DS115j](https://www.amazon.co.uk/Synology-DS115j-1TB-Desktop-Unit/dp/B00O8LLQBY) NAS.
+
+## Other tools
+
+Here are other tools I've implemented for use in the cluster.
+
+* `volume-backup` - Takes copies of my [persistent volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) and backs them up on my NAS drive via minio
+
+## External services
+
+These are devices/services that the cluster interacts with, without being directly installed in the cluster.
+
+* [Ring](https://ring.com/) - Home security devices, connected via home-assistant
+* [Tailscale](https://tailscale.com/) VPN - Used to access the cluster from anywhere
+* [Synology](https://www.synology.com/) NAS - Used as the storage backend for minio, primarily used for volume backups
 
 ## Environment
 

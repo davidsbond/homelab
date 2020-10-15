@@ -662,6 +662,7 @@ mvdan.cc/unparam/check
 ## explicit
 pkg.dsb.dev/app
 pkg.dsb.dev/closers
+pkg.dsb.dev/cmd/pkg-build
 pkg.dsb.dev/cron
 pkg.dsb.dev/distance
 pkg.dsb.dev/environment

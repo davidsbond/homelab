@@ -19,7 +19,8 @@ install-tools:
 	go install \
 		github.com/golangci/golangci-lint/cmd/golangci-lint \
 		mvdan.cc/gofumpt/gofumports \
-		github.com/sebdah/markdown-toc
+		github.com/sebdah/markdown-toc \
+		pkg.dsb.dev/cmd/pkg-build
 
 # Lints go source code
 lint:
@@ -37,7 +38,7 @@ has-changes:
 
 # Compiles go source code
 build:
-	./scripts/build.sh
+	pkg-build
 
 docker:
 	./scripts/docker.sh

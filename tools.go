@@ -6,4 +6,5 @@ import (
 	_ "github.com/golangci/golangci-lint/cmd/golangci-lint"
 	_ "github.com/sebdah/markdown-toc"
 	_ "mvdan.cc/gofumpt/gofumports"
+	_ "pkg.dsb.dev/cmd/pkg-build"
 )
