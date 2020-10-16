@@ -8,7 +8,6 @@ ADD . /project
 WORKDIR /project
 
 # Compile binaries
-RUN make install-tools
 RUN make
 
 FROM scratch
