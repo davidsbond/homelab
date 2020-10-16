@@ -43,7 +43,7 @@ spec:
               key: minio.secret_key
               name: minio
         - name: MINIO_BROWSER
-          value: "on"
+          value: 'on'
         volumeMounts:
         - name: storage
           mountPath: /storage

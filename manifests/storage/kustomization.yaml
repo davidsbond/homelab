@@ -5,8 +5,19 @@ namespace: storage
 resources:
 - namespace.yaml
 - minio
+- postgres
 
 secretGenerator:
 - name: minio
   envs:
   - secrets/minio
+- name: postgres
+  envs:
+  - secrets/postgres
+- name: registry
+  type: kubernetes.io/dockerconfigjson
+  files:
+  - .dockerconfigjson=secrets/registry
+
+patchesStrategicMerge:
+- overlays/postgres.yaml
