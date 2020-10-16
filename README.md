@@ -44,6 +44,7 @@ Here's a list of third-party applications I'm using alongside my custom applicat
 * [node-exporter](https://github.com/prometheus/node_exporter) - For monitoring the host environment and exporting stats as prometheus metrics
 * [helm](https://helm.sh/) - For installing non-trivial k8s applications, like the prometheus operator.
 * [minio](https://min.io/) - An S3 compatible API that sits in front of my NAS drive.
+* [postgres](https://www.postgresql.org/) - Relational SQL database
 
 ## Prometheus exporters
 
