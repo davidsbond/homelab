@@ -7,10 +7,10 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/urfave/cli/v2"
 	"pkg.dsb.dev/app"
 	"pkg.dsb.dev/closers"
 	"pkg.dsb.dev/cron"
+	"pkg.dsb.dev/flag"
 	"pkg.dsb.dev/storage/blob"
 
 	"github.com/davidsbond/homelab/internal/filesystem"
@@ -20,31 +20,31 @@ func main() {
 	a := app.New(
 		app.WithRunner(run),
 		app.WithFlags(
-			&cli.StringFlag{
+			&flag.String{
 				Name:        "volume-dir",
 				Usage:       "Directory to back up",
-				EnvVars:     []string{"VOLUME_DIR"},
+				EnvVar:      "VOLUME_DIR",
 				Destination: &volumeDir,
 				Required:    true,
 			},
-			&cli.StringFlag{
+			&flag.String{
 				Name:        "bucket-dsn",
 				Usage:       "DSN for the bucket to place the backup",
-				EnvVars:     []string{"BUCKET_DSN"},
+				EnvVar:      "BUCKET_DSN",
 				Destination: &bucketDSN,
 				Required:    true,
 			},
-			&cli.StringFlag{
+			&flag.String{
 				Name:        "bucket-dir",
 				Usage:       "Location in the bucket to place the backup",
-				EnvVars:     []string{"BUCKET_DIR"},
+				EnvVar:      "BUCKET_DIR",
 				Destination: &bucketDir,
 				Required:    true,
 			},
-			&cli.DurationFlag{
+			&flag.Duration{
 				Name:        "frequency",
 				Usage:       "How often to perform a backup",
-				EnvVars:     []string{"FREQUENCY"},
+				EnvVar:      "FREQUENCY",
 				Destination: &frequency,
 				Value:       time.Hour,
 			},

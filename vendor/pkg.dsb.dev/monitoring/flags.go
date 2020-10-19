@@ -1,26 +1,28 @@
 package monitoring
 
-import "github.com/urfave/cli/v2"
+import (
+	"pkg.dsb.dev/flag"
+)
 
 // Flags contains all command-line flags that can be used to configure monitoring.
-var Flags = []cli.Flag{
-	&cli.BoolFlag{
+var Flags = flag.Flags{
+	&flag.Boolean{
 		Name:        "monitoring-disabled",
 		Usage:       "Disables application monitoring",
-		EnvVars:     []string{"MONITORING_DISABLED"},
+		EnvVar:      "MONITORING_DISABLED",
 		Destination: &config.disabled,
 	},
-	&cli.StringFlag{
+	&flag.String{
 		Name:        "monitoring-environment",
 		Usage:       "Environment to use when writing to application monitoring",
-		EnvVars:     []string{"MONITORING_ENVIRONMENT"},
+		EnvVar:      "MONITORING_ENVIRONMENT",
 		Destination: &config.environment,
 		Value:       "development",
 	},
-	&cli.StringFlag{
+	&flag.String{
 		Name:        "monitoring-dsn",
 		Usage:       "DSN to use for sending reports to sentry",
-		EnvVars:     []string{"MONITORING_DSN"},
+		EnvVar:      "MONITORING_DSN",
 		Destination: &config.dsn,
 	},
 }

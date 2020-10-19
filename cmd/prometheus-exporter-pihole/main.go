@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/urfave/cli/v2"
 	"pkg.dsb.dev/app"
+	"pkg.dsb.dev/flag"
 	"pkg.dsb.dev/metrics"
 
 	"github.com/davidsbond/homelab/internal/pihole"
@@ -16,10 +16,10 @@ func main() {
 	a := app.New(
 		app.WithRunner(run),
 		app.WithFlags(
-			&cli.StringFlag{
+			&flag.String{
 				Name:        "pihole-url",
 				Usage:       "The URL of the pihole instance",
-				EnvVars:     []string{"PIHOLE_URL"},
+				EnvVar:      "PIHOLE_URL",
 				Required:    true,
 				Destination: &piHoleURL,
 			},

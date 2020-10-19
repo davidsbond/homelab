@@ -5,35 +5,35 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/davidsbond/homelab/internal/synology"
-
-	"github.com/urfave/cli/v2"
 	"pkg.dsb.dev/app"
+	"pkg.dsb.dev/flag"
 	"pkg.dsb.dev/metrics"
+
+	"github.com/davidsbond/homelab/internal/synology"
 )
 
 func main() {
 	a := app.New(
 		app.WithRunner(run),
 		app.WithFlags(
-			&cli.StringFlag{
+			&flag.String{
 				Name:        "synology-url",
 				Usage:       "The URL of the Synology NAS",
-				EnvVars:     []string{"SYNOLOGY_URL"},
+				EnvVar:      "SYNOLOGY_URL",
 				Required:    true,
 				Destination: &synologyURL,
 			},
-			&cli.StringFlag{
+			&flag.String{
 				Name:        "synology-user",
 				Usage:       "The username to use for authentication",
-				EnvVars:     []string{"SYNOLOGY_USER"},
+				EnvVar:      "SYNOLOGY_USER",
 				Required:    true,
 				Destination: &synologyUser,
 			},
-			&cli.StringFlag{
+			&flag.String{
 				Name:        "synology-password",
 				Usage:       "The password to use for authentication",
-				EnvVars:     []string{"SYNOLOGY_PASSWORD"},
+				EnvVar:      "SYNOLOGY_PASSWORD",
 				Required:    true,
 				Destination: &synologyPass,
 			},

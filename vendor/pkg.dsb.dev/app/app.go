@@ -16,6 +16,7 @@ import (
 
 	"pkg.dsb.dev/closers"
 	"pkg.dsb.dev/environment"
+	"pkg.dsb.dev/flag"
 	"pkg.dsb.dev/health"
 	"pkg.dsb.dev/logging"
 	"pkg.dsb.dev/metrics"
@@ -115,14 +116,17 @@ func WithRunner(run RunFunc) Option {
 }
 
 // WithFlags sets command-line flags that can be applied before Run is called.
-func WithFlags(flags ...cli.Flag) Option {
+func WithFlags(flags ...flag.Flag) Option {
 	return func(app *cli.App) {
-		app.Flags = flags
-		app.Flags = append(app.Flags, tracing.Flags...)
-		app.Flags = append(app.Flags, monitoring.Flags...)
-		app.Flags = append(app.Flags, health.Flags...)
-		app.Flags = append(app.Flags, metrics.Flags...)
-		app.Flags = append(app.Flags, logging.Flags...)
+		for _, fl := range flags {
+			app.Flags = append(app.Flags, fl.Unwrap())
+		}
+
+		app.Flags = append(app.Flags, tracing.Flags.Unwrap()...)
+		app.Flags = append(app.Flags, monitoring.Flags.Unwrap()...)
+		app.Flags = append(app.Flags, health.Flags.Unwrap()...)
+		app.Flags = append(app.Flags, metrics.Flags.Unwrap()...)
+		app.Flags = append(app.Flags, logging.Flags.Unwrap()...)
 
 		sort.Sort(cli.FlagsByName(app.Flags))
 	}

@@ -88,7 +88,7 @@ github.com/go-playground/locales
 github.com/go-playground/locales/currency
 # github.com/go-playground/universal-translator v0.17.0
 github.com/go-playground/universal-translator
-# github.com/go-playground/validator/v10 v10.4.0
+# github.com/go-playground/validator/v10 v10.4.1
 github.com/go-playground/validator/v10
 # github.com/go-toolsmith/astcast v1.0.0
 github.com/go-toolsmith/astcast
@@ -392,7 +392,6 @@ github.com/ultraware/whitespace
 # github.com/unrolled/secure v1.0.8
 github.com/unrolled/secure
 # github.com/urfave/cli/v2 v2.2.0
-## explicit
 github.com/urfave/cli/v2
 # github.com/uudashr/gocognit v1.0.1
 github.com/uudashr/gocognit
@@ -658,7 +657,7 @@ mvdan.cc/interfacer/check
 mvdan.cc/lint
 # mvdan.cc/unparam v0.0.0-20190720180237-d51796306d8f
 mvdan.cc/unparam/check
-# pkg.dsb.dev v0.0.0-20201013174244-06957806f4b8
+# pkg.dsb.dev v1.0.0
 ## explicit
 pkg.dsb.dev/app
 pkg.dsb.dev/closers
@@ -666,6 +665,7 @@ pkg.dsb.dev/cmd/pkg-build
 pkg.dsb.dev/cron
 pkg.dsb.dev/distance
 pkg.dsb.dev/environment
+pkg.dsb.dev/flag
 pkg.dsb.dev/health
 pkg.dsb.dev/logging
 pkg.dsb.dev/metrics

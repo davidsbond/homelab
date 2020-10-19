@@ -1,13 +1,15 @@
 package health
 
-import "github.com/urfave/cli/v2"
+import (
+	"pkg.dsb.dev/flag"
+)
 
 // Flags contains all command-line flags that can be used to configure health checks.
-var Flags = []cli.Flag{
-	&cli.BoolFlag{
+var Flags = flag.Flags{
+	&flag.Boolean{
 		Name:        "health-check-disabled",
 		Usage:       "Disables the health check endpoint",
-		EnvVars:     []string{"HEALTH_CHECK_DISABLED"},
+		EnvVar:      "HEALTH_CHECK_DISABLED",
 		Destination: &disabled,
 	},
 }

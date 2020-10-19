@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/urfave/cli/v2"
 	"pkg.dsb.dev/app"
 	"pkg.dsb.dev/closers"
+	"pkg.dsb.dev/flag"
 	"pkg.dsb.dev/server"
 )
 
@@ -20,17 +20,17 @@ func main() {
 	a := app.New(
 		app.WithRunner(run),
 		app.WithFlags(
-			&cli.StringFlag{
+			&flag.String{
 				Name:        "home-assistant-url",
 				Usage:       "Base URL of the home-assistant instance",
-				EnvVars:     []string{"HOME_ASSISTANT_URL"},
+				EnvVar:      "HOME_ASSISTANT_URL",
 				Required:    true,
 				Destination: &homeAssistantURL,
 			},
-			&cli.StringFlag{
+			&flag.String{
 				Name:        "home-assistant-token",
 				Usage:       "The long-lived access token to use to authenticate",
-				EnvVars:     []string{"HOME_ASSISTANT_TOKEN"},
+				EnvVar:      "HOME_ASSISTANT_TOKEN",
 				Required:    true,
 				Destination: &homeAssistantToken,
 			},

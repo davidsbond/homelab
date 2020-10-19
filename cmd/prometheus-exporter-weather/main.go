@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/urfave/cli/v2"
 	"pkg.dsb.dev/app"
+	"pkg.dsb.dev/flag"
 	"pkg.dsb.dev/metrics"
 
 	"github.com/davidsbond/homelab/internal/weather"
@@ -16,17 +16,17 @@ func main() {
 	a := app.New(
 		app.WithRunner(run),
 		app.WithFlags(
-			&cli.StringFlag{
+			&flag.String{
 				Name:        "api-key",
 				Usage:       "API key for authentication with weatherapi.com",
-				EnvVars:     []string{"API_KEY"},
+				EnvVar:      "API_KEY",
 				Required:    true,
 				Destination: &apiKey,
 			},
-			&cli.StringFlag{
+			&flag.String{
 				Name:        "location",
 				Usage:       "The location to query weather information for",
-				EnvVars:     []string{"LOCATION"},
+				EnvVar:      "LOCATION",
 				Required:    true,
 				Destination: &location,
 			},

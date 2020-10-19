@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/urfave/cli/v2"
 	"pkg.dsb.dev/app"
+	"pkg.dsb.dev/flag"
 	"pkg.dsb.dev/metrics"
 
 	"github.com/davidsbond/homelab/internal/worldping"
@@ -16,10 +16,10 @@ func main() {
 	a := app.New(
 		app.WithRunner(run),
 		app.WithFlags(
-			&cli.BoolFlag{
+			&flag.Boolean{
 				Name:        "privileged",
 				Usage:       "If true, uses privileged ICMP requests.",
-				EnvVars:     []string{"PRIVILEGED"},
+				EnvVar:      "PRIVILEGED",
 				Destination: &privileged,
 			},
 		),
