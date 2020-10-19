@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: firefly
+spec:
+  rules:
+  - host: firefly.homelab
+    http:
+      paths:
+      - backend:
+          serviceName: firefly
+          servicePort: 8080
+        path: /
+

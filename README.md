@@ -9,6 +9,7 @@
    1. [External services](#external-services)
    1. [Environment](#environment)
 <!-- ToC end -->
+
 # homelab [![PkgGoDev](https://pkg.go.dev/badge/github.com/davidsbond/homelab)](https://pkg.go.dev/github.com/davidsbond/homelab) [![Go Report Card](https://goreportcard.com/badge/github.com/davidsbond/homelab)](https://goreportcard.com/report/github.com/davidsbond/homelab)
 
 Monorepo for my personal homelab. It contains applications and kubernetes manifests for deployment.
@@ -45,6 +46,7 @@ Here's a list of third-party applications I'm using alongside my custom applicat
 * [helm](https://helm.sh/) - For installing non-trivial k8s applications, like the prometheus operator.
 * [minio](https://min.io/) - An S3 compatible API that sits in front of my NAS drive.
 * [postgres](https://www.postgresql.org/) - Relational SQL database
+* [firefly](https://www.firefly-iii.org/) - A personal finance manager
 
 ## Prometheus exporters
 

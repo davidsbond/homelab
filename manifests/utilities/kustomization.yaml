@@ -8,11 +8,19 @@ resources:
 - pihole
 - deluge
 - bitwarden
+- firefly
 
 configMapGenerator:
 - name: tracing
   envs:
   - config/tracing
+- name: home-assistant
+  files:
+  - config/home-assistant/configuration.yaml
+  - config/home-assistant/automations.yaml
+  - config/home-assistant/scenes.yaml
+  - config/home-assistant/scripts.yaml
+  - config/home-assistant/groups.yaml
 
 patchesStrategicMerge:
 - overlays/bitwarden.yaml
@@ -35,3 +43,12 @@ secretGenerator:
   type: kubernetes.io/dockerconfigjson
   files:
   - .dockerconfigjson=secrets/registry
+- name: home-assistant
+  files:
+  - secrets/home-assistant/secrets.yaml
+- name: postgres
+  envs:
+  - secrets/postgres
+- name: firefly
+  envs:
+  - secrets/firefly
