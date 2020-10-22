@@ -1405,8 +1405,8 @@ mvdan.cc/lint v0.0.0-20170908181259-adc824a0674b h1:DxJ5nJdkhDlLok9K6qO+5290kphD
 mvdan.cc/lint v0.0.0-20170908181259-adc824a0674b/go.mod h1:2odslEg/xrtNQqCYg2/jCoyKnw3vv5biOc3JnIcYfL4=
 mvdan.cc/unparam v0.0.0-20190720180237-d51796306d8f h1:Cq7MalBHYACRd6EesksG1Q8EoIAKOsiZviGKbOLIej4=
 mvdan.cc/unparam v0.0.0-20190720180237-d51796306d8f/go.mod h1:4G1h5nDURzA3bwVMZIVpwbkw+04kSxk3rAtzlimaUJw=
-pkg.dsb.dev v1.1.0 h1:2Rm8LkkpXgpwtXhk4skzXIx3Ob/XsvuAnLKJTNoWTGE=
-pkg.dsb.dev v1.1.0/go.mod h1:G04O718XEj9Sju1665CdUMoB6nGmtiLB+DPjPdCP/Zo=
+pkg.dsb.dev v1.2.0 h1:qP6i6yGS6AIQXsRAfNk3lSt1x38ck9KXlarMKskmCts=
+pkg.dsb.dev v1.2.0/go.mod h1:G04O718XEj9Sju1665CdUMoB6nGmtiLB+DPjPdCP/Zo=
 rsc.io/binaryregexp v0.2.0/go.mod h1:qTv7/COck+e2FymRvadv62gMdZztPaShugOCi3I+8D8=
 rsc.io/quote/v3 v3.1.0/go.mod h1:yEA65RcK8LyAZtP9Kv3t0HmxON59tX3rD+tICJqUlj0=
 rsc.io/sampler v1.3.0/go.mod h1:T1hPZKmBbMNahiBKFy5HrXp6adAjACjK9JXDnKaTXpA=

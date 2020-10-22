@@ -20,32 +20,32 @@ spec:
       - image: jc5x/firefly-iii:latest
         name: firefly
         env:
-          - name: APP_KEY
-            valueFrom:
-              secretKeyRef:
-                key: firefly.app.key
-                name: firefly
-          - name: DB_HOST
-            value: postgres.storage.svc.cluster.local
-          - name: DB_PORT
-            value: '5432'
-          - name: DB_CONNECTION
-            value: pgsql
-          - name: DB_DATABASE
-            valueFrom:
-              secretKeyRef:
-                key: firefly.database.name
-                name: firefly
-          - name: DB_USERNAME
-            valueFrom:
-              secretKeyRef:
-                key: postgres.user
-                name: postgres
-          - name: DB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: postgres.password
-                name: postgres
+        - name: APP_KEY
+          valueFrom:
+            secretKeyRef:
+              key: firefly.app.key
+              name: firefly
+        - name: DB_HOST
+          value: postgres.storage.svc.cluster.local
+        - name: DB_PORT
+          value: '5432'
+        - name: DB_CONNECTION
+          value: pgsql
+        - name: DB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: firefly.database.name
+              name: firefly
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              key: postgres.user
+              name: postgres
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: postgres.password
+              name: postgres
         readinessProbe:
           httpGet:
             path: /

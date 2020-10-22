@@ -6,6 +6,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"time"
 
 	"github.com/opentracing/opentracing-go"
 	"gocloud.dev/blob"
@@ -50,6 +51,17 @@ type (
 		n     int
 		key   string
 	}
+
+	// The Blob type contains metadata on an item in the blob store.
+	Blob struct {
+		Key     string
+		Size    int64
+		ModTime time.Time
+	}
+
+	// Iterator is a function used on a call to Bucket.Iterate that is invoked for
+	// each item in the bucket.
+	Iterator func(ctx context.Context, item Blob) error
 )
 
 // OpenBucket opens the bucket identified by the URL given.
@@ -81,6 +93,51 @@ func (bkt *Bucket) Ping() error {
 		return nil
 	default:
 		return err
+	}
+}
+
+// ErrStopIterating is the error used to stop the iterator from continuing.
+var ErrStopIterating = errors.New("stop iterating")
+
+// Iterate over the contents of the bucket, invoking fn for each item, excluding any directories.
+// Iteration can be cancelled via the provided context or by fn returning ErrStopIterating or any other
+// non-nil error.
+func (bkt *Bucket) Iterate(ctx context.Context, fn Iterator) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "blob-iterate")
+	defer span.Finish()
+
+	iterator := bkt.inner.List(nil)
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			item, err := iterator.Next(ctx)
+			switch {
+			case errors.Is(err, io.EOF):
+				return nil
+			case err != nil:
+				return tracing.WithError(span, err)
+			}
+
+			if item.IsDir {
+				continue
+			}
+
+			bl := Blob{
+				Key:     item.Key,
+				Size:    item.Size,
+				ModTime: item.ModTime,
+			}
+
+			err = fn(ctx, bl)
+			switch {
+			case errors.Is(err, ErrStopIterating):
+				return nil
+			case err != nil:
+				return tracing.WithError(span, err)
+			}
+		}
 	}
 }
 

@@ -1,0 +1,40 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: volume-backup-cleaner
+  labels:
+    app: volume-backup-cleaner
+spec:
+  schedule: 0 0 * * *
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+          - name: registry
+          containers:
+          - image: ghcr.io/davidsbond/homelab:latest
+            name: volume-backup-cleaner
+            command:
+            - /bin/volume-backup-cleaner
+            env:
+            - name: BUCKET_DSN
+              value: s3://volumes?endpoint=minio.storage.svc.cluster.local:9000&region=none&s3ForcePathStyle=true&disableSSL=true
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: minio.access_key
+                  name: minio
+            - name: AWS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: minio.secret_key
+                  name: minio
+            - name: TRACER_DISABLED
+              value: 'true'
+            readinessProbe:
+              httpGet:
+                path: /__/health
+                port: 8081
+              initialDelaySeconds: 5
+          restartPolicy: OnFailure
