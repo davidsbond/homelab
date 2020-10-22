@@ -20,7 +20,7 @@ func Archive(ctx context.Context, dir string, w io.Writer) error {
 	defer closers.Close(gzipWriter)
 	defer closers.Close(tarWriter)
 
-	const mode = 0o600
+	const mode = 0600
 	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
