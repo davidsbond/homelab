@@ -74,6 +74,7 @@ These are devices/services that the cluster interacts with, without being direct
 * [Ring](https://ring.com/) - Home security devices, connected via home-assistant
 * [Tailscale](https://tailscale.com/) VPN - Used to access the cluster from anywhere
 * [Synology](https://www.synology.com/) NAS - Used as the storage backend for minio, primarily used for volume backups
+* [Phillips Hue](https://www.philips-hue.com/en-gb) - Smart lighting, connected via home-assistant
 
 ## Environment
 
