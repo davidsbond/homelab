@@ -23,7 +23,7 @@ spec:
           httpGet:
             path: /
             port: 8123
-          initialDelaySeconds: 5
+          initialDelaySeconds: 120
         volumeMounts:
         - name: home-assistant
           mountPath: /config

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: firefly-csv-importer
+  labels:
+    app: firefly-csv-importer
+spec:
+  selector:
+    matchLabels:
+      app: firefly-csv-importer
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: firefly-csv-importer
+    spec:
+      containers:
+        - image: fireflyiii/csv-importer:latest
+          name: firefly-csv-importer
+          env:
+          - name: FIREFLY_III_URI
+            value: http://firefly.utilities.svc.cluster.local:8080
+          - name: FIREFLY_III_ACCESS_TOKEN
+            valueFrom:
+              secretKeyRef:
+                key: firefly.token
+                name: firefly

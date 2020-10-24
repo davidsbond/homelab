@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: firefly-csv-importer
+spec:
+  rules:
+  - host: firefly-csv-importer.homelab
+    http:
+      paths:
+      - backend:
+          serviceName: firefly-csv-importer
+          servicePort: 8080
+        path: /
+

@@ -35,7 +35,8 @@ spec:
           httpGet:
             path: /__/health
             port: 8081
-          initialDelaySeconds: 5
+          initialDelaySeconds: 30
+          timeoutSeconds: 60
         volumeMounts:
         - mountPath: /data
           name: home-assistant
