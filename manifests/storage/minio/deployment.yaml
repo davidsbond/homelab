@@ -56,3 +56,6 @@ spec:
           httpGet:
             path: /minio/health/ready
             port: 9000
+        resources:
+          limits:
+            memory: 512Mi

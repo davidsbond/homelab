@@ -51,3 +51,6 @@ spec:
             path: /
             port: 8080
           initialDelaySeconds: 5
+        resources:
+          limits:
+            memory: 512Mi
