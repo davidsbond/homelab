@@ -16,6 +16,8 @@ spec:
       labels:
         app: home-assistant
     spec:
+      imagePullSecrets:
+        - name: registry
       containers:
       - image: homeassistant/home-assistant:latest
         name: home-assistant
@@ -31,6 +33,34 @@ spec:
           mountPath: /config
         - name: home-assistant-secret
           mountPath: /config
+      # Volume backup has to be inline due to kustomize bug:
+      # https://github.com/kubernetes-sigs/kustomize/issues/3117
+      - image: ghcr.io/davidsbond/homelab:latest
+        name: volume-backup
+        command:
+          - /bin/volume-backup
+        env:
+          - name: BUCKET_DSN
+            value: s3://volumes?endpoint=minio.storage.svc.cluster.local:9000&region=none&s3ForcePathStyle=true&disableSSL=true
+          - name: BUCKET_DIR
+            value: home-assistant
+          - name: VOLUME_DIR
+            value: /data
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                key: minio.access_key
+                name: minio
+          - name: AWS_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                key: minio.secret_key
+                name: minio
+          - name: TRACER_DISABLED
+            value: 'true'
+        volumeMounts:
+          - mountPath: /data
+            name: home-assistant
       volumes:
       - name: home-assistant-config
         configMap:
