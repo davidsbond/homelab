@@ -1,1 +1,2 @@
 secrets/* filter=strongbox diff=strongbox
+secrets/home-assistant/* filter=strongbox diff=strongbox
