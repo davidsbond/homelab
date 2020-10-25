@@ -31,12 +31,6 @@ spec:
               name: minio
         - name: TRACER_DISABLED
           value: 'true'
-        livenessProbe:
-          httpGet:
-            path: /__/health
-            port: 8081
-          initialDelaySeconds: 30
-          timeoutSeconds: 60
         volumeMounts:
         - mountPath: /data
           name: home-assistant

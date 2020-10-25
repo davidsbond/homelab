@@ -1,6 +1,8 @@
-<!-- ToC start -->
-# Table of Contents
+# homelab [![PkgGoDev](https://pkg.go.dev/badge/github.com/davidsbond/homelab)](https://pkg.go.dev/github.com/davidsbond/homelab) [![Go Report Card](https://goreportcard.com/badge/github.com/davidsbond/homelab)](https://goreportcard.com/report/github.com/davidsbond/homelab)
 
+Monorepo for my personal homelab. It contains applications and kubernetes manifests for deployment.
+
+<!-- ToC start -->
    1. [Getting started](#getting-started)
    1. [Project structure](#project-structure)
    1. [Third party applications](#third-party-applications)
@@ -9,10 +11,6 @@
    1. [External services](#external-services)
    1. [Environment](#environment)
 <!-- ToC end -->
-
-# homelab [![PkgGoDev](https://pkg.go.dev/badge/github.com/davidsbond/homelab)](https://pkg.go.dev/github.com/davidsbond/homelab) [![Go Report Card](https://goreportcard.com/badge/github.com/davidsbond/homelab)](https://goreportcard.com/report/github.com/davidsbond/homelab)
-
-Monorepo for my personal homelab. It contains applications and kubernetes manifests for deployment.
 
 ## Getting started
 
