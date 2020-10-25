@@ -70,3 +70,14 @@ func returnsInBlock(b *ssa.BasicBlock, done map[*ssa.BasicBlock]bool) (rets []*s
 	}
 	return
 }
+
+// BinOp returns binary operator values which are contained in the block b.
+func BinOp(b *ssa.BasicBlock) ([]*ssa.BinOp) {
+	var binops []*ssa.BinOp
+	for _, instr := range b.Instrs {
+		if binop, ok := instr.(*ssa.BinOp); ok {
+			binops = append(binops, binop)
+		}
+	}
+	return binops
+}
