@@ -4,7 +4,7 @@ metadata:
   name: minio
 spec:
   storageClassName: nfs
-  volumeName: home-nas
+  volumeName: minio
   resources:
     requests:
       storage: 100Gi
