@@ -3,6 +3,7 @@ package analyzer
 import (
 	"go/ast"
 	"go/types"
+	"strings"
 
 	"golang.org/x/tools/go/analysis/passes/inspect"
 	"golang.org/x/tools/go/ast/inspector"
@@ -64,9 +65,15 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			return
 		}
 
+		missing := []string{}
+
 		for i := 0; i < str.NumFields(); i++ {
 			fieldName := str.Field(i).Name()
 			exists := false
+
+			if !str.Field(i).Exported() {
+				continue
+			}
 
 			for _, e := range compositeLit.Elts {
 				if k, ok := e.(*ast.KeyValueExpr); ok {
@@ -80,8 +87,14 @@ func run(pass *analysis.Pass) (interface{}, error) {
 			}
 
 			if !exists {
-				pass.Reportf(node.Pos(), "%s is missing in %s", fieldName, name)
+				missing = append(missing, fieldName)
 			}
+		}
+
+		if len(missing) == 1 {
+			pass.Reportf(node.Pos(), "%s is missing in %s", missing[0], name)
+		} else if len(missing) > 1 {
+			pass.Reportf(node.Pos(), "%s are missing in %s", strings.Join(missing, ", "), name)
 		}
 	})
 
