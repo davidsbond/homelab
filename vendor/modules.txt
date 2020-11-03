@@ -406,7 +406,7 @@ github.com/ultraware/funlen
 github.com/ultraware/whitespace
 # github.com/unrolled/secure v1.0.8
 github.com/unrolled/secure
-# github.com/urfave/cli/v2 v2.2.0
+# github.com/urfave/cli/v2 v2.3.0
 github.com/urfave/cli/v2
 # github.com/uudashr/gocognit v1.0.1
 github.com/uudashr/gocognit
@@ -672,7 +672,7 @@ mvdan.cc/interfacer/check
 mvdan.cc/lint
 # mvdan.cc/unparam v0.0.0-20200501210554-b37ab49443f7
 mvdan.cc/unparam/check
-# pkg.dsb.dev v1.2.0
+# pkg.dsb.dev v1.2.1
 ## explicit
 pkg.dsb.dev/app
 pkg.dsb.dev/closers
