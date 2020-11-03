@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/go-ping/ping v0.0.0-20201008161548-5f9dc3248bce
-	github.com/golangci/golangci-lint v1.32.1
+	github.com/golangci/golangci-lint v1.32.2
 	github.com/gorilla/mux v1.8.0
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/prometheus/client_golang v1.8.0

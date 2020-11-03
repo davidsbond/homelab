@@ -28,8 +28,8 @@ You may obtain a copy of the License [here](http://www.apache.org/licenses/LICEN
 ### CI Installation
 
 ```bash
-# binary will be $GOPATH/bin/gosec
-curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b $GOPATH/bin vX.Y.Z
+# binary will be $(go env GOPATH)/bin/gosec
+curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b $(go env GOPATH)/bin vX.Y.Z
 
 # or install it into ./bin/
 curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s vX.Y.Z
@@ -77,7 +77,7 @@ jobs:
 ### Local Installation
 
 ```bash
-go get github.com/securego/gosec/cmd/gosec
+go get github.com/securego/gosec/v2/cmd/gosec
 ```
 
 ## Usage
@@ -107,7 +107,7 @@ directory you can supply `./...` as the input argument.
 - G302: Poor file permissions used with chmod
 - G303: Creating tempfile using a predictable path
 - G304: File path provided as taint input
-- G305: File traversal when extracting zip archive
+- G305: File traversal when extracting zip/tar archive
 - G306: Poor file permissions used when writing to a new file
 - G307: Deferring a method which returns an error
 - G401: Detect the usage of DES, RC4, MD5 or SHA1
@@ -178,10 +178,10 @@ You can also configure the hard-coded credentials rule `G101` with additional pa
 {
     "G101": {
         "pattern": "(?i)passwd|pass|password|pwd|secret|private_key|token",
-         "ingnore_entropy": false,
+         "ignore_entropy": false,
          "entropy_threshold": "80.0",
          "per_char_threshold": "3.0",
-         "trucate": "32"
+         "truncate": "32"
     }
 }
 ```
@@ -304,8 +304,9 @@ You can run the `gosec` tool in a container against your local Go project. You o
 into a volume as follows:
 
 ```bash
-docker run -it -v <YOUR PROJECT PATH>/<PROJECT>:/<PROJECT> securego/gosec /<PROJECT>/...
+docker run --rm -it -w /<PROJECT>/ -v <YOUR PROJECT PATH>/<PROJECT>:/<PROJECT> securego/gosec /<PROJECT>/...
 ```
+**Note:** the current working directory needs to be set with `-w` option in order to get successfully resolved the dependencies from go module file 
 
 ### Generate TLS rule
 
@@ -314,7 +315,7 @@ The configuration of TLS rule can be generated from [Mozilla's TLS ciphers recom
 First you need to install the generator tool:
 
 ```bash
-go get github.com/securego/gosec/cmd/tlsconfig/...
+go get github.com/securego/gosec/v2/cmd/tlsconfig/...
 ```
 
 You can invoke now the `go generate` in the root of the project:
