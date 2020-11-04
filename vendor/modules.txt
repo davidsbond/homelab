@@ -58,6 +58,8 @@ github.com/aws/aws-sdk-go/service/sts/stsiface
 github.com/beorn7/perks/quantile
 # github.com/bombsimon/wsl/v3 v3.1.0
 github.com/bombsimon/wsl/v3
+# github.com/cenkalti/backoff v2.2.1+incompatible
+github.com/cenkalti/backoff
 # github.com/cespare/xxhash/v2 v2.1.1
 github.com/cespare/xxhash/v2
 # github.com/cpuguy83/go-md2man/v2 v2.0.0
@@ -398,7 +400,7 @@ github.com/uber/jaeger-client-go/thrift-gen/jaeger
 github.com/uber/jaeger-client-go/thrift-gen/sampling
 github.com/uber/jaeger-client-go/thrift-gen/zipkincore
 github.com/uber/jaeger-client-go/utils
-# github.com/uber/jaeger-lib v2.2.0+incompatible
+# github.com/uber/jaeger-lib v2.4.0+incompatible
 github.com/uber/jaeger-lib/metrics
 # github.com/ultraware/funlen v0.0.3
 github.com/ultraware/funlen
@@ -410,7 +412,7 @@ github.com/unrolled/secure
 github.com/urfave/cli/v2
 # github.com/uudashr/gocognit v1.0.1
 github.com/uudashr/gocognit
-# go.opencensus.io v0.22.4
+# go.opencensus.io v0.22.5
 go.opencensus.io
 go.opencensus.io/internal
 go.opencensus.io/internal/tagencoding
@@ -426,7 +428,7 @@ go.opencensus.io/trace
 go.opencensus.io/trace/internal
 go.opencensus.io/trace/propagation
 go.opencensus.io/trace/tracestate
-# go.uber.org/atomic v1.6.0
+# go.uber.org/atomic v1.7.0
 go.uber.org/atomic
 # gocloud.dev v0.20.0
 gocloud.dev/aws
@@ -441,7 +443,7 @@ gocloud.dev/internal/gcerr
 gocloud.dev/internal/oc
 gocloud.dev/internal/openurl
 gocloud.dev/internal/retry
-# golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
+# golang.org/x/crypto v0.0.0-20201016220609-9e8e0b390897
 golang.org/x/crypto/acme
 golang.org/x/crypto/acme/autocert
 golang.org/x/crypto/sha3
@@ -464,10 +466,10 @@ golang.org/x/net/internal/timeseries
 golang.org/x/net/ipv4
 golang.org/x/net/ipv6
 golang.org/x/net/trace
-# golang.org/x/sync v0.0.0-20201008141435-b3e1573b7520
+# golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
 ## explicit
 golang.org/x/sync/errgroup
-# golang.org/x/sys v0.0.0-20201015000850-e3ed0017c211
+# golang.org/x/sys v0.0.0-20201029080932-201ba4db2418
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
@@ -544,7 +546,7 @@ golang.org/x/tools/internal/typesinternal
 # golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1
 golang.org/x/xerrors
 golang.org/x/xerrors/internal
-# google.golang.org/genproto v0.0.0-20200815001618-f69a88009b70
+# google.golang.org/genproto v0.0.0-20201030142918-24207fddd1c3
 google.golang.org/genproto/googleapis/rpc/status
 # google.golang.org/grpc v1.33.1
 google.golang.org/grpc
@@ -623,7 +625,7 @@ google.golang.org/protobuf/types/known/timestamppb
 gopkg.in/ini.v1
 # gopkg.in/yaml.v2 v2.3.0
 gopkg.in/yaml.v2
-# gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
+# gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
 gopkg.in/yaml.v3
 # honnef.co/go/tools v0.0.1-2020.1.6
 honnef.co/go/tools/arg
@@ -654,7 +656,7 @@ honnef.co/go/tools/staticcheck
 honnef.co/go/tools/stylecheck
 honnef.co/go/tools/unused
 honnef.co/go/tools/version
-# mvdan.cc/gofumpt v0.0.0-20200927160801-5bfeb2e70dd6
+# mvdan.cc/gofumpt v0.0.0-20201027171050-85d5401eb0f6
 ## explicit
 mvdan.cc/gofumpt/format
 mvdan.cc/gofumpt/gofumports
@@ -672,7 +674,7 @@ mvdan.cc/interfacer/check
 mvdan.cc/lint
 # mvdan.cc/unparam v0.0.0-20200501210554-b37ab49443f7
 mvdan.cc/unparam/check
-# pkg.dsb.dev v1.2.1
+# pkg.dsb.dev v1.3.0
 ## explicit
 pkg.dsb.dev/app
 pkg.dsb.dev/closers
@@ -693,3 +695,4 @@ pkg.dsb.dev/server
 pkg.dsb.dev/storage/blob
 pkg.dsb.dev/tracing
 pkg.dsb.dev/transport
+pkg.dsb.dev/transport/v1

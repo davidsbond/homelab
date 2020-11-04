@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option go_package = "pkg.dsb.dev/transport/v1;transport";
+
+package transport.v1;
+
+// The GRPCErrorDetails message contains additional information on an error and is intended to be used as additional
+// details when constructing gRPC statuses.
+message GRPCErrorDetails {
+  // The stack trace
+  repeated string stack_trace = 1;
+}
