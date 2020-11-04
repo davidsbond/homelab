@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: experimental
+
+resources:
+- namespace.yaml
+- bytecrypt
+
+secretGenerator:
+- name: minio
+  envs:
+  - secrets/minio
+- name: bytecrypt
+  envs:
+  - secrets/bytecrypt
+- name: registry
+  type: kubernetes.io/dockerconfigjson
+  files:
+  - .dockerconfigjson=secrets/registry
+
+configMapGenerator:
+- name: tracing
+  envs:
+  - config/tracing

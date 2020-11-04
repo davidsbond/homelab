@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bytecrypt
+  labels:
+    app: bytecrypt
+spec:
+  selector:
+    matchLabels:
+      app: bytecrypt
+  replicas: 3
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: bytecrypt
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: /__/metrics
+        prometheus.io/port: '8081'
+    spec:
+      imagePullSecrets:
+        - name: registry
+      containers:
+        - image: ghcr.io/davidsbond/bytecrypt:latest
+          name: bytecrypt
+          command:
+            - /bin/server
+          env:
+            - name: UUID_NAMESPACE
+              valueFrom:
+                secretKeyRef:
+                  name: bytecrypt
+                  key: uuid.namespace
+            - name: BUCKET_DSN
+              value: s3://bytecrypt?endpoint=minio.storage.svc.cluster.local:9000&region=none&s3ForcePathStyle=true&disableSSL=true
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: minio.access_key
+                  name: minio
+            - name: AWS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: minio.secret_key
+                  name: minio
+            - name: TRACER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: tracer.host
+                  name: tracing
+          readinessProbe:
+            httpGet:
+              path: "/__/health"
+              port: 8081
+            initialDelaySeconds: 10
+          livenessProbe:
+            httpGet:
+              path: "/__/health"
+              port: 8081
+            initialDelaySeconds: 10
