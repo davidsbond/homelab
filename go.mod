@@ -10,7 +10,7 @@ require (
 	github.com/prometheus/client_golang v1.8.0
 	github.com/sebdah/markdown-toc v0.0.0-20171116085747-3bb461875c34
 	github.com/stretchr/testify v1.6.1
-	golang.org/x/sync v0.0.0-20201008141435-b3e1573b7520
-	mvdan.cc/gofumpt v0.0.0-20200927160801-5bfeb2e70dd6
-	pkg.dsb.dev v1.2.1
+	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
+	mvdan.cc/gofumpt v0.0.0-20201027171050-85d5401eb0f6
+	pkg.dsb.dev v1.3.0
 )
