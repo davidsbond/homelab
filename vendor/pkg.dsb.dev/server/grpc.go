@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"net"
 
+	grpc_opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
+	grpc_validator "github.com/grpc-ecosystem/go-grpc-middleware/validator"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 
@@ -29,7 +32,7 @@ type (
 // ServeGRPC starts a gRPC server listening on port 5000 configured using the provided options. This function
 // blocks until the provided context is cancelled. On cancellation, the server is gracefully stopped.
 func ServeGRPC(ctx context.Context, opts ...GRPCOption) error {
-	c := defaultGRPCConfig
+	c := defaultGRPCConfig()
 	for _, opt := range opts {
 		opt(&c)
 	}
@@ -69,4 +72,19 @@ func ServeGRPC(ctx context.Context, opts ...GRPCOption) error {
 	default:
 		return nil
 	}
+}
+
+// DialGRPC connects to a desired gRPC server, applying default options and registering interceptors.
+func DialGRPC(ctx context.Context, addr string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
+	return grpc.DialContext(ctx, addr, append(opts,
+		grpc.WithBlock(),
+		grpc.WithChainUnaryInterceptor(
+			grpc_opentracing.UnaryClientInterceptor(),
+			grpc_prometheus.UnaryClientInterceptor,
+			grpc_validator.UnaryClientInterceptor(),
+		),
+		grpc.WithChainStreamInterceptor(
+			grpc_opentracing.StreamClientInterceptor(),
+			grpc_prometheus.StreamClientInterceptor,
+		))...)
 }

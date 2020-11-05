@@ -12,5 +12,5 @@ require (
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
 	mvdan.cc/gofumpt v0.0.0-20201027171050-85d5401eb0f6
-	pkg.dsb.dev v1.3.0
+	pkg.dsb.dev v1.4.0
 )
