@@ -262,6 +262,7 @@ func (r *Reader) Read(p []byte) (int, error) {
 		return n, tracing.WithError(r.span, err)
 	default:
 		r.n += n
+		r.span.SetTag("blob.bytes_read", r.n)
 		return n, nil
 	}
 }

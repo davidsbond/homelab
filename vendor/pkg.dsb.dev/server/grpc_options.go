@@ -24,29 +24,31 @@ const (
 	defaultTime                  = 5 * time.Minute
 )
 
-var defaultGRPCConfig = grpcConfig{
-	serverOptions: []grpc.ServerOption{
-		grpc.ChainUnaryInterceptor(
-			grpc_opentracing.UnaryServerInterceptor(),
-			grpc_prometheus.UnaryServerInterceptor,
-			grpc_recovery.UnaryServerInterceptor(),
-			grpc_validator.UnaryServerInterceptor(),
-			grpc_ctxtags.UnaryServerInterceptor(),
-		),
-		grpc.ChainStreamInterceptor(
-			grpc_opentracing.StreamServerInterceptor(),
-			grpc_prometheus.StreamServerInterceptor,
-			grpc_recovery.StreamServerInterceptor(),
-			grpc_validator.StreamServerInterceptor(),
-			grpc_ctxtags.StreamServerInterceptor(),
-		),
-		grpc.KeepaliveParams(keepalive.ServerParameters{
-			MaxConnectionIdle:     defaultMaxConnectionIdle,
-			MaxConnectionAge:      defaultMaxConnectionAge,
-			MaxConnectionAgeGrace: defaultMaxConnectionAgeGrace,
-			Time:                  defaultTime,
-		}),
-	},
+func defaultGRPCConfig() grpcConfig {
+	return grpcConfig{
+		serverOptions: []grpc.ServerOption{
+			grpc.ChainUnaryInterceptor(
+				grpc_opentracing.UnaryServerInterceptor(),
+				grpc_prometheus.UnaryServerInterceptor,
+				grpc_recovery.UnaryServerInterceptor(),
+				grpc_validator.UnaryServerInterceptor(),
+				grpc_ctxtags.UnaryServerInterceptor(),
+			),
+			grpc.ChainStreamInterceptor(
+				grpc_opentracing.StreamServerInterceptor(),
+				grpc_prometheus.StreamServerInterceptor,
+				grpc_recovery.StreamServerInterceptor(),
+				grpc_validator.StreamServerInterceptor(),
+				grpc_ctxtags.StreamServerInterceptor(),
+			),
+			grpc.KeepaliveParams(keepalive.ServerParameters{
+				MaxConnectionIdle:     defaultMaxConnectionIdle,
+				MaxConnectionAge:      defaultMaxConnectionAge,
+				MaxConnectionAgeGrace: defaultMaxConnectionAgeGrace,
+				Time:                  defaultTime,
+			}),
+		},
+	}
 }
 
 // WithServerOptions configures the options to use when calling grpc.NewServer.
