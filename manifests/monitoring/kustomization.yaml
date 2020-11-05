@@ -8,11 +8,21 @@ resources:
 - grafana
 
 configMapGenerator:
-  - name: grafana
-    files:
-      - config/grafana.ini
+- name: grafana
+  files:
+  - config/grafana.ini
 
 secretGenerator:
-  - name: grafana
-    envs:
-      - secrets/grafana
+- name: grafana
+  envs:
+  - secrets/grafana
+- name: registry
+  type: kubernetes.io/dockerconfigjson
+  files:
+  - .dockerconfigjson=secrets/registry
+- name: minio
+  envs:
+  - secrets/minio
+
+patchesStrategicMerge:
+- overlays/grafana.yaml
