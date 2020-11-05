@@ -5,3 +5,14 @@ namespace: monitoring
 resources:
 - namespace.yaml
 - jaeger
+- grafana
+
+configMapGenerator:
+  - name: grafana
+    files:
+      - config/grafana.ini
+
+secretGenerator:
+  - name: grafana
+    envs:
+      - secrets/grafana

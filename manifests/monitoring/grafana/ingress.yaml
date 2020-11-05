@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: grafana
+spec:
+  rules:
+    - host: grafana.homelab
+      http:
+        paths:
+          - backend:
+              serviceName: grafana
+              servicePort: 80
+            path: /
