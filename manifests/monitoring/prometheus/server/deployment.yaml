@@ -6,6 +6,8 @@ metadata:
     component: server
   name: prometheus-server
 spec:
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: prometheus
@@ -24,7 +26,10 @@ spec:
             - --web.console.libraries=/etc/prometheus/console_libraries
             - --web.console.templates=/etc/prometheus/consoles
             - --web.enable-lifecycle
-          image: prom/prometheus:v2.20.1
+          image: prom/prometheus:latest
+          resources:
+            limits:
+              memory: 2Gi
           livenessProbe:
             httpGet:
               path: /-/healthy

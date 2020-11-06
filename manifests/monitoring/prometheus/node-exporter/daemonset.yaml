@@ -21,7 +21,7 @@ spec:
             - --path.procfs=/host/proc
             - --path.sysfs=/host/sys
             - --web.listen-address=:9100
-          image: prom/node-exporter:v1.0.1
+          image: prom/node-exporter:latest
           name: prometheus-node-exporter
           ports:
             - containerPort: 9100

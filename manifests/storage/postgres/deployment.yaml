@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: postgres
 spec:
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: postgres
