@@ -674,7 +674,7 @@ mvdan.cc/interfacer/check
 mvdan.cc/lint
 # mvdan.cc/unparam v0.0.0-20200501210554-b37ab49443f7
 mvdan.cc/unparam/check
-# pkg.dsb.dev v1.4.0
+# pkg.dsb.dev v1.4.1
 ## explicit
 pkg.dsb.dev/app
 pkg.dsb.dev/closers
@@ -688,6 +688,7 @@ pkg.dsb.dev/logging
 pkg.dsb.dev/metrics
 pkg.dsb.dev/middleware
 pkg.dsb.dev/monitoring
+pkg.dsb.dev/multierror
 pkg.dsb.dev/period
 pkg.dsb.dev/requestid
 pkg.dsb.dev/retry
