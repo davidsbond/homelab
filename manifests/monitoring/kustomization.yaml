@@ -34,3 +34,4 @@ secretGenerator:
 
 patchesStrategicMerge:
 - overlays/grafana.yaml
+- overlays/prometheus-server.yaml
