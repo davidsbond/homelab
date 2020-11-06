@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: prometheus
+    component: pushgateway
+  name: prometheus-pushgateway
+spec:
+  selector:
+    matchLabels:
+      app: prometheus
+      component: pushgateway
+  template:
+    metadata:
+      labels:
+        app: prometheus
+        component: pushgateway
+    spec:
+      containers:
+        - image: prom/pushgateway:v1.2.0
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: 9091
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+          name: prometheus-pushgateway
+          ports:
+            - containerPort: 9091
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 9091
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
