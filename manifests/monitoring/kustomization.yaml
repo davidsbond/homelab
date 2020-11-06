@@ -6,11 +6,19 @@ resources:
 - namespace.yaml
 - jaeger
 - grafana
+- prometheus
 
 configMapGenerator:
 - name: grafana
   files:
   - config/grafana.ini
+- name: prometheus-server
+  files:
+    - config/prometheus/prometheus.yml
+    - config/prometheus/alerting_rules.yml
+    - config/prometheus/alerts.yml
+    - config/prometheus/recording_rules.yml
+    - config/prometheus/rules.yml
 
 secretGenerator:
 - name: grafana
