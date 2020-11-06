@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-server
+spec:
+  template:
+    spec:
+      imagePullSecrets:
+      - name: registry
+      containers:
+      - image: ghcr.io/davidsbond/homelab:latest
+        name: volume-backup
+        command:
+        - /bin/volume-backup
+        env:
+        - name: BUCKET_DSN
+          value: s3://volumes?endpoint=minio.storage.svc.cluster.local:9000&region=none&s3ForcePathStyle=true&disableSSL=true
+        - name: BUCKET_DIR
+          value: prometheus
+        - name: VOLUME_DIR
+          value: /data
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: minio.access_key
+              name: minio
+        - name: AWS_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: minio.secret_key
+              name: minio
+        - name: TRACER_DISABLED
+          value: 'true'
+        volumeMounts:
+        - mountPath: /data
+          name: storage-volume
