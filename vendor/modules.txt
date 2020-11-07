@@ -210,11 +210,16 @@ github.com/gorilla/handlers
 # github.com/gorilla/mux v1.8.0
 ## explicit
 github.com/gorilla/mux
+# github.com/gosimple/slug v1.1.1
+github.com/gosimple/slug
 # github.com/gostaticanalysis/analysisutil v0.1.0
 github.com/gostaticanalysis/analysisutil
 # github.com/gostaticanalysis/comment v1.3.0
 github.com/gostaticanalysis/comment
 github.com/gostaticanalysis/comment/passes/commentmap
+# github.com/grafana-tools/sdk v0.0.0-20201025204618-ad428f9e2b02
+## explicit
+github.com/grafana-tools/sdk
 # github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 github.com/grpc-ecosystem/go-grpc-middleware
 github.com/grpc-ecosystem/go-grpc-middleware/recovery
@@ -326,6 +331,8 @@ github.com/quasilyte/go-ruleguard/ruleguard
 github.com/quasilyte/go-ruleguard/ruleguard/typematch
 # github.com/quasilyte/regex/syntax v0.0.0-20200407221936-30656e2c4a95
 github.com/quasilyte/regex/syntax
+# github.com/rainycape/unidecode v0.0.0-20150907023854-cb7f23ec59be
+github.com/rainycape/unidecode
 # github.com/russross/blackfriday/v2 v2.0.1
 github.com/russross/blackfriday/v2
 # github.com/ryancurrah/gomodguard v1.1.0
