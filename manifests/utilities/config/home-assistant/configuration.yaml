@@ -6,9 +6,9 @@ scene: !include scenes.yaml
 # Expose prometheus metrics.
 prometheus:
 
-# Enable pihole integration.
-pihole:
-  - host: pihole.utilities.svc.cluster.local:8000
-    name: Pi-Hole
-    verify_ssl: false
-    api_key: !secret pihole_api_key
+# Store things in postgres
+recorder:
+  db_url: !secret db_dsn
+
+# Enable UI
+frontend:
