@@ -31,6 +31,3 @@ secretGenerator:
 - name: minio
   envs:
   - secrets/minio
-
-patchesStrategicMerge:
-- overlays/prometheus-server.yaml
