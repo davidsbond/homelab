@@ -20,7 +20,7 @@ type (
 	DashboardIterator func(ctx context.Context, d *Dashboard) error
 )
 
-// IterateDashboard searches for all dashboards in the grafana instance and invokes fn for each one. If fn returns
+// IterateDashboards searches for all dashboards in the grafana instance and invokes fn for each one. If fn returns
 // an error or the context is cancelled iteration will stop.
 func (cl *Client) IterateDashboards(ctx context.Context, fn DashboardIterator) error {
 	boards, err := cl.grafana.Search(ctx, sdk.SearchType(sdk.SearchTypeDashboard))
