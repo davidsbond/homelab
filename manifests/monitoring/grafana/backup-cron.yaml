@@ -1,0 +1,47 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: grafana-backup
+  labels:
+    app: grafana-backup
+spec:
+  schedule: 0 * * * *
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+            - name: registry
+          containers:
+            - image: ghcr.io/davidsbond/homelab:latest
+              name: grafana-backup
+              command:
+                - /bin/grafana-backup
+              env:
+                - name: BUCKET_DSN
+                  value: s3://grafana?endpoint=minio.storage.svc.cluster.local:9000&region=none&s3ForcePathStyle=true&disableSSL=true
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      key: minio.access_key
+                      name: minio
+                - name: AWS_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: minio.secret_key
+                      name: minio
+                - name: TRACER_DISABLED
+                  value: 'true'
+                - name: GRAFANA_URL
+                  value: http://grafana.monitoring.svc.cluster.local
+                - name: GRAFANA_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: api.key
+                      name: grafana
+              readinessProbe:
+                httpGet:
+                  path: /__/health
+                  port: 8081
+                initialDelaySeconds: 5
+          restartPolicy: OnFailure

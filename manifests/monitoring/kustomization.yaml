@@ -33,5 +33,4 @@ secretGenerator:
   - secrets/minio
 
 patchesStrategicMerge:
-- overlays/grafana.yaml
 - overlays/prometheus-server.yaml
