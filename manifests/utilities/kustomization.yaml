@@ -24,7 +24,6 @@ configMapGenerator:
 
 patchesStrategicMerge:
 - overlays/bitwarden.yaml
-#- overlays/home-assistant.yaml
 - overlays/pihole.yaml
 
 secretGenerator:
