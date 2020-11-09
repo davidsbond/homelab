@@ -41,3 +41,6 @@ build:
 
 docker:
 	./scripts/docker.sh
+
+pack:
+	upx `find ./bin -type f`

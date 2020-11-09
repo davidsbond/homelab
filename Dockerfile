@@ -1,14 +1,14 @@
 FROM golang:alpine as builder
-RUN apk update && apk upgrade
 
 # Install required tools
-RUN apk add --no-cache ca-certificates make bash git
+RUN apk add --update --no-cache ca-certificates make bash git upx
 
 ADD . /project
 WORKDIR /project
 
 # Compile binaries
 RUN make
+RUN make pack
 
 FROM scratch
 
