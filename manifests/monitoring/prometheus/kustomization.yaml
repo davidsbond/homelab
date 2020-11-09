@@ -5,3 +5,4 @@ resources:
 - node-exporter
 - pushgateway
 - server
+- kube-state-metrics
