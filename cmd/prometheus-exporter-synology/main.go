@@ -53,7 +53,7 @@ var (
 )
 
 func run(ctx context.Context) error {
-	metrics.Register(diskTemp, diskSize, volumeSize, volumeUsed)
+	metrics.Register(diskTemp, diskSize, volumeSize, volumeUsed, uptime)
 
 	cl, err := synology.New(synologyURL, synologyUser, synologyPass)
 	if err != nil {
@@ -75,5 +75,6 @@ func run(ctx context.Context) error {
 		volumeUsed.WithLabelValues(volume.Name).Set(volume.Used)
 	}
 
+	uptime.Set(info.Uptime)
 	return metrics.Push()
 }

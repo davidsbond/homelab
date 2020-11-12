@@ -35,4 +35,11 @@ var (
 		Name:      "volume_bytes_used",
 		Help:      "The amount of space used on the volume, in bytes.",
 	}, []string{"name"})
+
+	uptime = prometheus.NewGauge(prometheus.GaugeOpts{
+		Namespace: namespace,
+		Subsystem: subsystem,
+		Name:      "uptime",
+		Help:      "Uptime of the nas in seconds",
+	})
 )
