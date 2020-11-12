@@ -5,11 +5,13 @@ package synology
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"pkg.dsb.dev/closers"
@@ -66,6 +68,7 @@ type (
 	SystemInfo struct {
 		Disks   []Disk
 		Volumes []Volume
+		Uptime  float64
 	}
 
 	// The Disk type contains information on an individual disk in the NAS.
@@ -127,7 +130,13 @@ func (cl *Client) SystemInfo(ctx context.Context) (*SystemInfo, error) {
 		info.Volumes = append(info.Volumes, volume)
 	}
 
-	return info, err
+	uptime, err := parseUptime(resp.Optime)
+	if err != nil {
+		return nil, err
+	}
+
+	info.Uptime = uptime.Seconds()
+	return info, nil
 }
 
 func (cl *Client) authenticate(ctx context.Context) error {
@@ -206,4 +215,32 @@ func (cl *Client) do(req *http.Request, out interface{}) error {
 	}
 
 	return nil
+}
+
+// ErrInvalidUptime is the error given when the uptime value cannot be parsed.
+var ErrInvalidUptime = errors.New("invalid uptime")
+
+func parseUptime(str string) (time.Duration, error) {
+	parts := strings.Split(str, ":")
+	if len(parts) != 3 {
+		return 0, fmt.Errorf("%w: %s", ErrInvalidUptime, str)
+	}
+
+	hours, err := strconv.ParseInt(parts[0], 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("%w: %s", ErrInvalidUptime, str)
+	}
+
+	mins, err := strconv.ParseInt(parts[1], 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("%w: %s", ErrInvalidUptime, str)
+	}
+
+	secs, err := strconv.ParseInt(parts[2], 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("%w: %s", ErrInvalidUptime, str)
+	}
+
+	result := (time.Hour * time.Duration(hours)) + (time.Minute * time.Duration(mins)) + (time.Second * time.Duration(secs))
+	return result, nil
 }
