@@ -6,7 +6,7 @@ metadata:
     k3s-upgrade: server
 spec:
   concurrency: 1
-  version: v1.19.3+k3s2
+  version: v1.19.3+k3s3
   nodeSelector:
     matchExpressions:
       - {key: k3s-upgrade, operator: Exists}

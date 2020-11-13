@@ -3,4 +3,4 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - v1.19.3+k3s2
+  - v1.19.3+k3s3
