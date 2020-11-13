@@ -11,6 +11,7 @@ import (
 
 	"pkg.dsb.dev/closers"
 	"pkg.dsb.dev/environment"
+	"pkg.dsb.dev/logging"
 )
 
 type (
@@ -29,12 +30,19 @@ func New() (io.Closer, error) {
 		return closers.Noop, nil
 	}
 
-	if err := sentry.Init(sentry.ClientOptions{
-		Dsn:         config.dsn,
-		ServerName:  environment.ApplicationName,
-		Release:     environment.Version,
-		Environment: config.environment,
-	}); err != nil {
+	opts := sentry.ClientOptions{
+		Dsn:              config.dsn,
+		ServerName:       environment.ApplicationName,
+		Release:          environment.Version,
+		Environment:      config.environment,
+		AttachStacktrace: true,
+		BeforeSend: func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
+			logging.WithField("event_id", hint.EventID).Debug("writing to sentry")
+			return event
+		},
+	}
+
+	if err := sentry.Init(opts); err != nil {
 		return nil, err
 	}
 
