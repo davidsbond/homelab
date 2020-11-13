@@ -27,7 +27,6 @@ func main() {
 	}
 
 	if len(binaries) == 0 {
-		fmt.Println("no entrypoints found")
 		os.Exit(0)
 	}
 
@@ -35,8 +34,8 @@ func main() {
 	environ := append(os.Environ(), "CGO_ENABLED=0")
 	for _, binary := range binaries {
 		if err := compile(version, binary, environ); err != nil {
-			fmt.Println("no entrypoints found")
-			os.Exit(0)
+			fmt.Println(err.Error())
+			os.Exit(1)
 		}
 	}
 }
