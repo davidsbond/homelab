@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: system-upgrade-controller
+spec:
+  selector:
+    matchLabels:
+      upgrade.cattle.io/controller: system-upgrade-controller
+  template:
+    metadata:
+      labels:
+        upgrade.cattle.io/controller: system-upgrade-controller # necessary to avoid drain
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - {key: "node-role.kubernetes.io/master", operator: In, values: ["true"]}
+      serviceAccountName: system-upgrade
+      tolerations:
+        - key: "CriticalAddonsOnly"
+          operator: "Exists"
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+      containers:
+        - name: system-upgrade-controller
+          image: rancher/system-upgrade-controller:v0.5.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SYSTEM_UPGRADE_CONTROLLER_DEBUG
+              value: "false"
+            - name: SYSTEM_UPGRADE_CONTROLLER_THREADS
+              value: "2"
+            - name: SYSTEM_UPGRADE_JOB_ACTIVE_DEADLINE_SECONDS
+              value: "900"
+            - name: SYSTEM_UPGRADE_JOB_BACKOFF_LIMIT
+              value: "99"
+            - name: SYSTEM_UPGRADE_JOB_IMAGE_PULL_POLICY
+              value: "Always"
+            - name: SYSTEM_UPGRADE_JOB_KUBECTL_IMAGE
+              value: "rancher/kubectl:v1.18.3"
+            - name: SYSTEM_UPGRADE_JOB_PRIVILEGED
+              value: "true"
+            - name: SYSTEM_UPGRADE_JOB_TTL_SECONDS_AFTER_FINISH
+              value: "900"
+            - name: SYSTEM_UPGRADE_PLAN_POLLING_INTERVAL
+              value: "15m"
+            - name: SYSTEM_UPGRADE_CONTROLLER_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['upgrade.cattle.io/controller']
+            - name: SYSTEM_UPGRADE_CONTROLLER_NAMESPACE
+              value: kube-system
+          volumeMounts:
+            - name: etc-ssl
+              mountPath: /etc/ssl
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: etc-ssl
+          hostPath:
+            path: /etc/ssl
+            type: Directory
+        - name: tmp
+          emptyDir: {}
