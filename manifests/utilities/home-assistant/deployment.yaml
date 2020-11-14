@@ -41,6 +41,8 @@ spec:
           - mountPath: /config/groups.yaml
             subPath: groups.yaml
             name: home-assistant-config
+          - mountPath: /config/.storage
+            name: home-assistant
       volumes:
       - name: home-assistant-config
         configMap:
@@ -48,3 +50,6 @@ spec:
       - name: home-assistant-secret
         secret:
           secretName: home-assistant
+      - name: home-assistant
+        persistentVolumeClaim:
+          claimName: home-assistant
