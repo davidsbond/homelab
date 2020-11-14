@@ -33,8 +33,8 @@ secretGenerator:
 - name: bitwarden
   type: kubernetes.io/tls
   files:
-  - secrets/tls.crt
-  - secrets/tls.key
+  - secrets/bitwarden/tls.crt
+  - secrets/bitwarden/tls.key
 - name: minio
   envs:
   - secrets/minio
