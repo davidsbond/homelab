@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: traefik
+  name: traefik
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traefik
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: /metrics
+        prometheus.io/port: '9100'
+      labels:
+        app: traefik
+    spec:
+      containers:
+        - args:
+            - --configfile=/config/traefik.toml
+          image: rancher/library-traefik:1.7.19
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+          name: traefik
+          ports:
+            - containerPort: 80
+              name: http
+            - containerPort: 8880
+              name: httpn
+            - containerPort: 443
+              name: https
+            - containerPort: 8080
+              name: dash
+            - containerPort: 9100
+              name: metrics
+          readinessProbe:
+            failureThreshold: 1
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+          volumeMounts:
+            - mountPath: /config
+              name: config
+            - mountPath: /ssl
+              name: ssl
+      serviceAccountName: traefik
+      terminationGracePeriodSeconds: 60
+      tolerations:
+        - key: CriticalAddonsOnly
+          operator: Exists
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+          operator: Exists
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: traefik
+          name: config
+        - name: ssl
+          secret:
+            defaultMode: 420
+            secretName: traefik
