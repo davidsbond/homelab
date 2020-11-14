@@ -27,7 +27,7 @@ lint:
 
 # Generates go source code
 generate:
-	markdown-toc --no-header --skip-headers=2 --replace --inline README.md
+	markdown-toc --no-header --skip-headers=1 --replace --inline README.md
 	go generate -x ./...
 
 # Checks for any changes, including new files

@@ -9,6 +9,7 @@ Monorepo for my personal homelab. It contains applications and kubernetes manife
    1. [Prometheus exporters](#prometheus-exporters)
    1. [Other tools](#other-tools)
    1. [External services](#external-services)
+   1. [Cluster upgrades](#cluster-upgrades)
    1. [Environment](#environment)
 <!-- ToC end -->
 
@@ -65,6 +66,7 @@ Here are other tools I've implemented for use in the cluster.
 
 * `volume-backup` - Takes copies of my [persistent volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) and backs them up on my NAS drive via minio
 * `volume-backup-cleaner` - Deletes backups older than a configured age.
+* `grafana-backup` - Copies all dashboards and data sources from grafana and writes them to a MinIO bucket.
 
 ## External services
 
@@ -74,6 +76,15 @@ These are devices/services that the cluster interacts with, without being direct
 * [Tailscale](https://tailscale.com/) VPN - Used to access the cluster from anywhere
 * [Synology](https://www.synology.com/) NAS - Used as the storage backend for minio, primarily used for volume backups
 * [Phillips Hue](https://www.philips-hue.com/en-gb) - Smart lighting, connected via home-assistant
+
+## Cluster upgrades
+
+Upgrading the k3s cluster itself is managed using Rancher's [system-upgrade-controller](https://github.com/rancher/system-upgrade-controller).
+It automates upgrading the cluster through the use of a CRD. To perform a cluster upgrade, see the [plans](manifests/kube-system/system-upgrade-controller/plans)
+directory. Each upgrade is stored in its own directory named using the desired version, when the plan manifests get applied
+via kustomize jobs will be started by the controller that upgrade the master node, followed by the worker nodes. The upgrade only takes
+a few minutes and tools like `k9s` and `kubectl` will not be able to communicate with the cluster for a small amount of time while
+the master node upgrades.
 
 ## Environment
 

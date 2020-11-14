@@ -9,7 +9,7 @@ spec:
   template:
     metadata:
       labels:
-        upgrade.cattle.io/controller: system-upgrade-controller # necessary to avoid drain
+        upgrade.cattle.io/controller: system-upgrade-controller
     spec:
       affinity:
         nodeAffinity:
