@@ -20,7 +20,8 @@ spec:
     spec:
       containers:
         - args:
-            - --storage.tsdb.retention.time=15d
+            - --storage.tsdb.retention.time=7d
+            - --storage.tsdb.retention.size=1GB
             - --config.file=/etc/config/prometheus.yml
             - --storage.tsdb.path=/data
             - --web.console.libraries=/etc/prometheus/console_libraries
@@ -58,7 +59,6 @@ spec:
         runAsGroup: 65534
         runAsNonRoot: true
         runAsUser: 65534
-      serviceAccount: prometheus-server
       serviceAccountName: prometheus-server
       terminationGracePeriodSeconds: 300
       volumes:
