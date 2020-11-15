@@ -21,10 +21,6 @@ install-tools:
 		mvdan.cc/gofumpt/gofumports \
 		github.com/sebdah/markdown-toc
 
-# Installs the latest UPX binary to GOBIN.
-install-upx:
-	./scripts/install_upx.sh
-
 # Lints go source code
 lint:
 	golangci-lint run --enable-all
@@ -43,10 +39,8 @@ has-changes:
 build:
 	./scripts/build.sh
 
-# Creates docker image for various architectures.
 docker:
 	./scripts/docker.sh
 
-# Compresses binaries
 pack:
 	upx `find ./bin -type f`
