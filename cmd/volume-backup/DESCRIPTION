@@ -1,1 +1,0 @@
-Compresses a desired directory as a tar.gz and writes it to an s3 bucket.

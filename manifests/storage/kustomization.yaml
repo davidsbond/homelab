@@ -6,7 +6,7 @@ resources:
 - namespace.yaml
 - minio
 - postgres
-- volume-backup-cleaner
+- bucket-object-cleaner
 
 secretGenerator:
 - name: minio
