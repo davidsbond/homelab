@@ -43,11 +43,10 @@ spec:
                       key: postgres.password
                       name: postgres
                 - name: DB_DSN
-                  value: sqlite://db.sqlite3
+                  value: sqlite://data/db.sqlite3
               volumeMounts:
-                - mountPath: /db-backup/bin/db-backup
+                - mountPath: /data
                   name: bitwarden
-                  subPath: data
               readinessProbe:
                 httpGet:
                   path: /__/health

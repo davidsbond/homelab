@@ -43,7 +43,7 @@ spec:
                       key: postgres.password
                       name: postgres
                 - name: DB_DSN
-                  value: postgres://$(DB_USERNAME):$(DB_PASSWORD)@postgres.storage.svc.cluster.local:5432
+                  value: postgres://$(DB_USERNAME):$(DB_PASSWORD)@postgres.storage.svc.cluster.local
               readinessProbe:
                 httpGet:
                   path: /__/health
