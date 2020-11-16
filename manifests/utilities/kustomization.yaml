@@ -23,7 +23,6 @@ configMapGenerator:
   - config/home-assistant/groups.yaml
 
 patchesStrategicMerge:
-- overlays/bitwarden.yaml
 - overlays/pihole.yaml
 
 secretGenerator:
