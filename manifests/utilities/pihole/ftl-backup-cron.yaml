@@ -1,9 +1,9 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: bitwarden-db-backup
+  name: pihole-ftl-db-backup
   labels:
-    app: bitwarden-db-backup
+    app: pihole-ftl-db-backup
 spec:
   schedule: 0 * * * *
   jobTemplate:
@@ -31,19 +31,19 @@ spec:
                 - name: TRACER_DISABLED
                   value: 'true'
                 - name: BUCKET_DIR
-                  value: bitwarden
+                  value: pihole/ftl
                 - name: DB_DSN
-                  value: sqlite://data/db.sqlite3
+                  value: sqlite://data/pihole-FTL.db
               volumeMounts:
                 - mountPath: /data
-                  name: bitwarden
+                  name: pihole
               readinessProbe:
                 httpGet:
                   path: /__/health
                   port: 8081
                 initialDelaySeconds: 5
           volumes:
-            - name: bitwarden
-              persistentVolumeClaim:
-                claimName: bitwarden
+          - name: pihole
+            persistentVolumeClaim:
+              claimName: pihole
           restartPolicy: OnFailure
