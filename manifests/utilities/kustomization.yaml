@@ -22,9 +22,6 @@ configMapGenerator:
   - config/home-assistant/scripts.yaml
   - config/home-assistant/groups.yaml
 
-patchesStrategicMerge:
-- overlays/pihole.yaml
-
 secretGenerator:
 - name: pihole
   envs:

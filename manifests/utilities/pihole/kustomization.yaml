@@ -7,3 +7,5 @@ resources:
 - persistentvolueclaim-dnsmasq.yaml
 - persistentvolumeclaim-data.yaml
 - ingress.yaml
+- ftl-backup-cron.yaml
+- gravity-backup-cron.yaml
