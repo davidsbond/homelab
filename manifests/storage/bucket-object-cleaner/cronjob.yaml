@@ -1,9 +1,9 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: volume-backup-cleaner
+  name: bucket-object-cleaner
   labels:
-    app: volume-backup-cleaner
+    app: bucket-object-cleaner
 spec:
   schedule: 0 0 * * *
   jobTemplate:
@@ -14,12 +14,12 @@ spec:
           - name: registry
           containers:
           - image: ghcr.io/davidsbond/homelab:latest
-            name: volume-backup-cleaner
+            name: bucket-object-cleaner
             command:
-            - /bin/volume-backup-cleaner
+            - /bin/bucket-object-cleaner
             env:
             - name: BUCKET_DSN
-              value: s3://volumes?endpoint=minio.storage.svc.cluster.local:9000&region=none&s3ForcePathStyle=true&disableSSL=true
+              value: s3://databases?endpoint=minio.storage.svc.cluster.local:9000&region=none&s3ForcePathStyle=true&disableSSL=true
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
