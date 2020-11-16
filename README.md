@@ -64,8 +64,7 @@ I've implemented several custom prometheus exporters in this repo that power my 
 
 Here are other tools I've implemented for use in the cluster.
 
-* `volume-backup` - Takes copies of my [persistent volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) and backs them up on my NAS drive via minio
-* `volume-backup-cleaner` - Deletes backups older than a configured age.
+* `bucket-object-cleaner` - Deletes objects in a blob bucket older than a configured age.
 * `grafana-backup` - Copies all dashboards and data sources from grafana and writes them to a MinIO bucket.
 
 ## External services
