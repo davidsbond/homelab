@@ -19,6 +19,3 @@ secretGenerator:
   type: kubernetes.io/dockerconfigjson
   files:
   - .dockerconfigjson=secrets/registry
-
-patchesStrategicMerge:
-- overlays/postgres.yaml
