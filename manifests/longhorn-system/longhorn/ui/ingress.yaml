@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: longhorn
+spec:
+  rules:
+  - host: longhorn.homelab
+    http:
+      paths:
+      - backend:
+          serviceName: longhorn-frontend
+          servicePort: 80
+        path: /
+
