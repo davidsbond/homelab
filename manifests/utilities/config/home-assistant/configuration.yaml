@@ -12,3 +12,9 @@ recorder:
 
 # Enable UI
 frontend:
+
+# Enable history
+history:
+
+# Enable logbook
+logbook:

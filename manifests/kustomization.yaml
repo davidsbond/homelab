@@ -8,3 +8,4 @@ resources:
 - storage
 - experimental
 - kube-system
+- longhorn-system
