@@ -3,8 +3,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: pihole-dnsmasq
 spec:
+  storageClassName: longhorn
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 500Mi
+      storage: 512Mi

@@ -3,8 +3,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: pihole
 spec:
+  storageClassName: longhorn
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 512Mi
