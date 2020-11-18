@@ -1,0 +1,42 @@
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: longhorn
+spec:
+  allowedCapabilities:
+    - SYS_ADMIN
+  allowedHostPaths:
+    - pathPrefix: /var/run/
+      readOnly: false
+    - pathPrefix: /lib/modules
+      readOnly: false
+    - pathPrefix: /var/lib/kubelet/plugins
+      readOnly: false
+    - pathPrefix: /var/lib/rancher/longhorn/
+      readOnly: false
+    - pathPrefix: /dev/
+      readOnly: false
+    - pathPrefix: /var/lib/kubelet/plugins/io.rancher.longhorn
+      readOnly: false
+    - pathPrefix: /var/lib/kubelet/pods
+      readOnly: false
+    - pathPrefix: /dev
+      readOnly: false
+    - pathPrefix: /sys
+      readOnly: false
+    - pathPrefix: /proc/
+      readOnly: false
+  fsGroup:
+    rule: RunAsAny
+  privileged: true
+  hostPID: true
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  volumes:
+    - hostPath
+    - secret
+
