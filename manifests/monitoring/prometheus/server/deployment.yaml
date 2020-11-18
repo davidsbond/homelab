@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - args:
-            - --storage.tsdb.retention.time=7d
+            - --storage.tsdb.retention.time=3d
             - --storage.tsdb.retention.size=1GB
             - --config.file=/etc/config/prometheus.yml
             - --storage.tsdb.path=/data
