@@ -6,7 +6,6 @@ resources:
 - namespace.yaml
 - home-assistant
 - pihole
-- deluge
 - bitwarden
 - firefly
 
