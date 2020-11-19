@@ -15,7 +15,8 @@ Monorepo for my personal homelab. It contains applications and kubernetes manife
 
 ## Getting started
 
-This assumes you have [go](https://golang.org/), [docker](https://www.docker.com/) & [make](https://www.gnu.org/software/make/manual/make.html) 
+This assumes you have [go](https://golang.org/), [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl),
+[kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization) & [make](https://www.gnu.org/software/make/manual/make.html) 
 installed along with docker's [buildx](https://docs.docker.com/buildx/working-with-buildx/) plugin.
 
 * Clone the repository
@@ -34,18 +35,17 @@ installed along with docker's [buildx](https://docs.docker.com/buildx/working-wi
 
 Here's a list of third-party applications I'm using alongside my custom applications:
 
-* [deluge](https://deluge-torrent.org/) - For torrents
-* [home-assistant](https://www.home-assistant.io/) - For interfacing with my ring cameras
-* [pihole](https://pi-hole.net/) - For DNS and ad-blocking
-* [traefik](https://traefik.io/) - For exposing services on the homelab, usually just their web-interfaces
-* [prometheus](https://prometheus.io/) - For scraping all my metrics
-* [grafana](https://grafana.com/) - For visualising all my metrics
-* [jaeger](https://www.jaegertracing.io/) - For tracing my applications
-* [node-exporter](https://github.com/prometheus/node_exporter) - For monitoring the host environment and exporting stats as prometheus metrics
-* [helm](https://helm.sh/) - For installing non-trivial k8s applications, like the prometheus operator.
-* [minio](https://min.io/) - An S3 compatible API that sits in front of my NAS drive.
-* [postgres](https://www.postgresql.org/) - Relational SQL database
-* [firefly](https://www.firefly-iii.org/) - A personal finance manager
+* [longhorn](https://longhorn.io/) - Cloud native distributed block storage for Kubernetes.
+* [home-assistant](https://www.home-assistant.io/) - Open source home automation that puts local control and privacy first.
+* [pihole](https://pi-hole.net/) - A black hole for Internet advertisements.
+* [traefik](https://traefik.io/) - The Cloud Native Application Proxy.
+* [prometheus](https://prometheus.io/) - The Prometheus monitoring system and time series database.
+* [grafana](https://grafana.com/) - The open observability platform.
+* [jaeger](https://www.jaegertracing.io/) - Open source, end-to-end distributed tracing.
+* [node-exporter](https://github.com/prometheus/node_exporter) - Exporter for machine metrics.
+* [minio](https://min.io/) - High Performance, Kubernetes Native Object Storage.
+* [postgres](https://www.postgresql.org/) - The world's most advanced open source database.
+* [firefly](https://www.firefly-iii.org/) - A free and open source personal finances manager.
 
 ## Prometheus exporters
 
@@ -58,7 +58,7 @@ I've implemented several custom prometheus exporters in this repo that power my 
 * `weather` - Exports current weather data as prometheus metrics
 * `worldping` - Exports world ping times for the local host as prometheus metrics
 * `home-assistant` - Proxies prometheus metrics from a home-assistant server.
-* `synology` - Exports statistics from my [Synology DS115j](https://www.amazon.co.uk/Synology-DS115j-1TB-Desktop-Unit/dp/B00O8LLQBY) NAS.
+* `synology` - Exports statistics from my NAS drive.
 
 ## Other tools
 
@@ -66,6 +66,7 @@ Here are other tools I've implemented for use in the cluster.
 
 * `bucket-object-cleaner` - Deletes objects in a blob bucket older than a configured age.
 * `grafana-backup` - Copies all dashboards and data sources from grafana and writes them to a MinIO bucket.
+* [db-backup](https://github.com/davidsbond/db-backup) - A backup utility for databases.
 
 ## External services
 
@@ -90,6 +91,8 @@ the master node upgrades.
 * 4 [Raspberry Pi 4b](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) (8GB RAM)
 * Kubernetes via [k3s](https://k3s.io/)
 * [Zebra Bramble Cluster Case](https://www.c4labs.com/product/zebra-bramble-case-raspberry-pi-3-b-color-and-stack-options/) from [C4 Labs](https://www.c4labs.com/)
+* 4 [SanDisk Ultra 32 GB microSDHC](https://www.amazon.co.uk/gp/product/B073JWXGNT) Memory Cards
+* [Synology DS115j](https://www.amazon.co.uk/Synology-DS115j-1TB-Desktop-Unit/dp/B00O8LLQBY) NAS drive.
 
 ![Cluster](img/cluster.jpg)
 
