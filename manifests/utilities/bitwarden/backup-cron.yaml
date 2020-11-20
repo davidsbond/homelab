@@ -5,7 +5,8 @@ metadata:
   labels:
     app: bitwarden-db-backup
 spec:
-  schedule: 0 * * * *
+  concurrencyPolicy: Replace
+  schedule: 30 * * * *
   jobTemplate:
     spec:
       template:

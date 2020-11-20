@@ -5,6 +5,7 @@ metadata:
   labels:
     app: pihole-ftl-db-backup
 spec:
+  concurrencyPolicy: Replace
   schedule: 0 * * * *
   jobTemplate:
     spec:

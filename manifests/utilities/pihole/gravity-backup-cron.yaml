@@ -5,7 +5,8 @@ metadata:
   labels:
     app: pihole-gravity-db-backup
 spec:
-  schedule: 0 * * * *
+  concurrencyPolicy: Replace
+  schedule: 15 * * * *
   jobTemplate:
     spec:
       template:
