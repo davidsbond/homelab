@@ -14,7 +14,7 @@ spec:
         app: postgres
     spec:
       containers:
-      - image: postgres:latest
+      - image: postgres:alpine
         name: postgres
         env:
         - name: POSTGRES_DB
@@ -29,6 +29,8 @@ spec:
             secretKeyRef:
               key: postgres.password
               name: postgres
+        - name: PGDATA
+          value: /postgres/data
         livenessProbe:
           exec:
             command:
@@ -51,7 +53,7 @@ spec:
           timeoutSeconds: 1
         volumeMounts:
         - name: postgres
-          mountPath: /var/lib/postgresql/data
+          mountPath: /postgres
       volumes:
       - name: postgres
         persistentVolumeClaim:
