@@ -19,11 +19,16 @@ install-tools:
 	go install \
 		github.com/golangci/golangci-lint/cmd/golangci-lint \
 		mvdan.cc/gofumpt/gofumports \
-		github.com/sebdah/markdown-toc
+		github.com/sebdah/markdown-toc \
+		github.com/instrumenta/kubeval
 
 # Lints go source code
-lint:
+go-lint:
 	golangci-lint run --enable-all
+
+# Lints k8s manifests
+k8s-lint:
+	./scripts/k8s_lint.sh
 
 # Generates go source code
 generate:

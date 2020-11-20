@@ -7,6 +7,7 @@ require (
 	github.com/golangci/golangci-lint v1.32.2
 	github.com/gorilla/mux v1.8.0
 	github.com/grafana-tools/sdk v0.0.0-20201025204618-ad428f9e2b02
+	github.com/instrumenta/kubeval v0.0.0-20201118090229-529b532b1ea1
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/prometheus/client_golang v1.8.0
 	github.com/sebdah/markdown-toc v0.0.0-20171116085747-3bb461875c34

@@ -1,0 +1,12 @@
+site_name: Kubeval
+theme:
+  name: "material"
+repo_url: https://github.com/instrumenta/kubeval
+nav:
+    - "Usage": "index.md"
+    - "Installation": "installation.md"
+    - "Go Library": "go.md"
+    - "Contrib": "contrib.md"
+markdown_extensions:
+    - codehilite
+google_analytics: ["UA-138875752-1", "kubeval.instrumenta.dev"]

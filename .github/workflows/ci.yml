@@ -1,0 +1,71 @@
+name: CI
+on:
+  push:
+jobs:
+  # Job that runs gofumports on all go source files. Will fail if any formatting changes
+  # have not been committed.
+  go-format:
+    runs-on: ubuntu-latest
+    container: "golang:1.15"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Install tools
+        run: make install-tools
+      - name: Format
+        run: make format
+      - name: Check for changes
+        run: make has-changes
+
+  # Job that runs golangci-lint on all go source files. Will fail on any linting
+  # errors.
+  go-lint:
+    runs-on: ubuntu-latest
+    container: "golang:1.15"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Install tools
+        run: make install-tools
+      - name: Run linters
+        run: make go-lint
+
+  # Job that runs kubeval on all k8s manifests. Will fail on any linting
+  # errors.
+  k8s-lint:
+    runs-on: ubuntu-latest
+    container: "golang:1.15"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Install tools
+        run: make install-tools
+      - name: Run linters
+        run: make k8s-lint
+
+  # Job that ensures all dependencies are added to the go.mod and go.sum files
+  go-mod:
+    runs-on: ubuntu-latest
+    container: "golang:1.15"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Tidy
+        run: make modules
+      - name: Check for changes
+        run: make has-changes
+
+  # Job that runs any code generation specified using go:generate commands. Will fail
+  # if any changes from generation have not been committed.
+  go-generate:
+    runs-on: ubuntu-latest
+    container: "golang:1.15"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Install tools
+        run: make install-tools
+      - name: Generate files
+        run: make generate
+      - name: Check for changes
+        run: make has-changes

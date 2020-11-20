@@ -58,8 +58,6 @@ github.com/aws/aws-sdk-go/service/sts/stsiface
 github.com/beorn7/perks/quantile
 # github.com/bombsimon/wsl/v3 v3.1.0
 github.com/bombsimon/wsl/v3
-# github.com/cenkalti/backoff v2.2.1+incompatible
-github.com/cenkalti/backoff
 # github.com/cespare/xxhash/v2 v2.1.1
 github.com/cespare/xxhash/v2
 # github.com/cpuguy83/go-md2man/v2 v2.0.0
@@ -229,6 +227,10 @@ github.com/grpc-ecosystem/go-grpc-middleware/util/metautils
 github.com/grpc-ecosystem/go-grpc-middleware/validator
 # github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 github.com/grpc-ecosystem/go-grpc-prometheus
+# github.com/hashicorp/errwrap v1.0.0
+github.com/hashicorp/errwrap
+# github.com/hashicorp/go-multierror v1.1.0
+github.com/hashicorp/go-multierror
 # github.com/hashicorp/hcl v1.0.0
 github.com/hashicorp/hcl
 github.com/hashicorp/hcl/hcl/ast
@@ -242,6 +244,11 @@ github.com/hashicorp/hcl/json/scanner
 github.com/hashicorp/hcl/json/token
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
+# github.com/instrumenta/kubeval v0.0.0-20201118090229-529b532b1ea1
+## explicit
+github.com/instrumenta/kubeval
+github.com/instrumenta/kubeval/kubeval
+github.com/instrumenta/kubeval/log
 # github.com/jingyugao/rowserrcheck v0.0.0-20191204022205-72ab7603b68a
 github.com/jingyugao/rowserrcheck/passes/rowserr
 # github.com/jirfag/go-printf-func-name v0.0.0-20191110105641-45db9963cdd3
@@ -419,6 +426,12 @@ github.com/unrolled/secure
 github.com/urfave/cli/v2
 # github.com/uudashr/gocognit v1.0.1
 github.com/uudashr/gocognit
+# github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f
+github.com/xeipuuv/gojsonpointer
+# github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415
+github.com/xeipuuv/gojsonreference
+# github.com/xeipuuv/gojsonschema v1.2.0
+github.com/xeipuuv/gojsonschema
 # go.opencensus.io v0.22.5
 go.opencensus.io
 go.opencensus.io/internal
@@ -685,8 +698,6 @@ mvdan.cc/unparam/check
 ## explicit
 pkg.dsb.dev/app
 pkg.dsb.dev/closers
-pkg.dsb.dev/cmd/pkg-build
-pkg.dsb.dev/cron
 pkg.dsb.dev/distance
 pkg.dsb.dev/environment
 pkg.dsb.dev/flag
@@ -698,9 +709,10 @@ pkg.dsb.dev/monitoring
 pkg.dsb.dev/multierror
 pkg.dsb.dev/period
 pkg.dsb.dev/requestid
-pkg.dsb.dev/retry
 pkg.dsb.dev/server
 pkg.dsb.dev/storage/blob
 pkg.dsb.dev/tracing
 pkg.dsb.dev/transport
 pkg.dsb.dev/transport/v1
+# sigs.k8s.io/yaml v1.1.0
+sigs.k8s.io/yaml
