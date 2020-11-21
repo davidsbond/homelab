@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: photoprism
+spec:
+  rules:
+  - host: photos.homelab
+    http:
+      paths:
+      - backend:
+          serviceName: photoprism
+          servicePort: 2342
+        path: /

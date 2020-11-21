@@ -1,0 +1,61 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: photoprism-db-backup
+  labels:
+    app: photoprism-db-backup
+spec:
+  concurrencyPolicy: Replace
+  schedule: 0 * * * *
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - topologyKey: kubernetes.io/hostname
+                  labelSelector:
+                    matchExpressions:
+                      - key: app
+                        operator: In
+                        values:
+                          - photoprism
+          imagePullSecrets:
+            - name: registry
+          containers:
+            - image: ghcr.io/davidsbond/db-backup:latest
+              name: db-backup
+              env:
+                - name: BUCKET_DSN
+                  value: s3://databases?endpoint=minio.storage.svc.cluster.local:9000&region=none&s3ForcePathStyle=true&disableSSL=true
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      key: minio.access_key
+                      name: minio
+                - name: AWS_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: minio.secret_key
+                      name: minio
+                - name: TRACER_DISABLED
+                  value: 'true'
+                - name: BUCKET_DIR
+                  value: photoprism
+                - name: DB_DSN
+                  value: sqlite://data/index.db
+              volumeMounts:
+                - mountPath: /data
+                  subPath: storage
+                  name: photoprism
+              readinessProbe:
+                httpGet:
+                  path: /__/health
+                  port: 8081
+                initialDelaySeconds: 5
+          volumes:
+            - name: photoprism
+              persistentVolumeClaim:
+                claimName: photoprism
+          restartPolicy: OnFailure
