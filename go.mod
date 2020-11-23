@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/go-ping/ping v0.0.0-20201008161548-5f9dc3248bce
-	github.com/golangci/golangci-lint v1.32.2
+	github.com/golangci/golangci-lint v1.33.0
 	github.com/gorilla/mux v1.8.0
 	github.com/grafana-tools/sdk v0.0.0-20201025204618-ad428f9e2b02
 	github.com/instrumenta/kubeval v0.0.0-20201118090229-529b532b1ea1

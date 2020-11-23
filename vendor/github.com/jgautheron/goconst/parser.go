@@ -14,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -25,7 +26,9 @@ type Parser struct {
 	// Meant to be passed via New()
 	path, ignore               string
 	ignoreTests, matchConstant bool
-	minLength                  int
+	minLength, minOccurrences  int
+	numberMin, numberMax       int
+	excludeTypes               map[Type]bool
 
 	supportedTokens []token.Token
 
@@ -36,7 +39,7 @@ type Parser struct {
 
 // New creates a new instance of the parser.
 // This is your entry point if you'd like to use goconst as an API.
-func New(path, ignore string, ignoreTests, matchConstant, numbers bool, minLength int) *Parser {
+func New(path, ignore string, ignoreTests, matchConstant, numbers bool, numberMin, numberMax, minLength, minOccurrences int, excludeTypes map[Type]bool) *Parser {
 	supportedTokens := []token.Token{token.STRING}
 	if numbers {
 		supportedTokens = append(supportedTokens, token.INT, token.FLOAT)
@@ -48,7 +51,11 @@ func New(path, ignore string, ignoreTests, matchConstant, numbers bool, minLengt
 		ignoreTests:     ignoreTests,
 		matchConstant:   matchConstant,
 		minLength:       minLength,
+		minOccurrences:  minOccurrences,
+		numberMin:       numberMin,
+		numberMax:       numberMax,
 		supportedTokens: supportedTokens,
+		excludeTypes:    excludeTypes,
 
 		// Initialize the maps
 		strs:   Strings{},
@@ -77,7 +84,30 @@ func (p *Parser) ParseTree() (Strings, Constants, error) {
 	} else {
 		p.parseDir(p.path)
 	}
+
+	p.ProcessResults()
+
 	return p.strs, p.consts, nil
+}
+
+// ProcessResults post-processes the raw results.
+func (p *Parser) ProcessResults() {
+	for str, item := range p.strs {
+		// Filter out items whose occurrences don't match the min value
+		if len(item) < p.minOccurrences {
+			delete(p.strs, str)
+		}
+
+		// If the value is a number
+		if i, err := strconv.Atoi(str); err == nil {
+			if p.numberMin != 0 && i < p.numberMin {
+				delete(p.strs, str)
+			}
+			if p.numberMax != 0 && i > p.numberMax {
+				delete(p.strs, str)
+			}
+		}
+	}
 }
 
 func (p *Parser) parseDir(dir string) error {
@@ -135,54 +165,12 @@ type ExtendedPos struct {
 	packageName string
 }
 
-type Issue struct {
-	Pos             token.Position
-	OccurencesCount int
-	Str             string
-	MatchingConst   string
-}
+type Type int
 
-type Config struct {
-	MatchWithConstants bool
-	MinStringLength    int
-	MinOccurrences     int
-}
-
-func Run(files []*ast.File, fset *token.FileSet, cfg *Config) ([]Issue, error) {
-	p := New("", "", false, cfg.MatchWithConstants, false, cfg.MinStringLength)
-	var issues []Issue
-	for _, f := range files {
-		ast.Walk(&treeVisitor{
-			fileSet:     fset,
-			packageName: "",
-			fileName:    "",
-			p:           p,
-		}, f)
-	}
-
-	for str, item := range p.strs {
-		// Filter out items whose occurrences don't match the min value
-		if len(item) < cfg.MinOccurrences {
-			delete(p.strs, str)
-		}
-	}
-
-	for str, item := range p.strs {
-		fi := item[0]
-		i := Issue{
-			Pos:             fi.Position,
-			OccurencesCount: len(item),
-			Str:             str,
-		}
-
-		if len(p.consts) != 0 {
-			if cst, ok := p.consts[str]; ok {
-				// const should be in the same package and exported
-				i.MatchingConst = cst.Name
-			}
-		}
-		issues = append(issues, i)
-	}
-
-	return issues, nil
-}
+const (
+	Assignment Type = iota
+	Binary
+	Case
+	Return
+	Call
+)

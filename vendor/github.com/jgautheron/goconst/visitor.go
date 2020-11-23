@@ -3,6 +3,7 @@ package goconst
 import (
 	"go/ast"
 	"go/token"
+	"strconv"
 	"strings"
 )
 
@@ -56,7 +57,7 @@ func (v *treeVisitor) Visit(node ast.Node) ast.Visitor {
 				continue
 			}
 
-			v.addString(lit.Value, rhs.(*ast.BasicLit).Pos())
+			v.addString(lit.Value, rhs.(*ast.BasicLit).Pos(), Assignment)
 		}
 
 	// if foo == "moo"
@@ -70,12 +71,12 @@ func (v *treeVisitor) Visit(node ast.Node) ast.Visitor {
 
 		lit, ok = t.X.(*ast.BasicLit)
 		if ok && v.isSupported(lit.Kind) {
-			v.addString(lit.Value, lit.Pos())
+			v.addString(lit.Value, lit.Pos(), Binary)
 		}
 
 		lit, ok = t.Y.(*ast.BasicLit)
 		if ok && v.isSupported(lit.Kind) {
-			v.addString(lit.Value, lit.Pos())
+			v.addString(lit.Value, lit.Pos(), Binary)
 		}
 
 	// case "foo":
@@ -83,7 +84,7 @@ func (v *treeVisitor) Visit(node ast.Node) ast.Visitor {
 		for _, item := range t.List {
 			lit, ok := item.(*ast.BasicLit)
 			if ok && v.isSupported(lit.Kind) {
-				v.addString(lit.Value, lit.Pos())
+				v.addString(lit.Value, lit.Pos(), Case)
 			}
 		}
 
@@ -92,7 +93,16 @@ func (v *treeVisitor) Visit(node ast.Node) ast.Visitor {
 		for _, item := range t.Results {
 			lit, ok := item.(*ast.BasicLit)
 			if ok && v.isSupported(lit.Kind) {
-				v.addString(lit.Value, lit.Pos())
+				v.addString(lit.Value, lit.Pos(), Return)
+			}
+		}
+
+	// fn("http://")
+	case *ast.CallExpr:
+		for _, item := range t.Args {
+			lit, ok := item.(*ast.BasicLit)
+			if ok && v.isSupported(lit.Kind) {
+				v.addString(lit.Value, lit.Pos(), Call)
 			}
 		}
 	}
@@ -101,8 +111,15 @@ func (v *treeVisitor) Visit(node ast.Node) ast.Visitor {
 }
 
 // addString adds a string in the map along with its position in the tree.
-func (v *treeVisitor) addString(str string, pos token.Pos) {
-	str = strings.Replace(str, `"`, "", 2)
+func (v *treeVisitor) addString(str string, pos token.Pos, typ Type) {
+	ok, excluded := v.p.excludeTypes[typ]
+	if ok && excluded {
+		return
+	}
+	// Drop quotes if any
+	if strings.HasPrefix(str, `"`) || strings.HasPrefix(str, "`") {
+		str, _ = strconv.Unquote(str)
+	}
 
 	// Ignore empty strings
 	if len(str) == 0 {
@@ -113,7 +130,7 @@ func (v *treeVisitor) addString(str string, pos token.Pos) {
 		return
 	}
 
-	_, ok := v.p.strs[str]
+	_, ok = v.p.strs[str]
 	if !ok {
 		v.p.strs[str] = make([]ExtendedPos, 0)
 	}

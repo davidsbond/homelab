@@ -144,14 +144,12 @@ github.com/golangci/errcheck/golangci
 github.com/golangci/errcheck/internal/errcheck
 # github.com/golangci/go-misc v0.0.0-20180628070357-927a3d87b613
 github.com/golangci/go-misc/deadcode
-# github.com/golangci/goconst v0.0.0-20180610141641-041c5f2b40f3
-github.com/golangci/goconst
 # github.com/golangci/gocyclo v0.0.0-20180528144436-0a533e8fa43d
 github.com/golangci/gocyclo/pkg/gocyclo
 # github.com/golangci/gofmt v0.0.0-20190930125516-244bba706f1a
 github.com/golangci/gofmt/gofmt
 github.com/golangci/gofmt/goimports
-# github.com/golangci/golangci-lint v1.32.2
+# github.com/golangci/golangci-lint v1.33.0
 ## explicit
 github.com/golangci/golangci-lint/cmd/golangci-lint
 github.com/golangci/golangci-lint/internal/cache
@@ -249,6 +247,8 @@ github.com/inconshreveable/mousetrap
 github.com/instrumenta/kubeval
 github.com/instrumenta/kubeval/kubeval
 github.com/instrumenta/kubeval/log
+# github.com/jgautheron/goconst v0.0.0-20201117150253-ccae5bf973f3
+github.com/jgautheron/goconst
 # github.com/jingyugao/rowserrcheck v0.0.0-20191204022205-72ab7603b68a
 github.com/jingyugao/rowserrcheck/passes/rowserr
 # github.com/jirfag/go-printf-func-name v0.0.0-20191110105641-45db9963cdd3
@@ -258,7 +258,9 @@ github.com/jmespath/go-jmespath
 # github.com/kisielk/gotool v1.0.0
 github.com/kisielk/gotool
 github.com/kisielk/gotool/internal/load
-# github.com/kyoh86/exportloopref v0.1.7
+# github.com/kunwardeep/paralleltest v1.0.2
+github.com/kunwardeep/paralleltest/pkg/paralleltest
+# github.com/kyoh86/exportloopref v0.1.8
 github.com/kyoh86/exportloopref
 # github.com/leodido/go-urn v1.2.0
 github.com/leodido/go-urn
@@ -391,7 +393,7 @@ github.com/stretchr/testify/mock
 github.com/subosito/gotenv
 # github.com/tdakkota/asciicheck v0.0.0-20200416190851-d7f85be797a2
 github.com/tdakkota/asciicheck
-# github.com/tetafro/godot v0.4.9
+# github.com/tetafro/godot v1.3.0
 github.com/tetafro/godot
 # github.com/timakin/bodyclose v0.0.0-20190930140734-f7f2e9bca95e
 github.com/timakin/bodyclose/passes/bodyclose
