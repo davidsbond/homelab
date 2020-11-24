@@ -1,12 +1,12 @@
-backup-target:
-backup-target-credential-secret:
+backup-target: s3://volumes@none/
+backup-target-credential-secret: minio
 create-default-disk-labeled-nodes:
-default-data-path:
+default-data-path: /media/usb
 replica-soft-anti-affinity:
 storage-over-provisioning-percentage:
 storage-minimal-available-percentage:
 upgrade-checker:
-default-replica-count:
+default-replica-count: 2
 guaranteed-engine-cpu:
 default-longhorn-static-storage-class:
 backupstore-poll-interval:

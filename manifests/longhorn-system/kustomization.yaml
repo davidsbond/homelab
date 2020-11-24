@@ -10,3 +10,11 @@ configMapGenerator:
   - name: longhorn
     files:
       - config/longhorn/default-setting.yaml
+
+secretGenerator:
+  - name: minio
+    envs:
+    - secrets/minio
+
+generatorOptions:
+  disableNameSuffixHash: true
