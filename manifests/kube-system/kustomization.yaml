@@ -5,6 +5,7 @@ namespace: kube-system
 resources:
   - system-upgrade-controller
   - traefik
+  - cert-manager
 
 configMapGenerator:
   - name: traefik
