@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: photoprism
+  labels:
+    app: photoprism
+spec:
+  selector:
+    matchLabels:
+      app: photoprism
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: photoprism
+    spec:
+      containers:
+        - image: photoprism/photoprism-arm64:latest
+          name: photoprism
+          readinessProbe:
+            tcpSocket:
+              port: 2342
+          env:
+            - name: PHOTOPRISM_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: admin.password
+                  name: photoprism
+            - name: PHOTOPRISM_SITE_URL
+              value: http://photos.homelab
+            - name: PHOTOPRISM_DATABASE_DRIVER
+              value: sqlite
+            - name: PHOTOPRISM_TENSORFLOW_OFF
+              value: "true"
+            - name: PHOTOPRISM_EXPERIMENTAL
+              value: "true"
+            - name: PHOTOPRISM_WORKERS
+              value: "4"
+          resources:
+            limits:
+              memory: 4Gi
+          volumeMounts:
+            - mountPath: /photoprism/storage
+              name: photoprism
+              subPath: storage
+            - mountPath: /photoprism/originals
+              name: photoprism
+              subPath: originals
+      volumes:
+        - name: photoprism
+          persistentVolumeClaim:
+            claimName: photoprism

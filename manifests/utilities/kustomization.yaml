@@ -8,6 +8,7 @@ resources:
 - pihole
 - bitwarden
 - firefly
+- photoprism
 
 configMapGenerator:
 - name: tracing
@@ -46,3 +47,6 @@ secretGenerator:
 - name: firefly
   envs:
   - secrets/firefly
+- name: photoprism
+  envs:
+  - secrets/photoprism
