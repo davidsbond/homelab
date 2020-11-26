@@ -46,6 +46,8 @@ Here's a list of third-party applications I'm using alongside my custom applicat
 * [minio](https://min.io/) - High Performance, Kubernetes Native Object Storage.
 * [postgres](https://www.postgresql.org/) - The world's most advanced open source database.
 * [firefly](https://www.firefly-iii.org/) - A free and open source personal finances manager.
+* [photoprism](https://photoprism.pro/features) - Personal Photo Management powered by Go and Google TensorFlow.
+* [cert-manager](https://cert-manager.io/) - x509 certificate management for Kubernetes.
 
 ## Prometheus exporters
 
@@ -76,6 +78,7 @@ These are devices/services that the cluster interacts with, without being direct
 * [Tailscale](https://tailscale.com/) VPN - Used to access the cluster from anywhere
 * [Synology](https://www.synology.com/) NAS - Used as the storage backend for minio, primarily used for volume backups
 * [Phillips Hue](https://www.philips-hue.com/en-gb) - Smart lighting, connected via home-assistant
+* [Cloudflare](https://www.cloudflare.com/) - DNS, used to access my applications under the `*.homelab.dsb.dev` domain.
 
 ## Cluster upgrades
 
@@ -92,6 +95,7 @@ the master node upgrades.
 * Kubernetes via [k3s](https://k3s.io/)
 * [Zebra Bramble Cluster Case](https://www.c4labs.com/product/zebra-bramble-case-raspberry-pi-3-b-color-and-stack-options/) from [C4 Labs](https://www.c4labs.com/)
 * 4 [SanDisk Ultra 32 GB microSDHC](https://www.amazon.co.uk/gp/product/B073JWXGNT) Memory Cards
+* 4 [SanDisk Ultra Fit 128 GB USB 3.1 Flash Drive](https://www.amazon.co.uk/gp/product/B07855LJ99) USB Drives
 * [Synology DS115j](https://www.amazon.co.uk/Synology-DS115j-1TB-Desktop-Unit/dp/B00O8LLQBY) NAS drive.
 
 ![Cluster](img/cluster.jpg)

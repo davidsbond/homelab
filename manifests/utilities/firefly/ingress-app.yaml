@@ -2,9 +2,15 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: firefly
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
 spec:
+  tls:
+  - hosts:
+    - firefly.homelab.dsb.dev
+    secretName: firefly-tls
   rules:
-  - host: firefly.homelab
+  - host: firefly.homelab.dsb.dev
     http:
       paths:
       - backend:

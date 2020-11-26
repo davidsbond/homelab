@@ -2,9 +2,15 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: home-assistant
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
 spec:
+  tls:
+  - hosts:
+    - homeassistant.homelab.dsb.dev
+    secretName: homeassistant-tls
   rules:
-  - host: homeassistant.homelab
+  - host: homeassistant.homelab.dsb.dev
     http:
       paths:
       - backend:

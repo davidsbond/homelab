@@ -2,13 +2,15 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: bitwarden
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
 spec:
   tls:
   - hosts:
-    - bitwarden.homelab
-    secretName: bitwarden
+    - bitwarden.homelab.dsb.dev
+    secretName: bitwarden-tls
   rules:
-  - host: bitwarden.homelab
+  - host: bitwarden.homelab.dsb.dev
     http:
       paths:
       - backend:

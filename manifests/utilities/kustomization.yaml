@@ -26,11 +26,6 @@ secretGenerator:
 - name: pihole
   envs:
   - secrets/pihole
-- name: bitwarden
-  type: kubernetes.io/tls
-  files:
-  - secrets/bitwarden/tls.crt
-  - secrets/bitwarden/tls.key
 - name: minio
   envs:
   - secrets/minio
