@@ -35,3 +35,11 @@ synology_dsm:
   - host: 192.168.1.69
     username: !secret synology_username
     password: !secret synology_password
+
+# Enable pihole integration
+pi_hole:
+  - host: pihole.homelab.dsb.dev:443
+    name: Pi-Hole
+    ssl: true
+    verify_ssl: true
+    api_key: !secret pihole_api_key
