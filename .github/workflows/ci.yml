@@ -13,7 +13,7 @@ jobs:
       - name: Install tools
         run: make install-tools
       - name: Format
-        run: make format
+        run: make go-format
       - name: Check for changes
         run: make has-changes
 
@@ -67,5 +67,21 @@ jobs:
         run: make install-tools
       - name: Generate files
         run: make generate
+      - name: Check for changes
+        run: make has-changes
+
+  # Job that runs terraform fmt on all terraform source files. Will fail if any formatting changes
+  # have not been committed.
+  tf-format:
+    runs-on: ubuntu-latest
+    container: "hashicorp/terraform"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+        # Image is based on alpine, but doesn't contain make, so we install it.
+      - name: Install make
+        run: apk add make
+      - name: Format
+        run: make tf-format
       - name: Check for changes
         run: make has-changes

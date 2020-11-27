@@ -6,7 +6,7 @@ modules:
 	go mod vendor
 
 # Formats all go source code
-format:
+go-format:
 	grep -L -R "Code generated .* DO NOT EDIT" --exclude-dir=.git --exclude-dir=vendor --include="*.go" | \
 	xargs -n 1 gofumports -w -local github.com/davidsbond/homelab
 
@@ -20,7 +20,8 @@ install-tools:
 		github.com/golangci/golangci-lint/cmd/golangci-lint \
 		mvdan.cc/gofumpt/gofumports \
 		github.com/sebdah/markdown-toc \
-		github.com/instrumenta/kubeval
+		github.com/instrumenta/kubeval \
+		github.com/uw-labs/strongbox
 
 # Lints go source code
 go-lint:
@@ -29,6 +30,10 @@ go-lint:
 # Lints k8s manifests
 k8s-lint:
 	./scripts/k8s_lint.sh
+
+# Formats all terraform files
+tf-format:
+	terraform fmt -recursive terraform
 
 # Generates go source code
 generate:

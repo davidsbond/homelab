@@ -1,0 +1,2 @@
+.tfvars filter=strongbox diff=strongbox
+terraform.tfstate* filter=strongbox diff=strongbox
