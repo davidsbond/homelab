@@ -21,3 +21,17 @@ logbook:
 
 # Enable mobile app
 mobile_app:
+
+# Enable system health
+system_health:
+
+# Enable spotify integration
+spotify:
+  client_id: !secret spotify_client_id
+  client_secret: !secret spotify_client_secret
+
+# Enable synology DSM integration
+synology_dsm:
+  - host: 192.168.1.69
+    username: !secret synology_username
+    password: !secret synology_password
