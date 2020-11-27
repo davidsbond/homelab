@@ -2,9 +2,15 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: pihole
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
 spec:
+  tls:
+  - hosts:
+    - pihole.homelab.dsb.dev
+    secretName: pihole-tls
   rules:
-  - host: pihole.homelab
+  - host: pihole.homelab.dsb.dev
     http:
       paths:
       - backend:

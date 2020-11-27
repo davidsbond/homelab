@@ -2,9 +2,15 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: photoprism
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
 spec:
+  tls:
+  - hosts:
+    - photoprism.homelab.dsb.dev
+    secretName: photoprism-tls
   rules:
-  - host: photos.homelab
+  - host: photoprism.homelab.dsb.dev
     http:
       paths:
       - backend:

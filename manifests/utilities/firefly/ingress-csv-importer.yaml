@@ -2,9 +2,15 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: firefly-csv-importer
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
 spec:
+  tls:
+  - hosts:
+    - firefly-csv-importer.homelab.dsb.dev
+    secretName: firefly-importer-tls
   rules:
-  - host: firefly-csv-importer.homelab
+  - host: firefly-csv-importer.homelab.dsb.dev
     http:
       paths:
       - backend:

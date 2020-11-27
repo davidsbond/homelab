@@ -2,13 +2,18 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: longhorn
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
 spec:
+  tls:
+  - hosts:
+      - longhorn.homelab.dsb.dev
+    secretName: longhorn-tls
   rules:
-  - host: longhorn.homelab
+  - host: longhorn.homelab.dsb.dev
     http:
       paths:
       - backend:
           serviceName: longhorn-frontend
           servicePort: 80
         path: /
-

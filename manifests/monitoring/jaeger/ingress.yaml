@@ -2,13 +2,18 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: jaeger
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
 spec:
+  tls:
+  - hosts:
+    - jaeger.homelab.dsb.dev
+    secretName: jaeger-tls
   rules:
-  - host: jaeger.homelab
+  - host: jaeger.homelab.dsb.dev
     http:
       paths:
       - backend:
           serviceName: jaeger
           servicePort: 16686
         path: /
-

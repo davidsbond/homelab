@@ -9,3 +9,4 @@ resources:
 - experimental
 - kube-system
 - longhorn-system
+- cert-manager

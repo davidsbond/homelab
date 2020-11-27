@@ -2,13 +2,18 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: minio
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
 spec:
+  tls:
+  - hosts:
+    - minio.homelab.dsb.dev
+    secretName: minio-tls
   rules:
-  - host: minio.homelab
+  - host: minio.homelab.dsb.dev
     http:
       paths:
       - backend:
           serviceName: minio
           servicePort: 9000
         path: /
-

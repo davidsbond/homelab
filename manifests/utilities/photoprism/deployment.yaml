@@ -29,7 +29,7 @@ spec:
                   key: admin.password
                   name: photoprism
             - name: PHOTOPRISM_SITE_URL
-              value: http://photos.homelab
+              value: https://photoprism.homelab.dsb.dev
             - name: PHOTOPRISM_DATABASE_DRIVER
               value: sqlite
             - name: PHOTOPRISM_TENSORFLOW_OFF

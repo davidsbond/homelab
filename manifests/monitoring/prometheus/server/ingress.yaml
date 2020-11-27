@@ -2,12 +2,18 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: prometheus
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
 spec:
+  tls:
+  - hosts:
+    - prometheus.homelab.dsb.dev
+    secretName: prometheus-tls
   rules:
-    - host: prometheus.homelab
-      http:
-        paths:
-          - backend:
-              serviceName: prometheus-server
-              servicePort: 80
-            path: /
+  - host: prometheus.homelab.dsb.dev
+    http:
+      paths:
+      - backend:
+          serviceName: prometheus-server
+          servicePort: 80
+        path: /
