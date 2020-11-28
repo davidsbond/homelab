@@ -247,6 +247,19 @@ github.com/inconshreveable/mousetrap
 github.com/instrumenta/kubeval
 github.com/instrumenta/kubeval/kubeval
 github.com/instrumenta/kubeval/log
+# github.com/jacobsa/crypto v0.0.0-20190317225127-9f44e2d11115
+## explicit
+github.com/jacobsa/crypto/cmac
+github.com/jacobsa/crypto/common
+github.com/jacobsa/crypto/siv
+# github.com/jacobsa/oglematchers v0.0.0-20150720000706-141901ea67cd
+## explicit
+# github.com/jacobsa/oglemock v0.0.0-20150831005832-e94d794d06ff
+## explicit
+# github.com/jacobsa/ogletest v0.0.0-20170503003838-80d50a735a11
+## explicit
+# github.com/jacobsa/reqtrace v0.0.0-20150505043853-245c9e0234cb
+## explicit
 # github.com/jgautheron/goconst v0.0.0-20201117150253-ccae5bf973f3
 github.com/jgautheron/goconst
 # github.com/jingyugao/rowserrcheck v0.0.0-20191204022205-72ab7603b68a
@@ -428,6 +441,9 @@ github.com/unrolled/secure
 github.com/urfave/cli/v2
 # github.com/uudashr/gocognit v1.0.1
 github.com/uudashr/gocognit
+# github.com/uw-labs/strongbox v0.3.1
+## explicit
+github.com/uw-labs/strongbox
 # github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f
 github.com/xeipuuv/gojsonpointer
 # github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415

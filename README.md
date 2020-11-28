@@ -10,26 +10,33 @@ Monorepo for my personal homelab. It contains applications and kubernetes manife
    1. [Other tools](#other-tools)
    1. [External services](#external-services)
    1. [Cluster upgrades](#cluster-upgrades)
+   1. [Managed infrastructure](#managed-infrastructure)
    1. [Environment](#environment)
 <!-- ToC end -->
 
 ## Getting started
 
-This assumes you have [go](https://golang.org/), [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl),
-[kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization) & [make](https://www.gnu.org/software/make/manual/make.html) 
-installed along with docker's [buildx](https://docs.docker.com/buildx/working-with-buildx/) plugin.
+This assumes you have the following tools:
+
+* [go](https://golang.org/)
+* [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl),
+* [kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization)
+* [make](https://www.gnu.org/software/make/manual/make.html) 
+* [buildx](https://docs.docker.com/buildx/working-with-buildx/)
+* [terraform](https://www.terraform.io/)
 
 * Clone the repository
-* Install golang tools using `make install-tools`
+* Install golang-based tools using `make install-tools`
 * Run `make` to build all binaries
 
 ## Project structure
 
-* `cmd` - Entry points to any bespoke applications
-* `internal` - Packages used throughout the application code
-* `manifests` - Kubernetes manifests to run all my homelab applications
+* `cmd` - Entry points to any bespoke applications.
+* `internal` - Packages used throughout the application code.
+* `manifests` - Kubernetes manifests to run all my homelab applications.
 * `scripts` - Bash scripts for working within the repository.
-* `vendor` - Vendored third-party code
+* `terraform` - Terraform files for managing infrastructure.
+* `vendor` - Vendored third-party code.
 
 ## Third party applications
 
@@ -88,6 +95,15 @@ directory. Each upgrade is stored in its own directory named using the desired v
 via kustomize jobs will be started by the controller that upgrade the master node, followed by the worker nodes. The upgrade only takes
 a few minutes and tools like `k9s` and `kubectl` will not be able to communicate with the cluster for a small amount of time while
 the master node upgrades.
+
+## Managed infrastructure
+
+Some aspects of the homelab are managed using Terraform. These include DNS records via CloudFlare. To plan and apply
+changes, use the `Makefile` in the [terraform](./terraform) directory. The `make plan` and `make apply` recipes will
+perform changes.
+
+Included in this repository is the terraform state. It is encrypted using strongbox, which is installed when using
+`make install-tools`.
 
 ## Environment
 
