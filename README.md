@@ -19,11 +19,13 @@ Monorepo for my personal homelab. It contains applications and kubernetes manife
 This assumes you have the following tools:
 
 * [go](https://golang.org/)
-* [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl),
+* [kubectl](https://kubernetes.io/docs/reference/kubectl/kubectl)
 * [kustomize](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/kustomization)
-* [make](https://www.gnu.org/software/make/manual/make.html) 
+* [make](https://www.gnu.org/software/make/manual/make.html)
 * [buildx](https://docs.docker.com/buildx/working-with-buildx/)
 * [terraform](https://www.terraform.io/)
+
+To start working:
 
 * Clone the repository
 * Install golang-based tools using `make install-tools`
