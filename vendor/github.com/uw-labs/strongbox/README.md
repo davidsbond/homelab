@@ -7,16 +7,19 @@ divergence from a typical git workflow.  Once installed, strongbox enables
 normal use of commands such as `git diff` etc. and all of the files that should
 be encrypted in the repository remain decrypted on your working copy.
 
-It supports use of different keys per directory if wanted.  It can cover as many
+It supports use of different keys per directory if wanted. It can cover as many
 or as few files as you wish based on
 [.gitattributes](https://www.git-scm.com/docs/gitattributes)
 
 ## Installation
 
-Assuming you have a working [Go](https://golang.org) installation, you can
+You can obtain a binary from https://github.com/uw-labs/strongbox/releases
+
+Alternatively, assuming you have a working [Go](https://golang.org) installation, you can
 install via `go get github.com/uw-labs/strongbox`
 
-Or you can obtain a binary from https://github.com/uw-labs/strongbox/releases
+Since the binary version is now included in the strongbox file header, you are
+recommended using a release version.
 
 ## Usage
 
@@ -87,6 +90,12 @@ Compare an entire branch (as it would appear on the remote) to master:
 ```
 git diff-index -p master
 ```
+
+### Empty diff due to header metadata
+
+Version 0.3.1 adds key-id metadata to the header. Modifying the header but not
+the plain-text will result in "empty diff". You can see the changes to the
+header only using this command: `git diff-index HEAD -p`
 
 ## Key rotation
 

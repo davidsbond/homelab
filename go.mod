@@ -17,7 +17,7 @@ require (
 	github.com/prometheus/client_golang v1.8.0
 	github.com/sebdah/markdown-toc v0.0.0-20171116085747-3bb461875c34
 	github.com/stretchr/testify v1.6.1
-	github.com/uw-labs/strongbox v0.2.0
+	github.com/uw-labs/strongbox v0.3.1
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
 	mvdan.cc/gofumpt v0.0.0-20201027171050-85d5401eb0f6
 	pkg.dsb.dev v1.5.0

@@ -441,7 +441,7 @@ github.com/unrolled/secure
 github.com/urfave/cli/v2
 # github.com/uudashr/gocognit v1.0.1
 github.com/uudashr/gocognit
-# github.com/uw-labs/strongbox v0.2.0
+# github.com/uw-labs/strongbox v0.3.1
 ## explicit
 github.com/uw-labs/strongbox
 # github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f
