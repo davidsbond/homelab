@@ -30,12 +30,11 @@ spec:
         volumeMounts:
         - name: pihole
           mountPath: /etc/pihole
-        - name: pihole-dnsmasq
+          subPath: pihole
+        - name: pihole
           mountPath: /etc/dnsmasq.d
+          subPath: dnsmasq
       volumes:
       - name: pihole
         persistentVolumeClaim:
           claimName: pihole
-      - name: pihole-dnsmasq
-        persistentVolumeClaim:
-          claimName: pihole-dnsmasq

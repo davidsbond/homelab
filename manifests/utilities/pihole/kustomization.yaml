@@ -4,8 +4,7 @@ kind: Kustomization
 resources:
 - deployment.yaml
 - service.yaml
-- persistentvolueclaim-dnsmasq.yaml
-- persistentvolumeclaim-data.yaml
+- persistentvolumeclaim.yaml
 - ingress.yaml
 - ftl-backup-cron.yaml
 - gravity-backup-cron.yaml

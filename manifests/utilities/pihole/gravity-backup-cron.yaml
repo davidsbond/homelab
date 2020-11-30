@@ -48,6 +48,7 @@ spec:
               volumeMounts:
                 - mountPath: /data
                   name: pihole
+                  subPath: pihole
               readinessProbe:
                 httpGet:
                   path: /__/health
