@@ -3,8 +3,12 @@ kind: Kustomization
 
 resources:
 - namespace.yaml
-- all
+- cainjector
+- cert-manager
+- controller
+- crd
 - issuers
+- webhook
 
 secretGenerator:
   - name: cloudflare
