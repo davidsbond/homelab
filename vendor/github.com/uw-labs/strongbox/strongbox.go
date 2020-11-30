@@ -22,22 +22,23 @@ import (
 	"github.com/jacobsa/crypto/siv"
 )
 
-const version = "v0.3.1"
+const version = "v0.2.0"
 
 var (
-	keyLoader     = keyPair
-	kr            keyRing
-	prefix        = []byte("# STRONGBOX ENCRYPTED RESOURCE ;")
-	defaultPrefix = "# STRONGBOX ENCRYPTED RESOURCE ; See https://github.com/uw-labs/strongbox\n# key-id: %s\n"
+	keyLoader       = keyPair
+	kr              keyRing
+	prefix          = []byte("# STRONGBOX ENCRYPTED RESOURCE ;")
+	v1DefaultPrefix = []byte("# STRONGBOX ENCRYPTED RESOURCE ; See https://github.com/uw-labs/strongbox\n")
+	v2DefaultPrefix = "# STRONGBOX ENCRYPTED RESOURCE ; See https://github.com/uw-labs/strongbox\n# key-id: %s\n# version: %s\n"
 
 	// Match lines *not* starting with `#`
 	// this should match ciphertext without the strongbox prefix
 	prefixStripRegex = regexp.MustCompile(`(?m)^[^#]+$`)
 
-	keyIDRegex = regexp.MustCompile(`key-id: (\w+)`)
+	keyIdRegex = regexp.MustCompile(`key-id: (\w+)`)
 
 	errKeyNotFound            = errors.New("key not found")
-	errKeyIDMissingFromHeader = errors.New("strongbox header doesn't contain key-id")
+	errKeyIdMissingFromHeader = errors.New("strongbox header doesn't contain key-id")
 
 	// flags
 	flagGitConfig = flag.Bool("git-config", false, "Configure git for strongbox use")
@@ -224,12 +225,12 @@ func clean(r io.Reader, w io.Writer, filename string) {
 		return
 	}
 	// File is plaintext and needs to be encrypted, get the key, fail on error
-	keyID, key, err := keyLoader(filename)
+	keyId, key, err := keyLoader(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	// encrypt the file, fail on error
-	out, err := encrypt(in, key, keyID)
+	out, err := encrypt(in, key, keyId)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -290,12 +291,12 @@ func smudge(r io.Reader, w io.Writer, filename string) {
 // keyFromHeader looks through the file content, trying to get key-id value,
 // and look up the key in the keyring
 func keyFromHeader(in []byte) ([]byte, error) {
-	match := keyIDRegex.FindStringSubmatch(string(in))
+	match := keyIdRegex.FindStringSubmatch(string(in))
 	if len(match) != 2 {
-		return []byte{}, errKeyIDMissingFromHeader
+		return []byte{}, errKeyIdMissingFromHeader
 	}
-	decodedKeyID, _ := decode([]byte(match[1]))
-	key, err := kr.Key(decodedKeyID)
+	decodedKeyId, _ := decode([]byte(match[1]))
+	key, err := kr.Key(decodedKeyId)
 	//log.Printf("DEBUG: found key %s %e", encode(key), err)
 	if err != nil {
 		return []byte{}, err
@@ -303,15 +304,22 @@ func keyFromHeader(in []byte) ([]byte, error) {
 	return key, nil
 }
 
-func encrypt(b []byte, key, keyID []byte) ([]byte, error) {
+func encrypt(b []byte, key, keyId []byte) ([]byte, error) {
 	b = compress(b)
 	out, err := siv.Encrypt(nil, key, b, nil)
 	if err != nil {
 		return nil, err
 	}
 	var buf []byte
-	p := fmt.Sprintf(defaultPrefix, encode(keyID))
-	buf = append(buf, []byte(p)...)
+	// decorate with v0.1 prefix
+	buf = append(buf, v1DefaultPrefix...)
+
+	// decoreate with v0.2 prefix
+	// args:
+	//   base64 keyId
+	//   version string
+	//v2p := fmt.Sprintf(v2DefaultPrefix, encode(keyId), version)
+	//buf = append(buf, []byte(v2p)...)
 
 	b64 := encode(out)
 	for len(b64) > 0 {
