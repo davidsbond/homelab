@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docker-registry
+  labels:
+    app: docker-registry
+spec:
+  selector:
+    matchLabels:
+      app: docker-registry
+  template:
+    metadata:
+      labels:
+        app: docker-registry
+    spec:
+      containers:
+      - name: docker-registry
+        image: registry:latest
+        env:
+          - name: REGISTRY_HTTP_SECRET
+            valueFrom:
+              secretKeyRef:
+                key: http.secret
+                name: docker-registry
+          - name: REGISTRY_STORAGE
+            value: s3
+          - name: REGISTRY_STORAGE_S3_KEYID
+            valueFrom:
+              secretKeyRef:
+                key: minio.access_key
+                name: minio
+          - name: REGISTRY_STORAGE_S3_SECRETKEY
+            valueFrom:
+              secretKeyRef:
+                key: minio.secret_key
+                name: minio
+          - name: REGISTRY_STORAGE_S3_REGION
+            value: none
+          - name: REGISTRY_STORAGE_S3_BUCKET
+            value: docker
+          - name: REGISTRY_STORAGE_S3_REGIONENDPOINT
+            value: minio.storage.svc.cluster.local:9000
+          - name: REGISTRY_STORAGE_S3_SECURE
+            value: "false"
+          - name: REGISTRY_STORAGE_S3_V4AUTH
+            value: "true"
+        readinessProbe:
+          tcpSocket:
+            port: 5000
+        resources:
+          limits:
+            memory: 1Gi
