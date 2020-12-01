@@ -7,6 +7,7 @@ resources:
 - minio
 - postgres
 - bucket-object-cleaner
+- docker-registry
 
 secretGenerator:
 - name: minio
@@ -19,3 +20,6 @@ secretGenerator:
   type: kubernetes.io/dockerconfigjson
   files:
   - .dockerconfigjson=secrets/registry
+- name: docker-registry
+  envs:
+  - secrets/docker-registry
