@@ -57,10 +57,6 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 5000
-        livenessProbe:
-          httpGet:
-            port: 8080
-            path: /debug/health
         resources:
           limits:
             memory: 1Gi
