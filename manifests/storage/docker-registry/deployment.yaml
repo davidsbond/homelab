@@ -12,6 +12,10 @@ spec:
     metadata:
       labels:
         app: docker-registry
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: /metrics
+        prometheus.io/port: '8080'
     spec:
       containers:
       - name: docker-registry
@@ -44,9 +48,19 @@ spec:
             value: "false"
           - name: REGISTRY_STORAGE_S3_V4AUTH
             value: "true"
+          - name: REGISTRY_HTTP_DEBUG_PROMETHEUS_ENABLED
+            value: "true"
+          - name: REGISTRY_HTTP_DEBUG_ADDR
+            value: :8080
+          - name: REGISTRY_HEALTH_STORAGEDRIVER_ENABLED
+            value: "true"
         readinessProbe:
           tcpSocket:
             port: 5000
+        livenessProbe:
+          httpGet:
+            port: 8080
+            path: /debug/health
         resources:
           limits:
             memory: 1Gi
