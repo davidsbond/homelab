@@ -5,6 +5,8 @@ metadata:
   labels:
     app: docker-registry
 spec:
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: docker-registry
@@ -26,37 +28,38 @@ spec:
               secretKeyRef:
                 key: http.secret
                 name: docker-registry
-          - name: REGISTRY_STORAGE
-            value: s3
-          - name: REGISTRY_STORAGE_S3_KEYID
-            valueFrom:
-              secretKeyRef:
-                key: minio.access_key
-                name: minio
-          - name: REGISTRY_STORAGE_S3_SECRETKEY
-            valueFrom:
-              secretKeyRef:
-                key: minio.secret_key
-                name: minio
-          - name: REGISTRY_STORAGE_S3_REGION
-            value: none
-          - name: REGISTRY_STORAGE_S3_BUCKET
-            value: docker
-          - name: REGISTRY_STORAGE_S3_REGIONENDPOINT
-            value: minio.storage.svc.cluster.local:9000
-          - name: REGISTRY_STORAGE_S3_SECURE
-            value: "false"
-          - name: REGISTRY_STORAGE_S3_V4AUTH
-            value: "true"
           - name: REGISTRY_HTTP_DEBUG_PROMETHEUS_ENABLED
             value: "true"
           - name: REGISTRY_HTTP_DEBUG_ADDR
             value: :8080
-          - name: REGISTRY_HEALTH_STORAGEDRIVER_ENABLED
-            value: "true"
+          - name: REGISTRY_AUTH
+            value: htpasswd
+          - name: REGISTRY_AUTH_HTPASSWD_PATH
+            value: /auth/htpasswd
+          - name: REGISTRY_AUTH_HTPASSWD_REALM
+            value: basic-realm
+          - name: REGISTRY_HTTP_ADDR
+            value: :5000
+          - name: REGISTRY_HTTP_HOST
+            value: https://registry.homelab.dsb.dev
+          - name: REGISTRY_HTTP_PREFIX
+            value: /
+        volumeMounts:
+          - mountPath: /auth/htpasswd
+            name: htpasswd
+            subPath: htpasswd
+          - mountPath: /var/lib/registry
+            name: images
         readinessProbe:
           tcpSocket:
             port: 5000
         resources:
           limits:
             memory: 1Gi
+      volumes:
+        - name: htpasswd
+          secret:
+            secretName: docker-registry
+        - name: images
+          persistentVolumeClaim:
+            claimName: docker-registry

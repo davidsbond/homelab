@@ -9,6 +9,11 @@ resources:
 - bucket-object-cleaner
 - docker-registry
 
+configMapGenerator:
+- name: docker-registry
+  files:
+  - config/docker-registry/garbage-collector.yaml
+
 secretGenerator:
 - name: minio
   envs:
@@ -22,4 +27,6 @@ secretGenerator:
   - .dockerconfigjson=secrets/registry
 - name: docker-registry
   envs:
-  - secrets/docker-registry
+  - secrets/docker-registry/env
+  files:
+  - secrets/docker-registry/htpasswd
