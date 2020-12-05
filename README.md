@@ -57,6 +57,8 @@ Here's a list of third-party applications I'm using alongside my custom applicat
 * [firefly](https://www.firefly-iii.org/) - A free and open source personal finances manager.
 * [photoprism](https://photoprism.pro/features) - Personal Photo Management powered by Go and Google TensorFlow.
 * [cert-manager](https://cert-manager.io/) - x509 certificate management for Kubernetes.
+* [docker-registry](https://docs.docker.com/registry/) - A stateless, highly scalable server side application that stores 
+  and lets you distribute Docker images
 
 ## Prometheus exporters
 
