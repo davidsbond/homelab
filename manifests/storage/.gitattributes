@@ -1,1 +1,2 @@
 secrets/* filter=strongbox diff=strongbox
+secrets/docker-registry/* filter=strongbox diff=strongbox

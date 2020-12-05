@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: registry
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
+spec:
+  tls:
+  - hosts:
+    - registry.homelab.dsb.dev
+    secretName: registry-tls
+  rules:
+  - host: registry.homelab.dsb.dev
+    http:
+      paths:
+      - backend:
+          serviceName: docker-registry
+          servicePort: 5000
+        path: /

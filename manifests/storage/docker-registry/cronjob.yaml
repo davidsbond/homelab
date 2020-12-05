@@ -1,0 +1,43 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: docker-registry-garbage-collector
+  labels:
+    app: docker-registry-garbage-collector
+spec:
+  schedule: 0 0 * * *
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - topologyKey: kubernetes.io/hostname
+                  labelSelector:
+                    matchExpressions:
+                      - key: app
+                        operator: In
+                        values:
+                          - docker-registry
+          containers:
+            - image: registry:latest
+              name: docker-registry-garbage-collector
+              command:
+                - bin/registry garbage-collect
+              args:
+                - /config.yaml
+              volumeMounts:
+                - mountPath: /var/lib/registry
+                  name: images
+                - mountPath: /config.yaml
+                  name: config
+                  subPath: garbage-collector.yaml
+          volumes:
+            - name: images
+              persistentVolumeClaim:
+                claimName: docker-registry
+            - name: config
+              configMap:
+                name: docker-registry
+          restartPolicy: OnFailure
