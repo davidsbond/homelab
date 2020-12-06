@@ -23,9 +23,8 @@ spec:
           containers:
             - image: registry:latest
               name: docker-registry-garbage-collector
-              command:
-                - bin/registry garbage-collect
               args:
+                - garbage-collect
                 - /config.yaml
               volumeMounts:
                 - mountPath: /var/lib/registry
