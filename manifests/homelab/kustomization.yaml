@@ -5,6 +5,7 @@ namespace: homelab
 resources:
 - namespace.yaml
 - prometheus-exporters
+- directory
 
 secretGenerator:
 - name: registry
@@ -19,3 +20,6 @@ configMapGenerator:
 - name: prometheus
   envs:
   - config/prometheus
+- name: directory
+  files:
+  - config/directory/config.yaml

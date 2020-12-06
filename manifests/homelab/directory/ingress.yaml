@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: directory
+  annotations:
+    cert-manager.io/cluster-issuer: cloudflare
+spec:
+  tls:
+  - hosts:
+    - homelab.dsb.dev
+    secretName: directory-tls
+  rules:
+  - host: homelab.dsb.dev
+    http:
+      paths:
+      - backend:
+          serviceName: directory
+          servicePort: 80
+        path: /

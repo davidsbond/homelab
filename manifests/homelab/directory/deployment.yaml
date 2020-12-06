@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: directory
+  labels:
+    app: directory
+spec:
+  selector:
+    matchLabels:
+      app: directory
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: /__/metrics
+        prometheus.io/port: '8081'
+      labels:
+        app: directory
+    spec:
+      imagePullSecrets:
+      - name: registry
+      containers:
+      - image: ghcr.io/davidsbond/homelab:latest
+        name: directory
+        command:
+        - /bin/directory
+        env:
+        - name: TRACER_DISABLED
+          value: "true"
+        - name: CONFIG_PATH
+          value: /directory/config.yaml
+        volumeMounts:
+          - mountPath: /directory/config.yaml
+            name: directory
+            subPath: config.yaml
+        readinessProbe:
+          httpGet:
+            path: /__/health
+            port: 8081
+          initialDelaySeconds: 5
+      volumes:
+        - name: directory
+          configMap:
+            name: directory
