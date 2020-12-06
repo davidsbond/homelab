@@ -24,7 +24,7 @@ require (
 	github.com/uw-labs/strongbox v0.2.0
 	github.com/zach-klippenstein/goregen v0.0.0-20160303162051-795b5e3961ea // indirect
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
-	gopkg.in/yaml.v2 v2.3.0
+	gopkg.in/yaml.v2 v2.4.0
 	mvdan.cc/gofumpt v0.0.0-20201027171050-85d5401eb0f6
 	pkg.dsb.dev v1.5.0
 )
