@@ -21,7 +21,8 @@ install-tools:
 		mvdan.cc/gofumpt/gofumports \
 		github.com/sebdah/markdown-toc \
 		github.com/instrumenta/kubeval \
-		github.com/uw-labs/strongbox
+		github.com/uw-labs/strongbox \
+		github.com/tmthrgd/go-bindata/go-bindata
 
 # Lints go source code
 go-lint:

@@ -1,0 +1,31 @@
+items:
+- name: Grafana
+  url: https://grafana.homelab.dsb.dev
+  description: Metric Visualisations
+- name: Jaeger
+  url: https://jaeger.homelab.dsb.dev
+  description: Distributed Tracing
+- name: Prometheus
+  url: https://prometheus.homelab.dsb.dev
+  description: Application Metrics
+- name: Bitwarden
+  url: https://bitwarden.homelab.dsb.dev
+  description: Password Manager
+- name: Home Assistant
+  url: https://homeassistant.homelab.dsb.dev
+  description: Home Automation
+- name: Longhorn
+  url: https://longhorn.homelab.dsb.dev
+  description: Storage Orchestration
+- name: Minio
+  url: https://minio.homelab.dsb.dev
+  description: Blob Storage
+- name: Photoprism
+  url: https://photoprism.homelab.dsb.dev
+  description: Photos & Videos
+- name: Firefly
+  url: https://firefly.homelab.dsb.dev
+  description: Finance Management
+- name: PiHole
+  url: https://pihole.homelab.dsb.dev/admin
+  description: DNS & Ad Blocking

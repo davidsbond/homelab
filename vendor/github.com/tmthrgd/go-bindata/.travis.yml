@@ -1,0 +1,23 @@
+language: go
+go:
+    - 1.10.x
+    - 1.11.x
+    - 1.12.x
+    - 1.13.x
+    - tip
+before_install:
+    - export GOROOT=$(go env GOROOT)
+before_script:
+    - PKGS=$(go list ./... | grep -v /vendor/)
+    - GO_FILES=$(find . -iname '*.go' -not \( -path '*/vendor/*' -prune \))
+    - go get -v github.com/client9/misspell/cmd/misspell
+script:
+    - test -z $(gofmt -s -l $GO_FILES)
+    - go vet $PKGS
+    - misspell -locale UK $GO_FILES README.md
+    - go test -v -race -randtests 1000 ./...
+    - ./corpus_test_travis.sh
+matrix:
+    fast_finish: true
+    allow_failures:
+        - go: tip

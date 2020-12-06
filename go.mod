@@ -3,8 +3,10 @@ module github.com/davidsbond/homelab
 go 1.15
 
 require (
+	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
 	github.com/go-ping/ping v0.0.0-20201008161548-5f9dc3248bce
 	github.com/golangci/golangci-lint v1.33.0
+	github.com/google/gxui v0.0.0-20151028112939-f85e0a97b3a4 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/grafana-tools/sdk v0.0.0-20201025204618-ad428f9e2b02
 	github.com/instrumenta/kubeval v0.0.0-20201118090229-529b532b1ea1
@@ -17,8 +19,12 @@ require (
 	github.com/prometheus/client_golang v1.8.0
 	github.com/sebdah/markdown-toc v0.0.0-20171116085747-3bb461875c34
 	github.com/stretchr/testify v1.6.1
+	github.com/tmthrgd/go-bindata v0.0.0-20190904063317-a4b65675e0fb
+	github.com/tmthrgd/go-rand v0.0.0-20190904060720-34764beea44d // indirect
 	github.com/uw-labs/strongbox v0.2.0
+	github.com/zach-klippenstein/goregen v0.0.0-20160303162051-795b5e3961ea // indirect
 	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
+	gopkg.in/yaml.v2 v2.3.0
 	mvdan.cc/gofumpt v0.0.0-20201027171050-85d5401eb0f6
 	pkg.dsb.dev v1.5.0
 )
