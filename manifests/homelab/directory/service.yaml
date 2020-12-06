@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: directory
+spec:
+  selector:
+    app: directory
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
