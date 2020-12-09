@@ -5,3 +5,8 @@ namespace: kube-system
 resources:
   - system-upgrade-controller
   - traefik
+
+secretGenerator:
+  - name: traefik
+    envs:
+    - secrets/traefik
