@@ -3,6 +3,8 @@ kind: Ingress
 metadata:
   name: minio
   annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.tls: "true"
     cert-manager.io/cluster-issuer: cloudflare
 spec:
   tls:
