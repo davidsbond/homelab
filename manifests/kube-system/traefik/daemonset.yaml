@@ -20,8 +20,14 @@ spec:
       serviceAccountName: traefik
       terminationGracePeriodSeconds: 60
       containers:
-      - image: traefik:v2.2
-        name: traefik-ingress-lb
+      - image: traefik:latest
+        name: traefik
+        env:
+          - name: PILOT_TOKEN
+            valueFrom:
+              secretKeyRef:
+                key: pilot.token
+                name: traefik
         ports:
         - name: http
           containerPort: 80
@@ -49,3 +55,4 @@ spec:
         - --entryPoints.metrics.address=:8082
         - --entrypoints.web.http.redirections.entryPoint.to=websecure
         - --entrypoints.web.http.redirections.entryPoint.scheme=https
+        - --pilot.token=$(PILOT_TOKEN)
