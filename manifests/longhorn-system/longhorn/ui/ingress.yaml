@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: longhorn
@@ -14,6 +14,9 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: longhorn-frontend
-          servicePort: 80
+          service:
+            name: longhorn-frontend
+            port:
+              number: 80
         path: /
+        pathType: Prefix

@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: jaeger
@@ -14,6 +14,9 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: jaeger
-          servicePort: 16686
+          service:
+            name: jaeger
+            port:
+              number: 16686
         path: /
+        pathType: Prefix

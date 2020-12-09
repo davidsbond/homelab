@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: home-assistant
@@ -13,8 +13,11 @@ spec:
   - host: homeassistant.homelab.dsb.dev
     http:
       paths:
-      - backend:
-          serviceName: home-assistant
-          servicePort: 8123
-        path: /
+        - backend:
+            service:
+              name: home-assistant
+              port:
+                number: 8123
+          path: /
+          pathType: Prefix
 

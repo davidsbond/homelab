@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: photoprism
@@ -14,6 +14,9 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: photoprism
-          servicePort: 2342
+          service:
+            name: photoprism
+            port:
+              number: 2342
         path: /
+        pathType: Prefix
