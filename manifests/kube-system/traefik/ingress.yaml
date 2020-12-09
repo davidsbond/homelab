@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: photoprism
+  name: traefik
   annotations:
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.tls: "true"
@@ -9,16 +9,16 @@ metadata:
 spec:
   tls:
   - hosts:
-    - photoprism.homelab.dsb.dev
-    secretName: photoprism-tls
+      - traefik.homelab.dsb.dev
+    secretName: traefik-tls
   rules:
-  - host: photoprism.homelab.dsb.dev
+  - host: traefik.homelab.dsb.dev
     http:
       paths:
       - backend:
           service:
-            name: photoprism
+            name: traefik
             port:
-              number: 2342
+              number: 8080
         path: /
         pathType: Prefix

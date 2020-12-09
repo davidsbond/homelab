@@ -1,14 +1,11 @@
-apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  labels:
-    app: traefik
   name: traefik
 rules:
   - apiGroups:
       - ""
     resources:
-      - pods
       - services
       - endpoints
       - secrets

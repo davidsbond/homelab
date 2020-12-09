@@ -29,3 +29,6 @@ items:
 - name: PiHole
   url: https://pihole.homelab.dsb.dev/admin
   description: DNS & Ad Blocking
+- name: Traefik
+  url: https://traefik.homelab.dsb.dev
+  description: Reverse Proxy Dasboard

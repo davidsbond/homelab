@@ -5,14 +5,3 @@ namespace: kube-system
 resources:
   - system-upgrade-controller
   - traefik
-
-configMapGenerator:
-  - name: traefik
-    files:
-      - config/traefik.toml
-
-secretGenerator:
-  - name: traefik
-    files:
-      - secrets/traefik/tls.crt
-      - secrets/traefik/tls.key
