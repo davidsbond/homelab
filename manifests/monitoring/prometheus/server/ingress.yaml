@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: prometheus
@@ -14,6 +14,9 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: prometheus-server
-          servicePort: 80
+          service:
+            name: prometheus-server
+            port:
+              number: 80
         path: /
+        pathType: Prefix

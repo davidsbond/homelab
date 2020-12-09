@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: pihole
@@ -14,7 +14,10 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: pihole
-          servicePort: 8000
+          service:
+            name: pihole
+            port:
+              number: 8000
         path: /
+        pathType: Prefix
 
