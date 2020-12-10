@@ -12,3 +12,9 @@ spec:
   - protocol: UDP
     name: traces
     port: 6831
+  - protocol: TCP
+    name: configs
+    port: 5778
+  - protocol: TCP
+    name: collector
+    port: 14268

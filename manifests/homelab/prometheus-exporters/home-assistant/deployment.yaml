@@ -30,16 +30,8 @@ spec:
         env:
         - name: HOME_ASSISTANT_URL
           value: http://home-assistant.utilities.svc.cluster.local:8123
-        - name: TRACER_HOST
-          valueFrom:
-            configMapKeyRef:
-              key: tracer.host
-              name: tracing
-        - name: HOME_ASSISTANT_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: home-assistant
-              key: home-assistant.token
+        - name: TRACER_DISABLED
+          value: "true"
         readinessProbe:
           httpGet:
             path: /__/health
