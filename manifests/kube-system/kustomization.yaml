@@ -10,3 +10,9 @@ secretGenerator:
   - name: traefik
     envs:
     - secrets/traefik
+
+configMapGenerator:
+  - name: traefik
+    files:
+    - config/traefik/traefik.yaml
+    - config/traefik/middleware.yaml
