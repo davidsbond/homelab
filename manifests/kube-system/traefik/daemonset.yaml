@@ -23,7 +23,7 @@ spec:
       - image: traefik:latest
         name: traefik
         env:
-          - name: PILOT_TOKEN
+          - name: TRAEFIK_PILOT_TOKEN
             valueFrom:
               secretKeyRef:
                 key: pilot.token
@@ -45,14 +45,15 @@ spec:
             add:
               - NET_BIND_SERVICE
         args:
-        - --api.insecure
-        - --api.dashboard
-        - --metrics.prometheus
-        - --metrics.prometheus.entryPoint=metrics
-        - --providers.kubernetesingress
-        - --entryPoints.web.address=:80
-        - --entryPoints.websecure.address=:443
-        - --entryPoints.metrics.address=:8082
-        - --entrypoints.web.http.redirections.entryPoint.to=websecure
-        - --entrypoints.web.http.redirections.entryPoint.scheme=https
-        - --pilot.token=$(PILOT_TOKEN)
+        - --configFile=/config/traefik.yaml
+        volumeMounts:
+          - mountPath: /config/traefik.yaml
+            name: traefik
+            subPath: traefik.yaml
+          - mountPath: /config/common/middleware.yaml
+            name: traefik
+            subPath: middleware.yaml
+      volumes:
+        - name: traefik
+          configMap:
+            name: traefik
