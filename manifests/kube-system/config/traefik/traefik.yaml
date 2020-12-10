@@ -12,17 +12,22 @@ providers:
   kubernetesIngress: {}
 
 entryPoints:
-  web:
+  http:
     address: :80
     http:
       redirections:
         entryPoint:
-          to: websecure
+          to: https
           scheme: https
-  websecure:
+  https:
     address: :443
     http:
       middlewares:
         - sslheader@file
   metrics:
+    address: :8081
+  ping:
     address: :8082
+
+ping:
+  entryPoint: ping

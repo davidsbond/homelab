@@ -15,7 +15,7 @@ spec:
       annotations:
         prometheus.io/scrape: 'true'
         prometheus.io/path: /metrics
-        prometheus.io/port: '8082'
+        prometheus.io/port: '8081'
     spec:
       serviceAccountName: traefik
       terminationGracePeriodSeconds: 60
@@ -53,6 +53,14 @@ spec:
           - mountPath: /config/common/middleware.yaml
             name: traefik
             subPath: middleware.yaml
+        livenessProbe:
+          httpGet:
+            port: 8082
+            path: /ping
+        readinessProbe:
+          httpGet:
+            port: 8082
+            path: /ping
       volumes:
         - name: traefik
           configMap:
