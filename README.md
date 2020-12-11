@@ -11,6 +11,7 @@ Monorepo for my personal homelab. It contains applications and kubernetes manife
    1. [External services](#external-services)
    1. [Cluster upgrades](#cluster-upgrades)
    1. [Managed infrastructure](#managed-infrastructure)
+      1. [Terraform Providers](#terraform-providers)
    1. [Environment](#environment)
 <!-- ToC end -->
 
@@ -106,8 +107,15 @@ Some aspects of the homelab are managed using Terraform. These include DNS recor
 changes, use the `Makefile` in the [terraform](./terraform) directory. The `make plan` and `make apply` recipes will
 perform changes.
 
-Included in this repository is the terraform state. It is encrypted using strongbox, which is installed when using
+The terraform state is included in this repository. It is encrypted using strongbox, which is installed when using
 `make install-tools`.
+
+### Terraform Providers
+
+This list contains all terraform providers used in the project:
+
+* [cloudflare](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs)
+* [minio](https://github.com/aminueza/terraform-provider-minio)
 
 ## Environment
 
