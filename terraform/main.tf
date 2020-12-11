@@ -5,3 +5,10 @@ module "cloudflare" {
   homelab_ip         = var.homelab_ip
   nas_ip             = var.nas_ip
 }
+
+module "minio" {
+  source           = "./minio"
+  minio_access_key = var.minio_access_key
+  minio_secret_key = var.minio_secret_key
+  minio_url        = var.minio_url
+}
