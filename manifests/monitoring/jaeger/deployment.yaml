@@ -32,6 +32,9 @@ spec:
           value: /badger
         - name: BADGER_DIRECTORY_KEY
           value: /badger/key
+        resources:
+          limits:
+            memory: 1Gi
         readinessProbe:
           httpGet:
             path: /

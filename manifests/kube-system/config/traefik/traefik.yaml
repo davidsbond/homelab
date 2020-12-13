@@ -32,8 +32,8 @@ entryPoints:
 ping:
   entryPoint: ping
 
-tracing:
-  jaeger:
-    collector:
-      endpoint: http://jaeger.monitoring.svc.cluster.local:14268/api/traces?format=jaeger.thrift
-    samplingServerURL: http://jaeger.monitoring.svc.cluster.local:5778/sampling
+#tracing:
+#  jaeger:
+#    collector:
+#      endpoint: http://jaeger.monitoring.svc.cluster.local:14268/api/traces?format=jaeger.thrift
+#    samplingServerURL: http://jaeger.monitoring.svc.cluster.local:5778/sampling
