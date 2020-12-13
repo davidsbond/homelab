@@ -8,6 +8,7 @@ resources:
 - postgres
 - bucket-object-cleaner
 - docker-registry
+- elasticsearch
 
 configMapGenerator:
 - name: docker-registry

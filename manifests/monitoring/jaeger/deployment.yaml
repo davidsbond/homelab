@@ -25,13 +25,9 @@ spec:
         name: jaeger
         env:
         - name: SPAN_STORAGE_TYPE
-          value: badger
-        - name: BADGER_EPHEMERAL
-          value: 'false'
-        - name: BADGER_DIRECTORY_VALUE
-          value: /badger
-        - name: BADGER_DIRECTORY_KEY
-          value: /badger/key
+          value: elasticsearch
+        - name: ES_SERVER_URLS
+          value: http://elasticsearch.storage.svc.cluster.local:9200
         resources:
           limits:
             memory: 1Gi
@@ -40,10 +36,3 @@ spec:
             path: /
             port: 16686
           initialDelaySeconds: 5
-        volumeMounts:
-        - mountPath: /badger
-          name: jaeger
-      volumes:
-      - name: jaeger
-        persistentVolumeClaim:
-          claimName: jaeger
