@@ -60,6 +60,7 @@ Here's a list of third-party applications I'm using alongside my custom applicat
 * [cert-manager](https://cert-manager.io/) - x509 certificate management for Kubernetes.
 * [docker-registry](https://docs.docker.com/registry/) - A stateless, highly scalable server side application that stores 
   and lets you distribute Docker images
+* [elasticsearch](https://www.elastic.co/) - A search engine based on the Lucene library
 
 ## Prometheus exporters
 
