@@ -15,6 +15,7 @@ require (
 	github.com/jacobsa/oglemock v0.0.0-20150831005832-e94d794d06ff // indirect
 	github.com/jacobsa/ogletest v0.0.0-20170503003838-80d50a735a11 // indirect
 	github.com/jacobsa/reqtrace v0.0.0-20150505043853-245c9e0234cb // indirect
+	github.com/olivere/elastic/v7 v7.0.22
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/prometheus/client_golang v1.8.0
 	github.com/sebdah/markdown-toc v0.0.0-20171116085747-3bb461875c34
