@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
 
+# This script iterates over each subdirectory in /cmd that contains a main.go file
+# and builds the binary. Each binary is placed within /bin. Compilation details are
+# linked in the binary via ldflags.
+
 DIR=$(pwd)
 BIN_DIR=${DIR}/bin
-
-# Application metadata
 APP_VERSION=$(git describe --tags --always)
-
 rm -rf "${BIN_DIR}"
 mkdir -p "${BIN_DIR}"
 
-# Iterates over each subdirectory in ~/cmd that contains a main.go file
-# and builds the binary. Each binary is placed within ~/bin.
 for dir in $(find "${DIR}"/cmd -name 'main.go' -print0 | xargs -0 -n1 dirname | sort | uniq); do
   APP_NAME=$(basename "${dir}")
   APP_DESCRIPTION=$(cat "${dir}"/DESCRIPTION)

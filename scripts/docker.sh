@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# This script is used to build the docker image that contains all bespoke applications ran
+# in the k3s cluster. If no go files have changed, nothing is done here.
+
 CHANGES=$(git diff --name-only HEAD HEAD~1 | grep .go)
 if [ -z "$CHANGES" ]
 then

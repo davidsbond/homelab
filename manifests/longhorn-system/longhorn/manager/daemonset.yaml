@@ -25,7 +25,6 @@ spec:
             privileged: true
           command:
             - longhorn-manager
-            - -d
             - daemon
             - --engine-image
             - longhornio/longhorn-engine:master
