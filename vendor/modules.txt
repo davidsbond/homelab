@@ -84,7 +84,7 @@ github.com/go-critic/go-critic/checkers
 github.com/go-critic/go-critic/checkers/internal/astwalk
 github.com/go-critic/go-critic/checkers/internal/lintutil
 github.com/go-critic/go-critic/framework/linter
-# github.com/go-ping/ping v0.0.0-20201008161548-5f9dc3248bce
+# github.com/go-ping/ping v0.0.0-20201115131931-3300c582a663
 ## explicit
 github.com/go-ping/ping
 # github.com/go-playground/locales v0.13.0
@@ -193,7 +193,7 @@ github.com/golangci/prealloc
 github.com/golangci/revgrep
 # github.com/golangci/unconvert v0.0.0-20180507085042-28b1c447d1f4
 github.com/golangci/unconvert
-# github.com/google/go-cmp v0.5.2
+# github.com/google/go-cmp v0.5.3
 github.com/google/go-cmp/cmp
 github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
@@ -217,7 +217,7 @@ github.com/gostaticanalysis/analysisutil
 # github.com/gostaticanalysis/comment v1.3.0
 github.com/gostaticanalysis/comment
 github.com/gostaticanalysis/comment/passes/commentmap
-# github.com/grafana-tools/sdk v0.0.0-20201025204618-ad428f9e2b02
+# github.com/grafana-tools/sdk v0.0.0-20201123153837-5fb28a7aa2ef
 ## explicit
 github.com/grafana-tools/sdk
 # github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
@@ -504,7 +504,7 @@ golang.org/x/mod/internal/lazyregexp
 golang.org/x/mod/modfile
 golang.org/x/mod/module
 golang.org/x/mod/semver
-# golang.org/x/net v0.0.0-20200904194848-62affa334b73
+# golang.org/x/net v0.0.0-20201021035429-f5854403a974
 golang.org/x/net/bpf
 golang.org/x/net/context
 golang.org/x/net/http/httpguts
@@ -518,7 +518,7 @@ golang.org/x/net/internal/timeseries
 golang.org/x/net/ipv4
 golang.org/x/net/ipv6
 golang.org/x/net/trace
-# golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
+# golang.org/x/sync v0.0.0-20201207232520-09787c993a3a
 ## explicit
 golang.org/x/sync/errgroup
 # golang.org/x/sys v0.0.0-20201101102859-da207088b7d1
@@ -532,7 +532,7 @@ golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
 golang.org/x/text/width
-# golang.org/x/tools v0.0.0-20201013201025-64a9e34f3752
+# golang.org/x/tools v0.0.0-20201121010211-780cb80bd7fb
 golang.org/x/tools/go/analysis
 golang.org/x/tools/go/analysis/passes/asmdecl
 golang.org/x/tools/go/analysis/passes/assign
@@ -709,7 +709,7 @@ honnef.co/go/tools/staticcheck
 honnef.co/go/tools/stylecheck
 honnef.co/go/tools/unused
 honnef.co/go/tools/version
-# mvdan.cc/gofumpt v0.0.0-20201027171050-85d5401eb0f6
+# mvdan.cc/gofumpt v0.0.0-20201129102820-5c11c50e9475
 ## explicit
 mvdan.cc/gofumpt/format
 mvdan.cc/gofumpt/gofumports

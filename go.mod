@@ -4,11 +4,11 @@ go 1.15
 
 require (
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
-	github.com/go-ping/ping v0.0.0-20201008161548-5f9dc3248bce
+	github.com/go-ping/ping v0.0.0-20201115131931-3300c582a663
 	github.com/golangci/golangci-lint v1.33.0
 	github.com/google/gxui v0.0.0-20151028112939-f85e0a97b3a4 // indirect
 	github.com/gorilla/mux v1.8.0
-	github.com/grafana-tools/sdk v0.0.0-20201025204618-ad428f9e2b02
+	github.com/grafana-tools/sdk v0.0.0-20201123153837-5fb28a7aa2ef
 	github.com/instrumenta/kubeval v0.0.0-20201118090229-529b532b1ea1
 	github.com/jacobsa/crypto v0.0.0-20190317225127-9f44e2d11115 // indirect
 	github.com/jacobsa/oglematchers v0.0.0-20150720000706-141901ea67cd // indirect
@@ -23,8 +23,8 @@ require (
 	github.com/tmthrgd/go-rand v0.0.0-20190904060720-34764beea44d // indirect
 	github.com/uw-labs/strongbox v0.2.0
 	github.com/zach-klippenstein/goregen v0.0.0-20160303162051-795b5e3961ea // indirect
-	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
+	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a
 	gopkg.in/yaml.v2 v2.4.0
-	mvdan.cc/gofumpt v0.0.0-20201027171050-85d5401eb0f6
+	mvdan.cc/gofumpt v0.0.0-20201129102820-5c11c50e9475
 	pkg.dsb.dev v1.5.0
 )
