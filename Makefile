@@ -55,3 +55,6 @@ docker:
 
 pack:
 	upx `find ./bin -type f`
+
+install-cron-jobs:
+	./scripts/install_cron_jobs.sh

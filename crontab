@@ -1,0 +1,9 @@
+# Delete unused container images
+@daily sudo k3s crictl rmi --prune
+
+# Clear logs older than 1 day
+@daily sudo journalctl --vacuum-time=1d
+
+# Clear rotated and compressed logs
+@daily sudo find /var/log -type f -regex ".*\.gz$" -delete
+@daily sudo find /var/log -type f -regex ".*\.[0-9]$" -delete
