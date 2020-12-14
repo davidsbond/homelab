@@ -7,3 +7,6 @@
 # Clear rotated and compressed logs
 @daily sudo find /var/log -type f -regex ".*\.gz$" -delete
 @daily sudo find /var/log -type f -regex ".*\.[0-9]$" -delete
+
+# Clear temporary files that have not been accessed in 7 days
+@daily sudo find /tmp -type f -atime +7 -delete
