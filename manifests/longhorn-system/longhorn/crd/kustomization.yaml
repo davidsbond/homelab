@@ -9,3 +9,6 @@ resources:
   - replica.yaml
   - setting.yaml
   - volume.yaml
+  - volumesnapshot.yaml
+  - volumesnapshotclass.yaml
+  - volumesnapshotcontents.yaml
