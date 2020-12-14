@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluent-bit
+  labels:
+    app: fluent-bit
+spec:
+  selector:
+    matchLabels:
+      app: fluent-bit
+  template:
+    metadata:
+      labels:
+        app: fluent-bit
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "2020"
+        prometheus.io/path: /api/v1/metrics/prometheus
+    spec:
+      containers:
+      - name: fluent-bit
+        image: fluent/fluent-bit:arm64v8-1.6.8
+        imagePullPolicy: Always
+        env:
+          - name: FLUENT_ELASTICSEARCH_HOST
+            value: elasticsearch.storage.svc.cluster.local
+          - name: FLUENT_ELASTICSEARCH_PORT
+            value: "9200"
+        readinessProbe:
+          httpGet:
+            port: 2020
+            path: /api/v1/uptime
+        volumeMounts:
+          - name: logs
+            mountPath: /var/log
+          - name: config
+            mountPath: /fluent-bit/etc/
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - name: logs
+        hostPath:
+          path: /var/log
+      - name: config
+        configMap:
+          name: fluent-bit
+      serviceAccountName: fluent-bit
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
+        - operator: "Exists"
+          effect: "NoExecute"
+        - operator: "Exists"
+          effect: "NoSchedule"
