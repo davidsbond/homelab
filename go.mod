@@ -27,5 +27,5 @@ require (
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a
 	gopkg.in/yaml.v2 v2.4.0
 	mvdan.cc/gofumpt v0.0.0-20201129102820-5c11c50e9475
-	pkg.dsb.dev v1.5.0
+	pkg.dsb.dev v1.6.0
 )

@@ -70,6 +70,7 @@ func (a *App) Run() error {
 	action := a.inner.Action
 	a.inner.Action = func(c *cli.Context) error {
 		logging.Init()
+		environment.SetMaxProcsToCPUQuota()
 
 		svr := operationalServer()
 		var grp errgroup.Group
@@ -122,6 +123,7 @@ func WithFlags(flags ...flag.Flag) Option {
 			app.Flags = append(app.Flags, fl.Unwrap())
 		}
 
+		app.Flags = append(app.Flags, environment.Flags.Unwrap()...)
 		app.Flags = append(app.Flags, tracing.Flags.Unwrap()...)
 		app.Flags = append(app.Flags, monitoring.Flags.Unwrap()...)
 		app.Flags = append(app.Flags, health.Flags.Unwrap()...)
