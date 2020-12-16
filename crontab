@@ -10,3 +10,6 @@
 
 # Clear temporary files that have not been accessed in 7 days
 @daily sudo find /tmp -type f -atime +7 -delete
+
+# Upgrade packages weekly
+@weekly sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get autoremove -y
