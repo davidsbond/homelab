@@ -48,7 +48,7 @@ func (ic *IndexCleaner) Ping() error {
 
 // Clean indexes older than maxAge, whose names match those provided in formats. Each string in the formats slice
 // should follow the standard go formatting directives. Each is generated using the year, month and day of today
-// minus maxAge.
+// minus maxAge. Once indexes have been deleted, a force merge is performed on deleted indexes only.
 func (ic *IndexCleaner) Clean(ctx context.Context, formats []string, maxAge time.Duration) error {
 	date := time.Now().Add(-maxAge)
 
@@ -57,6 +57,7 @@ func (ic *IndexCleaner) Clean(ctx context.Context, formats []string, maxAge time
 		indices[i] = fmt.Sprintf(format, date.Year(), int(date.Month()), date.Day())
 	}
 
+	var expunge bool
 	for _, index := range indices {
 		_, err := ic.client.DeleteIndex(index).Do(ctx)
 		switch {
@@ -64,8 +65,16 @@ func (ic *IndexCleaner) Clean(ctx context.Context, formats []string, maxAge time
 			continue
 		case err != nil:
 			return err
+		default:
+			expunge = true
 		}
 	}
 
-	return nil
+	// Don't perform the force merge if nothing has been deleted.
+	if !expunge {
+		return nil
+	}
+
+	_, err := ic.client.Forcemerge().OnlyExpungeDeletes(true).Do(ctx)
+	return err
 }
