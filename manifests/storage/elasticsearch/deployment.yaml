@@ -14,9 +14,13 @@ spec:
     metadata:
       labels:
         app: elasticsearch
+      annotations:
+        prometheus.io/path: /_prometheus/metrics
+        prometheus.io/port: "9200"
+        prometheus.io/scrape: "true"
     spec:
       securityContext:
-        fsGroup: 82
+        fsGroup: 1000
       initContainers:
       - name: create
         image: busybox:1.28
@@ -24,29 +28,39 @@ spec:
         volumeMounts:
         - mountPath: /usr/share/elasticsearch/data
           name: data
+          subPath: data
+        - mountPath: /usr/share/elasticsearch/plugins
+          name: data
+          subPath: plugins
       - name: file-permissions
         image: busybox:1.28
         command: ['chown', '-R', '1000:1000', '/usr/share/elasticsearch/']
         volumeMounts:
         - mountPath: /usr/share/elasticsearch/data
           name: data
+          subPath: data
+        - mountPath: /usr/share/elasticsearch/plugins
+          name: data
+          subPath: plugins
       containers:
       - name: elasticsearch
         image: elasticsearch:7.10.1
         env:
-          - name: discovery.type
-            value: single-node
-          - name: bootstrap.memory_lock
-            value: "true"
-          - name: cluster.name
-            value: homelab
           - name: ES_JAVA_OPTS
             value: "-Xms1g -Xmx1g"
         volumeMounts:
           - mountPath: /usr/share/elasticsearch/data
             name: data
+            subPath: data
+          - mountPath: /usr/share/elasticsearch/plugins
+            name: data
+            subPath: plugins
+          - name: elasticsearch
+            mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+            subPath: elasticsearch.yml
         readinessProbe:
           timeoutSeconds: 120
+          initialDelaySeconds: 120
           httpGet:
             port: 9200
             path: /_cluster/health?wait_for_status=yellow&timeout=120s
@@ -58,3 +72,6 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: elasticsearch
+        - name: elasticsearch
+          configMap:
+            name: elasticsearch
