@@ -10,6 +10,7 @@ Monorepo for my personal homelab. It contains applications and kubernetes manife
    1. [Other tools](#other-tools)
    1. [External services](#external-services)
    1. [Cluster upgrades](#cluster-upgrades)
+   1. [Node maintenance](#node-maintenance)
    1. [Managed infrastructure](#managed-infrastructure)
       1. [Terraform Providers](#terraform-providers)
    1. [Environment](#environment)
@@ -83,6 +84,7 @@ Here are other tools I've implemented for use in the cluster.
 * `bucket-object-cleaner` - Deletes objects in a blob bucket older than a configured age.
 * `grafana-backup` - Copies all dashboards and data sources from grafana and writes them to a MinIO bucket.
 * [db-backup](https://github.com/davidsbond/db-backup) - A backup utility for databases.
+* `elasticsearch-index-cleaner` - Removes indices from elasticsearch older than a desired age.
 
 ## External services
 
@@ -102,6 +104,16 @@ directory. Each upgrade is stored in its own directory named using the desired v
 via kustomize jobs will be started by the controller that upgrade the master node, followed by the worker nodes. The upgrade only takes
 a few minutes and tools like `k9s` and `kubectl` will not be able to communicate with the cluster for a small amount of time while
 the master node upgrades.
+
+## Node maintenance
+
+The [crontab](./crontab) file at the root of the repository is used on all nodes in the cluster, it describes scheduled
+tasks that clear out temporary and old files on the filesystem (/tmp, /var/log etc) and performs package upgrades on a
+weekly basis. It will also prune container images that are no longer in use.
+
+The crontab file can be deployed to all nodes using the `make install-cron-jobs` recipe. This command will copy over the
+contents of the local crontab file to each node via SSH. You need to have used `ssh copy-key-id` for each node so you don't
+get any password prompts.
 
 ## Managed infrastructure
 
