@@ -63,6 +63,7 @@ Here's a list of third-party applications I'm using alongside my custom applicat
   and lets you distribute Docker images
 * [elasticsearch](https://www.elastic.co/) - A search engine based on the Lucene library
 * [fluent-bit](https://fluentbit.io/) - Log processor and forwarder
+* [kibana](https://www.elastic.co/kibana) - User interface that lets you visualize your Elasticsearch data
 
 ## Prometheus exporters
 
