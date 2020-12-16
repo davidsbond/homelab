@@ -7,6 +7,7 @@ resources:
 - jaeger
 - grafana
 - prometheus
+- kibana
 
 configMapGenerator:
 - name: grafana
@@ -19,6 +20,9 @@ configMapGenerator:
     - config/prometheus/alerts.yml
     - config/prometheus/recording_rules.yml
     - config/prometheus/rules.yml
+- name: kibana
+  files:
+    - config/kibana.yml
 
 secretGenerator:
 - name: grafana

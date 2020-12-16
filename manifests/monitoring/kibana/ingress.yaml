@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kibana
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.entrypoints: https
+    cert-manager.io/cluster-issuer: cloudflare
+spec:
+  tls:
+  - hosts:
+    - kibana.homelab.dsb.dev
+    secretName: kibana-tls
+  rules:
+  - host: kibana.homelab.dsb.dev
+    http:
+      paths:
+      - backend:
+          service:
+            name: kibana
+            port:
+              number: 5601
+        path: /
+        pathType: Prefix

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  labels:
+    app: kibana
+spec:
+  selector:
+    matchLabels:
+      app: kibana
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+      - name: kibana
+        image: gagara/kibana-oss-arm64:latest
+        volumeMounts:
+          - name: config
+            mountPath: /usr/share/kibana/config/kibana.yml
+            subPath: kibana.yml
+        resources:
+          limits:
+            memory: 1Gi
+            cpu: "1"
+        readinessProbe:
+          timeoutSeconds: 120
+          initialDelaySeconds: 120
+          httpGet:
+            port: 5601
+            path: /api/status
+      restartPolicy: Always
+      volumes:
+        - name: config
+          configMap:
+            name: kibana
