@@ -32,3 +32,6 @@ items:
 - name: Traefik
   url: https://traefik.homelab.dsb.dev
   description: Reverse Proxy Dasboard
+- name: Kibana
+  url: https://kibana.homelab.dsb.dev
+  description: Elasticsearch UI
