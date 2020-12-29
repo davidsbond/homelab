@@ -46,7 +46,15 @@ spec:
         - mountPath: /usr/share/elasticsearch/plugins
           name: data
           subPath: plugins
-      # Third container installs the prometheus plugin. This will expose prometheus metrics to be scraped.
+      # Third container removes the prometheus plugin directory if it already exists.
+      - name: remove-prometheus-plugin
+        image: busybox:1.28
+        command: ['rm', '-rf', '/usr/share/elasticsearch/plugins/prometheus-exporter']
+        volumeMounts:
+          - mountPath: /usr/share/elasticsearch/plugins
+            name: data
+            subPath: plugins
+      # Fourth container installs the prometheus plugin. This will expose prometheus metrics to be scraped.
       - name: install-prometheus-plugin
         image: elasticsearch:7.10.1
         command: ['./bin/elasticsearch-plugin', 'install', '-b', 'https://github.com/vvanholl/elasticsearch-prometheus-exporter/releases/download/7.10.1.0/prometheus-exporter-7.10.1.0.zip']
