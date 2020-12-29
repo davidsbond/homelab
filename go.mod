@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
 	github.com/go-ping/ping v0.0.0-20201115131931-3300c582a663
-	github.com/golangci/golangci-lint v1.33.0
+	github.com/golangci/golangci-lint v1.34.1
 	github.com/google/gxui v0.0.0-20151028112939-f85e0a97b3a4 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/grafana-tools/sdk v0.0.0-20201123153837-5fb28a7aa2ef

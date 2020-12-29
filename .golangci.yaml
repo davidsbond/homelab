@@ -25,6 +25,7 @@ linters:
     - maligned
     - exhaustivestruct
     - wrapcheck
+    - forbidigo
 
 issues:
   exclude-use-default: false

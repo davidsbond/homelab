@@ -10,6 +10,10 @@ github.com/Masterminds/semver
 github.com/OpenPeeDeeP/depguard
 # github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da
 ## explicit
+# github.com/ashanbrown/forbidigo v1.0.0
+github.com/ashanbrown/forbidigo/forbidigo
+# github.com/ashanbrown/makezero v0.0.0-20201205152432-7b7cdbb3025a
+github.com/ashanbrown/makezero/makezero
 # github.com/aws/aws-sdk-go v1.36.1
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
@@ -65,11 +69,11 @@ github.com/bombsimon/wsl/v3
 github.com/cespare/xxhash/v2
 # github.com/cpuguy83/go-md2man/v2 v2.0.0
 github.com/cpuguy83/go-md2man/v2/md2man
-# github.com/daixiang0/gci v0.2.4
+# github.com/daixiang0/gci v0.2.7
 github.com/daixiang0/gci/pkg/gci
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
-# github.com/denis-tingajkin/go-header v0.3.1
+# github.com/denis-tingajkin/go-header v0.4.2
 github.com/denis-tingajkin/go-header
 # github.com/fatih/color v1.10.0
 github.com/fatih/color
@@ -154,7 +158,7 @@ github.com/golangci/gocyclo/pkg/gocyclo
 # github.com/golangci/gofmt v0.0.0-20190930125516-244bba706f1a
 github.com/golangci/gofmt/gofmt
 github.com/golangci/gofmt/goimports
-# github.com/golangci/golangci-lint v1.33.0
+# github.com/golangci/golangci-lint v1.34.1
 ## explicit
 github.com/golangci/golangci-lint/cmd/golangci-lint
 github.com/golangci/golangci-lint/internal/cache
@@ -215,9 +219,9 @@ github.com/gorilla/handlers
 github.com/gorilla/mux
 # github.com/gosimple/slug v1.1.1
 github.com/gosimple/slug
-# github.com/gostaticanalysis/analysisutil v0.1.0
+# github.com/gostaticanalysis/analysisutil v0.4.1
 github.com/gostaticanalysis/analysisutil
-# github.com/gostaticanalysis/comment v1.3.0
+# github.com/gostaticanalysis/comment v1.4.1
 github.com/gostaticanalysis/comment
 github.com/gostaticanalysis/comment/passes/commentmap
 # github.com/grafana-tools/sdk v0.0.0-20201123153837-5fb28a7aa2ef
@@ -280,6 +284,8 @@ github.com/josharian/intern
 # github.com/kisielk/gotool v1.0.0
 github.com/kisielk/gotool
 github.com/kisielk/gotool/internal/load
+# github.com/kulti/thelper v0.1.0
+github.com/kulti/thelper/pkg/analyzer
 # github.com/kunwardeep/paralleltest v1.0.2
 github.com/kunwardeep/paralleltest/pkg/paralleltest
 # github.com/kyoh86/exportloopref v0.1.8
@@ -347,7 +353,7 @@ github.com/phayes/checkstyle
 github.com/pkg/errors
 # github.com/pmezard/go-difflib v1.0.0
 github.com/pmezard/go-difflib/difflib
-# github.com/polyfloyd/go-errorlint v0.0.0-20201006195004-351e25ade6e3
+# github.com/polyfloyd/go-errorlint v0.0.0-20201127212506-19bd8db6546f
 github.com/polyfloyd/go-errorlint/errorlint
 # github.com/prometheus/client_golang v1.9.0
 ## explicit
@@ -376,7 +382,7 @@ github.com/quasilyte/regex/syntax
 github.com/rainycape/unidecode
 # github.com/russross/blackfriday/v2 v2.0.1
 github.com/russross/blackfriday/v2
-# github.com/ryancurrah/gomodguard v1.1.0
+# github.com/ryancurrah/gomodguard v1.2.0
 github.com/ryancurrah/gomodguard
 # github.com/ryanrolds/sqlclosecheck v0.3.0
 github.com/ryanrolds/sqlclosecheck/pkg/analyzer
@@ -425,7 +431,7 @@ github.com/stretchr/testify/mock
 github.com/subosito/gotenv
 # github.com/tdakkota/asciicheck v0.0.0-20200416190851-d7f85be797a2
 github.com/tdakkota/asciicheck
-# github.com/tetafro/godot v1.3.0
+# github.com/tetafro/godot v1.3.2
 github.com/tetafro/godot
 # github.com/timakin/bodyclose v0.0.0-20190930140734-f7f2e9bca95e
 github.com/timakin/bodyclose/passes/bodyclose
@@ -439,7 +445,7 @@ github.com/tmthrgd/go-bindata/restore
 ## explicit
 # github.com/tomarrell/wrapcheck v0.0.0-20200807122107-df9e8bcb914d
 github.com/tomarrell/wrapcheck/wrapcheck
-# github.com/tommy-muehle/go-mnd v1.3.1-0.20200224220436-e6f9a994e8fa
+# github.com/tommy-muehle/go-mnd v1.3.1-0.20201008215730-16041ac3fe65
 github.com/tommy-muehle/go-mnd
 github.com/tommy-muehle/go-mnd/checks
 github.com/tommy-muehle/go-mnd/config
