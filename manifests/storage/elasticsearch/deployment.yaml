@@ -22,6 +22,8 @@ spec:
       securityContext:
         fsGroup: 1000
       initContainers:
+      # Container creates the directory for node data, for some reason this doesn't just get created automatically
+      # by the elasticsearch container.
       - name: create
         image: busybox:1.28
         command: ['mkdir', '-p', '/usr/share/elasticsearch/data/nodes/']
@@ -32,6 +34,8 @@ spec:
         - mountPath: /usr/share/elasticsearch/plugins
           name: data
           subPath: plugins
+      # Second container sets appropriate permissions for the elasticsearch folder, was experiencing crashes due to
+      # fs permissions without doing this.
       - name: file-permissions
         image: busybox:1.28
         command: ['chown', '-R', '1000:1000', '/usr/share/elasticsearch/']
@@ -42,12 +46,20 @@ spec:
         - mountPath: /usr/share/elasticsearch/plugins
           name: data
           subPath: plugins
+      # Third container installs the prometheus plugin. This will expose prometheus metrics to be scraped.
+      - name: install-prometheus-plugin
+        image: elasticsearch:7.10.1
+        command: ['./bin/elasticsearch-plugin', 'install', '-b', 'https://github.com/vvanholl/elasticsearch-prometheus-exporter/releases/download/7.10.1.0/prometheus-exporter-7.10.1.0.zip']
+        volumeMounts:
+        - mountPath: /usr/share/elasticsearch/plugins
+          name: data
+          subPath: plugins
       containers:
       - name: elasticsearch
         image: elasticsearch:7.10.1
         env:
           - name: ES_JAVA_OPTS
-            value: "-Xms1g -Xmx1g"
+            value: "-Xms2g -Xmx2g"
         volumeMounts:
           - mountPath: /usr/share/elasticsearch/data
             name: data
@@ -66,8 +78,8 @@ spec:
             path: /_cluster/health?wait_for_status=yellow&timeout=120s
         resources:
           limits:
-            memory: 2Gi
-            cpu: "1"
+            memory: 3Gi
+            cpu: "2"
       volumes:
         - name: data
           persistentVolumeClaim:
