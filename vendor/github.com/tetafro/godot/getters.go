@@ -1,13 +1,17 @@
 package godot
 
 import (
-	"bytes"
 	"fmt"
 	"go/ast"
-	"go/format"
 	"go/token"
+	"io/ioutil"
 	"strings"
 )
+
+// specialReplacer is a replacer for some types of special lines in comments,
+// which shouldn't be checked. For example, if comment ends with a block of
+// code it should not necessarily have a period at the end.
+const specialReplacer = "<godotSpecialReplacer>"
 
 // getComments extracts comments from a file.
 func getComments(file *ast.File, fset *token.FileSet, scope Scope) ([]comment, error) {
@@ -15,12 +19,14 @@ func getComments(file *ast.File, fset *token.FileSet, scope Scope) ([]comment, e
 		return nil, nil
 	}
 
-	// Render AST representation to a string
-	var buf bytes.Buffer
-	if err := format.Node(&buf, fset, file); err != nil {
-		return nil, fmt.Errorf("render file: %v", err)
+	// Read original file. This is necessary for making a replacements for
+	// inline comments. I couldn't find a better way to get original line
+	// with code and comment without reading the file. Function `Format`
+	// from "go/format" won't help here if the original file is not gofmt-ed.
+	lines, err := readFile(file, fset)
+	if err != nil {
+		return nil, fmt.Errorf("read file: %v", err)
 	}
-	lines := strings.Split(buf.String(), "\n")
 
 	// Check consistency to avoid checking index in each function
 	lastComment := file.Comments[len(file.Comments)-1]
@@ -149,7 +155,8 @@ func getAllComments(file *ast.File, fset *token.FileSet, lines []string) []comme
 // getText extracts text from comment. If comment is a special block
 // (e.g., CGO code), a block of empty lines is returned. If comment contains
 // special lines (e.g., tags or indented code examples), they are replaced
-// with an empty line. The result can be multiline.
+// with `specialReplacer` to skip checks for it.
+// The result can be multiline.
 func getText(comment *ast.CommentGroup) (s string) {
 	if len(comment.List) == 1 &&
 		strings.HasPrefix(comment.List[0].Text, "/*") &&
@@ -167,7 +174,7 @@ func getText(comment *ast.CommentGroup) (s string) {
 		}
 		for _, line := range strings.Split(text, "\n") {
 			if isSpecialLine(line) {
-				s += "\n"
+				s += specialReplacer + "\n"
 				continue
 			}
 			if !isBlock {
@@ -180,6 +187,16 @@ func getText(comment *ast.CommentGroup) (s string) {
 		return ""
 	}
 	return s[:len(s)-1] // trim last "\n"
+}
+
+// readFile reads file and returns it's lines as strings.
+func readFile(file *ast.File, fset *token.FileSet) ([]string, error) {
+	fname := fset.File(file.Package)
+	f, err := ioutil.ReadFile(fname.Name())
+	if err != nil {
+		return nil, err
+	}
+	return strings.Split(string(f), "\n"), nil
 }
 
 // setDecl sets `decl` flag to comments which are declaration comments.

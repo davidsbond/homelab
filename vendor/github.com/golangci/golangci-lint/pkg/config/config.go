@@ -245,6 +245,7 @@ type LintersSettings struct {
 				Version string `mapstructure:"version"`
 				Reason  string `mapstructure:"reason"`
 			} `mapstructure:"versions"`
+			LocalReplaceDirectives bool `mapstructure:"local_replace_directives"`
 		} `mapstructure:"blocked"`
 	}
 
@@ -266,6 +267,9 @@ type LintersSettings struct {
 	Exhaustive  ExhaustiveSettings
 	Gofumpt     GofumptSettings
 	ErrorLint   ErrorLintSettings
+	Makezero    MakezeroSettings
+	Thelper     ThelperSettings
+	Forbidigo   ForbidigoSettings
 
 	Custom map[string]CustomLinterSettings
 }
@@ -384,6 +388,27 @@ type GofumptSettings struct {
 
 type ErrorLintSettings struct {
 	Errorf bool `mapstructure:"errorf"`
+}
+
+type MakezeroSettings struct {
+	Always bool
+}
+
+type ThelperSettings struct {
+	Test struct {
+		First bool `mapstructure:"first"`
+		Name  bool `mapstructure:"name"`
+		Begin bool `mapstructure:"begin"`
+	} `mapstructure:"test"`
+	Benchmark struct {
+		First bool `mapstructure:"first"`
+		Name  bool `mapstructure:"name"`
+		Begin bool `mapstructure:"begin"`
+	} `mapstructure:"benchmark"`
+}
+
+type ForbidigoSettings struct {
+	Forbid []string `mapstructure:"forbid"`
 }
 
 var defaultLintersSettings = LintersSettings{
