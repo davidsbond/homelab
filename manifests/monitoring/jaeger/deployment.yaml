@@ -21,13 +21,13 @@ spec:
         app: jaeger
     spec:
       containers:
-      - image: querycapistio/all-in-one:1.20.0
+      - image: querycapistio/all-in-one:1.21.0
+        args:
+          - --memory.max-traces=1000
         name: jaeger
         env:
         - name: SPAN_STORAGE_TYPE
-          value: elasticsearch
-        - name: ES_SERVER_URLS
-          value: http://elasticsearch.storage.svc.cluster.local:9200
+          value: memory
         resources:
           limits:
             memory: 1Gi

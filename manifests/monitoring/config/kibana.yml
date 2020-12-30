@@ -1,6 +1,0 @@
-server:
-  name: homelab
-  port: 5601
-  host: 0.0.0.0
-elasticsearch.hosts: http://elasticsearch.storage.svc.cluster.local:9200
-logging.quiet: true

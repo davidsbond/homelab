@@ -1,8 +1,0 @@
-discovery.type: single-node
-bootstrap.memory_lock: true
-cluster.name: homelab
-prometheus.indices: false
-http.host: 0.0.0.0
-network.host: 0.0.0.0
-http.port: 9200
-transport.tcp.port: 9300

@@ -8,15 +8,11 @@ resources:
 - postgres
 - bucket-object-cleaner
 - docker-registry
-- elasticsearch
 
 configMapGenerator:
 - name: docker-registry
   files:
   - config/docker-registry/garbage-collector.yaml
-- name: elasticsearch
-  files:
-  - config/elasticsearch/elasticsearch.yml
 
 secretGenerator:
 - name: minio
