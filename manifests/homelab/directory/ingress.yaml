@@ -10,10 +10,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - homelab.dsb.dev
+    - directory.homelab.dsb.dev
     secretName: directory-tls
   rules:
-  - host: homelab.dsb.dev
+  - host: directory.homelab.dsb.dev
     http:
       paths:
       - backend:
