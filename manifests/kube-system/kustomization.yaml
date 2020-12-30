@@ -3,24 +3,27 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
-  - system-upgrade-controller
-  - traefik
-  - fluent-bit
+- system-upgrade-controller
+- traefik
+- fluent-bit
 
 secretGenerator:
-  - name: traefik
-    envs:
-    - secrets/traefik
+- name: traefik
+  envs:
+  - secrets/traefik
+- name: postgres
+  envs:
+  - secrets/postgres
 
 configMapGenerator:
-  - name: traefik
-    files:
-    - config/traefik/traefik.yaml
-    - config/traefik/middleware.yaml
-  - name: fluent-bit
-    files:
-    - config/fluent-bit/filter-kubernetes.conf
-    - config/fluent-bit/fluent-bit.conf
-    - config/fluent-bit/input-kubernetes.conf
-    - config/fluent-bit/output-elasticsearch.conf
-    - config/fluent-bit/parsers.conf
+- name: traefik
+  files:
+  - config/traefik/traefik.yaml
+  - config/traefik/middleware.yaml
+- name: fluent-bit
+  files:
+  - config/fluent-bit/filter-kubernetes.conf
+  - config/fluent-bit/fluent-bit.conf
+  - config/fluent-bit/input-kubernetes.conf
+  - config/fluent-bit/output-postgres.conf
+  - config/fluent-bit/parsers.conf

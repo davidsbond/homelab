@@ -22,10 +22,20 @@ spec:
         image: fluent/fluent-bit:arm64v8-1.6.8
         imagePullPolicy: Always
         env:
-          - name: FLUENT_ELASTICSEARCH_HOST
-            value: elasticsearch.storage.svc.cluster.local
-          - name: FLUENT_ELASTICSEARCH_PORT
-            value: "9200"
+          - name: PG_HOST
+            value: postgres.storage.svc.cluster.local
+          - name: PG_PORT
+            value: "5432"
+          - name: PG_USER
+            valueFrom:
+              secretKeyRef:
+                key: postgres.user
+                name: postgres
+          - name: PG_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: postgres.password
+                name: postgres
         readinessProbe:
           httpGet:
             port: 2020
