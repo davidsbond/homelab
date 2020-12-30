@@ -2,7 +2,10 @@ module "cloudflare" {
   source             = "./cloudflare"
   cloudflare_api_key = var.cloudflare_api_key
   cloudflare_email   = var.cloudflare_email
-  homelab_ip         = var.homelab_ip
+  homelab_0_ip       = var.homelab_0_ip
+  homelab_1_ip       = var.homelab_1_ip
+  homelab_2_ip       = var.homelab_2_ip
+  homelab_3_ip       = var.homelab_3_ip
   nas_ip             = var.nas_ip
 }
 
