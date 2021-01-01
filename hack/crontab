@@ -1,3 +1,7 @@
+# This file contains all my custom cron jobs to run on each k3s node host, each job is a general
+# maintenance thing, either to keep things up-to-date or to reduce resource usage. This is managed
+# from the central homelab repository and shouldn't be modified directly on the host.
+
 # Delete unused container images
 @daily sudo k3s crictl rmi --prune
 
