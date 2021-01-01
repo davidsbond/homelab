@@ -36,6 +36,7 @@ To start working:
 ## Project structure
 
 * `cmd` - Entry points to any bespoke applications.
+* `hack` - Node host specific config files and tweaks.
 * `internal` - Packages used throughout the application code.
 * `manifests` - Kubernetes manifests to run all my homelab applications.
 * `scripts` - Bash scripts for working within the repository.
@@ -105,9 +106,10 @@ the master node upgrades.
 
 ## Node maintenance
 
-The [crontab](./crontab) file at the root of the repository is used on all nodes in the cluster, it describes scheduled
-tasks that clear out temporary and old files on the filesystem (/tmp, /var/log etc) and performs package upgrades on a
-weekly basis. It will also prune container images that are no longer in use.
+The [hack](./hack) diretory at the root of the repository contains files used on all nodes in the cluster, it contains a 
+[crontab](./hack/crontab) file that describes scheduled tasks that clear out temporary and old files on the filesystem 
+(/tmp, /var/log etc) and performs package upgrades on a weekly basis. It will also prune container images that are no 
+longer in use.
 
 The crontab file can be deployed to all nodes using the `make install-cron-jobs` recipe. This command will copy over the
 contents of the local crontab file to each node via SSH. You need to have used `ssh copy-key-id` for each node so you don't

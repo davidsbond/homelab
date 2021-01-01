@@ -4,7 +4,7 @@
 # servers via SSH. This allows me to easily modify the cron jobs that are ran on each node in the
 # k3s cluster, and makes sure they're all the same.
 
-DIR=$(pwd)
+DIR=$(pwd)/hack
 SSH_SERVERS="homelab-0 homelab-1 homelab-2 homelab-3"
 SSH_USER="ubuntu"
 CRONTAB_DATA=$(cat "${DIR}/crontab")
