@@ -26,4 +26,9 @@ ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
 ExecStart=/usr/local/bin/k3s \
     server \
-    --no-deploy traefik \
+    --disable traefik \
+    --advertise-address ${TAILSCALE_ADDR} \
+    --bind-address ${TAILSCALE_ADDR} \
+    --node-ip ${TAILSCALE_ADDR} \
+    --node-external-ip ${TAILSCALE_ADDR} \
+    --node-label "tailscale.com/addr=${TAILSCALE_ADDR}" \
