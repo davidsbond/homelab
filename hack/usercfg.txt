@@ -1,0 +1,17 @@
+# Place "config.txt" changes (dtparam, dtoverlay, disable_overscan, etc.) in
+# this file. Please refer to the README file for a description of the various
+# configuration files on the boot partition.
+
+# Below are values that overclock the Raspberry Pi, pretty sure my warranty is gone.
+
+# CPU/GPU core voltage adjustment. The value should be in the range [-16, 8] which equates to the range [0.8V, 1.4V]
+# with 0.025V steps. In other words, specifying -16 will give 0.8V as the GPU/core voltage, and specifying 8 will give
+# 1.4V. For defaults see table below. Values above 6 are only allowed when force_turbo is specified: this sets the
+# warranty bit if over_voltage_* is also set.
+over_voltage=8
+
+# Frequency of the ARM CPU in MHz. Default 1500.
+arm_freq=2147
+
+# Sets core_freq, h264_freq, isp_freq, v3d_freq and hevc_freq together
+gpu_freq=750

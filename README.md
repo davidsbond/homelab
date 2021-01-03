@@ -11,6 +11,10 @@ Monorepo for my personal homelab. It contains applications and kubernetes manife
    1. [External services](#external-services)
    1. [Cluster upgrades](#cluster-upgrades)
    1. [Node maintenance](#node-maintenance)
+      1. [Crontab](#crontab)
+      1. [K3s services](#k3s-services)
+      1. [Overclocking](#overclocking)
+      1. [Multipath](#multipath)
    1. [Managed infrastructure](#managed-infrastructure)
       1. [Terraform Providers](#terraform-providers)
    1. [Environment](#environment)
@@ -106,14 +110,41 @@ the master node upgrades.
 
 ## Node maintenance
 
-The [hack](./hack) diretory at the root of the repository contains files used on all nodes in the cluster, it contains a 
-[crontab](./hack/crontab) file that describes scheduled tasks that clear out temporary and old files on the filesystem 
+The [hack](./hack) diretory at the root of the repository contains files used on all nodes in the cluster.
+
+### Crontab
+ 
+The `crontab` file describes scheduled tasks that clear out temporary and old files on the filesystem 
 (/tmp, /var/log etc) and performs package upgrades on a weekly basis. It will also prune container images that are no 
 longer in use.
 
 The crontab file can be deployed to all nodes using the `make install-cron-jobs` recipe. This command will copy over the
-contents of the local crontab file to each node via SSH. You need to have used `ssh copy-key-id` for each node so you don't
-get any password prompts.
+contents of the local crontab file to each node via SSH. You need to have used `ssh copy-key-id` for each node, so you 
+don't get any password prompts.
+
+### K3s services
+
+The `k3s.service` and `k3s-agent.service` files are the `systemd` service files that run the service and agent nodes. It
+sets the cluster to communicate via the Tailscale network and stops k3s from installing traefik. This is because I run
+traefik 2, whereas k3s comes with 1.7 by default.
+
+### Overclocking
+
+The `usercfg.txt` file is stored at `/boot/firmware/usercfg.txt` and is used to set overclocking values for the Raspberry
+Pis. Pretty certain this voids my warranty, so if you're not me and planning on using this repository you should keep that
+in mind.
+
+See [Overclocking options in config.txt](https://www.raspberrypi.org/documentation/configuration/config-txt/overclocking.md)
+for more details on these values.
+
+### Multipath
+
+The `multipath.conf` file is the configuration file for the multipath daemon. It is used to overwrite the built-in 
+configuration table of `multipathd`. Any line whose first non-white-space character is a '#' is considered a comment line. 
+Empty lines are ignored.
+
+The sole reason for this existing, is to handle [an issue with longhorn](https://github.com/longhorn/longhorn/issues/1210)
+that I was experiencing.
 
 ## Managed infrastructure
 
