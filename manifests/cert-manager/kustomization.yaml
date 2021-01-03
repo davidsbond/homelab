@@ -18,3 +18,6 @@ secretGenerator:
 
 generatorOptions:
   disableNameSuffixHash: true
+
+commonAnnotations:
+  fluentbit.io/exclude: "true"
