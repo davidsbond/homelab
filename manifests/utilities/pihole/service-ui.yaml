@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pihole-ui
+spec:
+  selector:
+    app: pihole
+  ports:
+    - port: 8000
+      targetPort: 80
+      name: pihole-admin

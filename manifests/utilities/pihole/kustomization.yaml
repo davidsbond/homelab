@@ -3,7 +3,8 @@ kind: Kustomization
 
 resources:
 - deployment.yaml
-- service.yaml
+- service-dns.yaml
+- service-ui.yaml
 - persistentvolumeclaim.yaml
 - ingress.yaml
 - ftl-backup-cron.yaml
