@@ -29,7 +29,7 @@ spec:
                   key: push.gateway.url
                   name: prometheus
             - name: PIHOLE_URL
-              value: http://pihole.utilities.svc.cluster.local:8000
+              value: http://pihole-ui.utilities.svc.cluster.local:8000
             readinessProbe:
               httpGet:
                 path: /__/health

@@ -18,7 +18,7 @@ spec:
       paths:
       - backend:
           service:
-            name: pihole
+            name: pihole-ui
             port:
               number: 8000
         path: /
