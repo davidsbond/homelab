@@ -15,5 +15,5 @@ spec:
     protocol: UDP
     name: dns-udp
   externalIPs:
-  - 100.100.86.74
-  - 100.126.136.14
+  - 192.168.1.140
+  - 192.168.1.141
