@@ -14,8 +14,14 @@ spec:
         app: postgres
     spec:
       containers:
-      - image: postgres:alpine
+      - image: postgres:13.1-alpine
         name: postgres
+        command:
+          - docker-entrypoint.sh
+          - -c
+          - work_mem=156MB
+          - -c
+          - max_parallel_workers_per_gather=0
         env:
         - name: POSTGRES_DB
           value: postgres
@@ -41,6 +47,13 @@ spec:
           initialDelaySeconds: 30
           successThreshold: 1
           timeoutSeconds: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 400Mi
+          limits:
+            cpu: "1"
+            memory: 2Gi
         volumeMounts:
         - name: postgres
           mountPath: /postgres
