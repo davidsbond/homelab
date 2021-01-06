@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: docker-registry
-        image: registry:latest
+        image: registry:2.7.1
         env:
           - name: REGISTRY_HTTP_SECRET
             valueFrom:

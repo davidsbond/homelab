@@ -17,7 +17,7 @@ spec:
         app: photoprism
     spec:
       containers:
-        - image: photoprism/photoprism-arm64:latest
+        - image: photoprism/photoprism-arm64:20201224
           name: photoprism
           readinessProbe:
             tcpSocket:

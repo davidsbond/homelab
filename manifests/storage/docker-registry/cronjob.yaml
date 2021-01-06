@@ -21,7 +21,7 @@ spec:
                         values:
                           - docker-registry
           containers:
-            - image: registry:latest
+            - image: registry:2.7.1
               name: docker-registry-garbage-collector
               args:
                 - garbage-collect
