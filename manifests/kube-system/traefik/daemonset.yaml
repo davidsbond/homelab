@@ -20,7 +20,7 @@ spec:
       serviceAccountName: traefik
       terminationGracePeriodSeconds: 60
       containers:
-      - image: traefik:latest
+      - image: traefik:v2.3.6
         name: traefik
         env:
           - name: TRAEFIK_PILOT_TOKEN

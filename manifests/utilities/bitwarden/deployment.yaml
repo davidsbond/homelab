@@ -17,7 +17,7 @@ spec:
         app: bitwarden
     spec:
       containers:
-      - image: bitwardenrs/server:latest
+      - image: bitwardenrs/server:1.18.0
         name: bitwarden
         readinessProbe:
           httpGet:

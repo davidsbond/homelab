@@ -17,7 +17,7 @@ spec:
         app: home-assistant
     spec:
       containers:
-      - image: homeassistant/home-assistant:latest
+      - image: homeassistant/home-assistant:2021.1.0
         name: home-assistant
         readinessProbe:
           tcpSocket:
