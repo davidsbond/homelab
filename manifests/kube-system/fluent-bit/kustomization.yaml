@@ -2,8 +2,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - clusterrolebinding.yaml
-  - clusterrole.yaml
-  - daemonset.yaml
-  - serviceaccount.yaml
+- clusterrolebinding.yaml
+- clusterrole.yaml
+- daemonset.yaml
+- serviceaccount.yaml
+- db-init.yaml
 
