@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fluent-bit-db-init
+spec:
+  template:
+    spec:
+      containers:
+        - image: postgres:13.1-alpine
+          name: createdb
+          command:
+            - createdb
+          env:
+            - name: PGHOST
+              value: postgres.storage.svc.cluster.local
+            - name: PGDATABASE
+              value: fluentbit
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  key: postgres.user
+                  name: postgres
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: postgres.password
+                  name: postgres
+      restartPolicy: Never
+  backoffLimit: 0

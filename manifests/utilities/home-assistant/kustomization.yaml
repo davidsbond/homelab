@@ -6,3 +6,4 @@ resources:
 - service.yaml
 - ingress.yaml
 - persistentvolumeclaim.yaml
+- db-init.yaml

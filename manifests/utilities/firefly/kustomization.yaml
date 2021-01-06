@@ -8,3 +8,4 @@ resources:
 - deployment-csv-importer.yaml
 - service-csv-importer.yaml
 - ingress-csv-importer.yaml
+- db-init.yaml
