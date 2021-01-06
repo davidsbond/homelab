@@ -32,22 +32,15 @@ spec:
             value: "true"
           - name: REGISTRY_HTTP_DEBUG_ADDR
             value: :8080
-          - name: REGISTRY_AUTH
-            value: htpasswd
-          - name: REGISTRY_AUTH_HTPASSWD_PATH
-            value: /auth/htpasswd
-          - name: REGISTRY_AUTH_HTPASSWD_REALM
-            value: basic-realm
           - name: REGISTRY_HTTP_ADDR
             value: :5000
           - name: REGISTRY_HTTP_HOST
             value: https://registry.homelab.dsb.dev
           - name: REGISTRY_HTTP_PREFIX
             value: /
+          - name: REGISTRY_PROXY_REMOTEURL
+            value: https://registry-1.docker.io
         volumeMounts:
-          - mountPath: /auth/htpasswd
-            name: htpasswd
-            subPath: htpasswd
           - mountPath: /var/lib/registry
             name: images
         readinessProbe:
@@ -57,9 +50,6 @@ spec:
           limits:
             memory: 1Gi
       volumes:
-        - name: htpasswd
-          secret:
-            secretName: docker-registry
         - name: images
           persistentVolumeClaim:
             claimName: docker-registry

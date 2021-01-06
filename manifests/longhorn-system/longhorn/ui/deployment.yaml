@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: longhorn-ui
-          image: longhornio/longhorn-ui:v1.1.0
+          image: registry.homelab.dsb.dev/longhornio/longhorn-ui:v1.1.0
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0

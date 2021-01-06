@@ -21,7 +21,7 @@ spec:
         app: jaeger
     spec:
       containers:
-      - image: querycapistio/all-in-one:1.21.0
+      - image: registry.homelab.dsb.dev/querycapistio/all-in-one:1.21.0
         args:
           - --memory.max-traces=1000
         name: jaeger

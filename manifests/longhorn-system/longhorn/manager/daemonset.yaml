@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: longhorn-manager
-          image: longhornio/longhorn-manager:v1.1.0
+          image: registry.homelab.dsb.dev/longhornio/longhorn-manager:v1.1.0
           imagePullPolicy: IfNotPresent
           securityContext:
             privileged: true
@@ -28,13 +28,13 @@ spec:
             - -j
             - daemon
             - --engine-image
-            - longhornio/longhorn-engine:v1.1.0
+            - registry.homelab.dsb.dev/longhornio/longhorn-engine:v1.1.0
             - --instance-manager-image
-            - longhornio/longhorn-instance-manager:v1_20201216
+            - registry.homelab.dsb.dev/longhornio/longhorn-instance-manager:v1_20201216
             - --manager-image
-            - longhornio/longhorn-manager:v1.1.0
+            - registry.homelab.dsb.dev/longhornio/longhorn-manager:v1.1.0
             - --share-manager-image
-            - longhornio/longhorn-share-manager:v1.1.0
+            - registry.homelab.dsb.dev/longhornio/longhorn-share-manager:v1.1.0
             - --service-account
             - longhorn
           ports:
