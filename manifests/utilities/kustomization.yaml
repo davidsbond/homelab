@@ -21,6 +21,7 @@ configMapGenerator:
   - config/home-assistant/scenes.yaml
   - config/home-assistant/scripts.yaml
   - config/home-assistant/groups.yaml
+  - config/home-assistant/ui-lovelace.yaml
 
 secretGenerator:
 - name: pihole

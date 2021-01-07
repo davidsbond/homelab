@@ -1,0 +1,24 @@
+title: Dashboard
+views:
+- title: Home Automation
+  path: home-automation
+  theme: ''
+  badges: []
+  cards:
+  - type: entities
+    entities:
+    - entity: light.bedroom_lamp
+    - entity: light.hallway_light
+    - entity: light.landing_light
+    - entity: light.living_room_light
+    - entity: light.office_light
+    - entity: light.spare_bedroom_lamp
+    state_color: true
+    title: Lights
+  - type: entities
+    entities:
+    - entity: script.all_lights_red
+    - entity: script.all_lights_pink
+    - entity: script.all_lights_random
+    title: Light Scripts
+    state_color: true
