@@ -1,1 +1,35 @@
-{}
+# The 'Roxanne' script changes the colour of all lights in the lights group
+# to red at full brightness.
+all_lights_red:
+  alias: Roxanne
+  sequence:
+    - data:
+        brightness_pct: 100
+        entity_id: group.lights
+        color_name: red
+        effect: 'none'
+      service: light.turn_on
+
+# The 'Barbie Girl' script changes the colour of all lights in the lights group
+# to pink at full brightness.
+all_lights_pink:
+  alias: Barbie Girl
+  sequence:
+    - data:
+        brightness_pct: 100
+        entity_id: group.lights
+        color_name: pink
+        effect: 'none'
+      service: light.turn_on
+
+# The 'Rainbow' script sets all lights in the lights group on a colour loop at
+# full brightness.
+all_lights_random:
+  alias: Rainbow
+  sequence:
+    - data:
+        brightness_pct: 100
+        entity_id: group.lights
+        color_name: white
+        effect: 'colorloop'
+      service: light.turn_on

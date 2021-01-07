@@ -29,6 +29,9 @@ spec:
           - mountPath: /config/scripts.yaml
             subPath: scripts.yaml
             name: home-assistant-config
+          - mountPath: /config/ui-lovelace.yaml
+            subPath: ui-lovelace.yaml
+            name: home-assistant-config
           - mountPath: /config/scenes.yaml
             subPath: scenes.yaml
             name: home-assistant-config

@@ -9,9 +9,13 @@ prometheus:
 # Store things in postgres
 recorder:
   db_url: !secret db_dsn
+  purge_keep_days: 3
 
 # Enable UI
 frontend:
+
+# Enables configuration UI
+config:
 
 # Enable history
 history:
@@ -43,3 +47,13 @@ pi_hole:
     ssl: true
     verify_ssl: true
     api_key: !secret pihole_api_key
+
+# Checks for available updates
+updater:
+
+# Discover some devices automatically
+discovery:
+
+# Enable yaml based dashboards
+lovelace:
+  mode: yaml
