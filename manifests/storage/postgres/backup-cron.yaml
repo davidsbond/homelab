@@ -5,7 +5,7 @@ metadata:
   labels:
     app: db-backup
 spec:
-  schedule: 0 * * * *
+  schedule: 0 0 * * *
   jobTemplate:
     spec:
       template:
