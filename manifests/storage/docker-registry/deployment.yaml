@@ -23,11 +23,6 @@ spec:
       - name: docker-registry
         image: registry:2.7.1
         env:
-          - name: REGISTRY_HTTP_SECRET
-            valueFrom:
-              secretKeyRef:
-                key: http.secret
-                name: docker-registry
           - name: REGISTRY_HTTP_DEBUG_PROMETHEUS_ENABLED
             value: "true"
           - name: REGISTRY_HTTP_DEBUG_ADDR
