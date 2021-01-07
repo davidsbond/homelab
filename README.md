@@ -17,6 +17,8 @@ Monorepo for my personal homelab. It contains applications and kubernetes manife
       1. [Multipath](#multipath)
    1. [Managed infrastructure](#managed-infrastructure)
       1. [Terraform Providers](#terraform-providers)
+      1. [Database provisioning](#database-provisioning)
+      1. [Docker images](#docker-images)
    1. [Environment](#environment)
 <!-- ToC end -->
 
@@ -161,6 +163,52 @@ This list contains all terraform providers used in the project:
 
 * [cloudflare](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs)
 * [minio](https://github.com/aminueza/terraform-provider-minio)
+
+### Database provisioning
+
+New postgres databases can be provisioned using a kubernetes `Job` resource using the `createdb` binary included in standard
+`postgres` docker images. Below is an example:
+
+```yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: example-db-init
+spec:
+  template:
+    spec:
+      containers:
+        - image: postgres:13.1-alpine
+          name: createdb
+          command:
+            - createdb
+          env:
+            - name: PGHOST
+              value: postgres.storage.svc.cluster.local
+            - name: PGDATABASE
+              value: example
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  key: postgres.user
+                  name: postgres
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: postgres.password
+                  name: postgres
+      restartPolicy: Never
+  backoffLimit: 0
+```
+
+You can view the documentation for the `createdb` command [here](https://www.postgresql.org/docs/current/app-createdb.html).
+
+### Docker images
+
+The cluster contains a deployment of the docker registry that is used as a pull-through proxy for any images hosted
+on hub.docker.com. When referencing images stored in the main library, like `postgres` or `busybox`, you use the image
+reference `registry.homelab.dsb.dev/library`. Otherwise, you just use the repository/tag combination. This increases
+the speed at which images are pulled and also helps with docker's recent change to add API request limits.
 
 ## Environment
 

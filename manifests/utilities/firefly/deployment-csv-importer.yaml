@@ -17,7 +17,7 @@ spec:
         app: firefly-csv-importer
     spec:
       containers:
-        - image: fireflyiii/csv-importer:version-2.3.3
+        - image: registry.homelab.dsb.dev/fireflyiii/csv-importer:version-2.3.3
           name: firefly-csv-importer
           env:
           - name: FIREFLY_III_URI

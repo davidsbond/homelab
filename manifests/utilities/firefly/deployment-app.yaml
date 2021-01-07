@@ -17,7 +17,7 @@ spec:
         app: firefly
     spec:
       containers:
-      - image: jc5x/firefly-iii:version-5.4.6
+      - image: registry.homelab.dsb.dev/jc5x/firefly-iii:version-5.4.6
         name: firefly
         env:
         - name: APP_KEY

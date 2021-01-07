@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: pihole
-        image: pihole/pihole:v5.3.4
+        image: registry.homelab.dsb.dev/pihole/pihole:v5.3.4
         imagePullPolicy: Always
         env:
         - name: TZ
@@ -45,7 +45,7 @@ spec:
           tcpSocket:
             port: 80
       - name: cloudflared
-        image: klutchell/cloudflared:2019.12.0
+        image: registry.homelab.dsb.dev/klutchell/cloudflared:2019.12.0
       volumes:
       - name: pihole
         persistentVolumeClaim:
