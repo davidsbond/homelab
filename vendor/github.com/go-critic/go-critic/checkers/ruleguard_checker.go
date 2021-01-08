@@ -2,10 +2,13 @@ package checkers
 
 import (
 	"bytes"
+	"fmt"
 	"go/ast"
 	"go/token"
 	"io/ioutil"
 	"log"
+	"os"
+	"strings"
 
 	"github.com/go-critic/go-critic/framework/linter"
 	"github.com/quasilyte/go-ruleguard/ruleguard"
@@ -18,7 +21,11 @@ func init() {
 	info.Params = linter.CheckerParams{
 		"rules": {
 			Value: "",
-			Usage: "path to a gorules file",
+			Usage: "comma-separated list of gorule file paths",
+		},
+		"debug": {
+			Value: "",
+			Usage: "enable debug for the specified named rules group",
 		},
 	}
 	info.Summary = "Runs user-defined rules using ruleguard linter"
@@ -33,9 +40,12 @@ func init() {
 }
 
 func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *ruleguardChecker {
-	c := &ruleguardChecker{ctx: ctx}
-	rulesFilename := info.Params.String("rules")
-	if rulesFilename == "" {
+	c := &ruleguardChecker{
+		ctx:        ctx,
+		debugGroup: info.Params.String("debug"),
+	}
+	rulesFlag := info.Params.String("rules")
+	if rulesFlag == "" {
 		return c
 	}
 
@@ -45,27 +55,33 @@ func newRuleguardChecker(info *linter.CheckerInfo, ctx *linter.CheckerContext) *
 	// For now, we log error messages and return a ruleguard checker
 	// with an empty rules set.
 
-	data, err := ioutil.ReadFile(rulesFilename)
-	if err != nil {
-		log.Printf("ruleguard init error: %+v", err)
-		return c
-	}
-
 	fset := token.NewFileSet()
-	rset, err := ruleguard.ParseRules(rulesFilename, fset, bytes.NewReader(data))
-	if err != nil {
-		log.Printf("ruleguard init error: %+v", err)
-		return c
+	filenames := strings.Split(rulesFlag, ",")
+	var ruleSets []*ruleguard.GoRuleSet
+	for _, filename := range filenames {
+		filename = strings.TrimSpace(filename)
+		data, err := ioutil.ReadFile(filename)
+		if err != nil {
+			log.Printf("ruleguard init error: %+v", err)
+			return c
+		}
+		rset, err := ruleguard.ParseRules(filename, fset, bytes.NewReader(data))
+		if err != nil {
+			log.Printf("ruleguard init error: %+v", err)
+			return c
+		}
+		ruleSets = append(ruleSets, rset)
 	}
 
-	c.rset = rset
+	c.rset = ruleguard.MergeRuleSets(ruleSets)
 	return c
 }
 
 type ruleguardChecker struct {
 	ctx *linter.CheckerContext
 
-	rset *ruleguard.GoRuleSet
+	debugGroup string
+	rset       *ruleguard.GoRuleSet
 }
 
 func (c *ruleguardChecker) WalkFile(f *ast.File) {
@@ -74,6 +90,10 @@ func (c *ruleguardChecker) WalkFile(f *ast.File) {
 	}
 
 	ctx := &ruleguard.Context{
+		Debug: c.debugGroup,
+		DebugPrint: func(s string) {
+			fmt.Fprintln(os.Stderr, s)
+		},
 		Pkg:   c.ctx.Pkg,
 		Types: c.ctx.TypesInfo,
 		Sizes: c.ctx.SizesInfo,

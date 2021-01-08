@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"go/ast"
+	"go/token"
 	"go/types"
 	"sort"
 	"strings"
@@ -116,6 +117,12 @@ func (t thelper) run(pass *analysis.Pass) (interface{}, error) {
 		return nil, nil
 	}
 
+	var ctxType types.Type
+	ctxObj := analysisutil.ObjectOf(pass, "context", "Context")
+	if ctxObj != nil {
+		ctxType = ctxObj.Type()
+	}
+
 	tHelper, _, _ := types.LookupFieldOrMethod(tObj.Type(), true, tObj.Pkg(), "Helper")
 	if tHelper == nil {
 		return nil, nil
@@ -131,6 +138,7 @@ func (t thelper) run(pass *analysis.Pass) (interface{}, error) {
 		varName:    "t",
 		tbHelper:   tHelper,
 		tbType:     types.NewPointer(tObj.Type()),
+		ctxType:    ctxType,
 		checkBegin: t.enabledChecks.Enabled(checkTBegin),
 		checkFirst: t.enabledChecks.Enabled(checkTFirst),
 		checkName:  t.enabledChecks.Enabled(checkTName),
@@ -141,6 +149,7 @@ func (t thelper) run(pass *analysis.Pass) (interface{}, error) {
 		varName:    "b",
 		tbHelper:   bHelper,
 		tbType:     types.NewPointer(bObj.Type()),
+		ctxType:    ctxType,
 		checkBegin: t.enabledChecks.Enabled(checkBBegin),
 		checkFirst: t.enabledChecks.Enabled(checkBFirst),
 		checkName:  t.enabledChecks.Enabled(checkBName),
@@ -149,15 +158,27 @@ func (t thelper) run(pass *analysis.Pass) (interface{}, error) {
 	inspect := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 	nodeFilter := []ast.Node{
 		(*ast.FuncDecl)(nil),
+		(*ast.FuncLit)(nil),
 	}
 	inspect.Preorder(nodeFilter, func(node ast.Node) {
-		funcDecl, ok := node.(*ast.FuncDecl)
-		if !ok {
+		var fd funcDecl
+		switch n := node.(type) {
+		case *ast.FuncLit:
+			fd.Pos = n.Pos()
+			fd.Type = n.Type
+			fd.Body = n.Body
+			fd.Name = ast.NewIdent("")
+		case *ast.FuncDecl:
+			fd.Pos = n.Pos()
+			fd.Type = n.Type
+			fd.Body = n.Body
+			fd.Name = n.Name
+		default:
 			return
 		}
 
-		checkFunc(pass, funcDecl, tCheckOpts)
-		checkFunc(pass, funcDecl, bCheckOpts)
+		checkFunc(pass, fd, tCheckOpts)
+		checkFunc(pass, fd, bCheckOpts)
 	})
 	return nil, nil
 }
@@ -166,13 +187,21 @@ type checkFuncOpts struct {
 	skipPrefix string
 	varName    string
 	tbHelper   types.Object
-	tbType     *types.Pointer
+	tbType     types.Type
+	ctxType    types.Type
 	checkBegin bool
 	checkFirst bool
 	checkName  bool
 }
 
-func checkFunc(pass *analysis.Pass, funcDecl *ast.FuncDecl, opts checkFuncOpts) {
+type funcDecl struct {
+	Pos  token.Pos
+	Name *ast.Ident
+	Type *ast.FuncType
+	Body *ast.BlockStmt
+}
+
+func checkFunc(pass *analysis.Pass, funcDecl funcDecl, opts checkFuncOpts) {
 	if strings.HasPrefix(funcDecl.Name.Name, opts.skipPrefix) {
 		return
 	}
@@ -184,24 +213,32 @@ func checkFunc(pass *analysis.Pass, funcDecl *ast.FuncDecl, opts checkFuncOpts) 
 
 	if opts.checkFirst {
 		if pos != 0 {
-			pass.Reportf(funcDecl.Pos(), "parameter %s should be the first", opts.tbType)
+			checkFirstPassed := false
+			if pos == 1 && opts.ctxType != nil {
+				_, pos, ok := searchFuncParam(pass, funcDecl, opts.ctxType)
+				checkFirstPassed = ok && (pos == 0)
+			}
+
+			if !checkFirstPassed {
+				pass.Reportf(funcDecl.Pos, "parameter %s should be the first or after context.Context", opts.tbType)
+			}
 		}
 	}
 
 	if opts.checkName {
 		if len(p.Names) > 0 && p.Names[0].Name != opts.varName {
-			pass.Reportf(funcDecl.Pos(), "parameter %s should have name %s", opts.tbType, opts.varName)
+			pass.Reportf(funcDecl.Pos, "parameter %s should have name %s", opts.tbType, opts.varName)
 		}
 	}
 
 	if opts.checkBegin {
 		if len(funcDecl.Body.List) == 0 || !isTHelperCall(pass, funcDecl.Body.List[0], opts.tbHelper) {
-			pass.Reportf(funcDecl.Pos(), "test helper function should start from %s.Helper()", opts.varName)
+			pass.Reportf(funcDecl.Pos, "test helper function should start from %s.Helper()", opts.varName)
 		}
 	}
 }
 
-func searchFuncParam(pass *analysis.Pass, f *ast.FuncDecl, p types.Type) (*ast.Field, int, bool) {
+func searchFuncParam(pass *analysis.Pass, f funcDecl, p types.Type) (*ast.Field, int, bool) {
 	for i, f := range f.Type.Params.List {
 		typeInfo, ok := pass.TypesInfo.Types[f.Type]
 		if !ok {

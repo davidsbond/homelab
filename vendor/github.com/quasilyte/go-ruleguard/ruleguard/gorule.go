@@ -13,13 +13,21 @@ type scopedGoRuleSet struct {
 }
 
 type goRule struct {
+	group      string
 	filename   string
+	line       int
 	severity   string
 	pat        *gogrep.Pattern
 	msg        string
 	location   string
 	suggestion string
-	filters    map[string]submatchFilter
+	filter     matchFilter
+}
+
+type matchFilter struct {
+	fileImports  []string
+	filenamePred func(string) bool
+	sub          map[string]submatchFilter
 }
 
 type submatchFilter struct {
