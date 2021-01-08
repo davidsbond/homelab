@@ -7,4 +7,4 @@ resources:
 - daemonset.yaml
 - serviceaccount.yaml
 - db-init.yaml
-
+- db-cleanup-cron.yaml
