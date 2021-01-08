@@ -1,0 +1,35 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: fluent-bit-cleanup
+  labels:
+    app: fluent-bit-cleanup
+spec:
+  schedule: 0 1 * * *
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - image: registry.homelab.dsb.dev/library/postgres:13.1-alpine
+              name: cleanup
+              command:
+                - psql
+                - -c
+                - "DELETE FROM fluentbit WHERE time < NOW() - INTERVAL '2 days'"
+              env:
+                - name: PGHOST
+                  value: postgres.storage.svc.cluster.local
+                - name: PGDATABASE
+                  value: fluentbit
+                - name: PGUSER
+                  valueFrom:
+                    secretKeyRef:
+                      key: postgres.user
+                      name: postgres
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      key: postgres.password
+                      name: postgres
+          restartPolicy: Never
