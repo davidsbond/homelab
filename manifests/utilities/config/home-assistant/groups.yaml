@@ -7,3 +7,9 @@ lights:
     - light.living_room_light
     - light.office_light
     - light.spare_bedroom_lamp
+
+office_lights:
+  name: Office Lights
+  entities:
+    - light.office_light
+    - light.spare_bedroom_lamp

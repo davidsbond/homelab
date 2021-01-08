@@ -20,5 +20,6 @@ views:
     - entity: script.all_lights_red
     - entity: script.all_lights_pink
     - entity: script.all_lights_random
+    - entity: script.flash_office_lights
     title: Light Scripts
     state_color: true
