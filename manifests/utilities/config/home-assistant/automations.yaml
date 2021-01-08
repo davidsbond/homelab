@@ -1,1 +1,10 @@
-[]
+- id: door_bell_ring
+  alias: Door Bell Ringing
+  description: 'When doorbell rings, make office lights flash'
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.front_door_ding
+      to: 'on'
+  action:
+    - alias: 'Make office lights flash'
+      service: script.flash_office_lights
