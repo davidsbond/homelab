@@ -100,65 +100,35 @@ func NewAnalyzer() *analysis.Analyzer {
 		},
 	}
 
-	a.Flags.Init("nlreturn", flag.ExitOnError)
+	a.Flags.Init("thelper", flag.ExitOnError)
 	a.Flags.Var(&thelper.enabledChecks, "checks", checksDoc)
 
 	return a
 }
 
 func (t thelper) run(pass *analysis.Pass) (interface{}, error) {
-	tObj := analysisutil.ObjectOf(pass, "testing", "T")
-	if tObj == nil {
-		return nil, nil
-	}
-
-	bObj := analysisutil.ObjectOf(pass, "testing", "B")
-	if bObj == nil {
-		return nil, nil
-	}
-
 	var ctxType types.Type
 	ctxObj := analysisutil.ObjectOf(pass, "context", "Context")
 	if ctxObj != nil {
 		ctxType = ctxObj.Type()
 	}
 
-	tHelper, _, _ := types.LookupFieldOrMethod(tObj.Type(), true, tObj.Pkg(), "Helper")
-	if tHelper == nil {
+	tCheckOpts, ok := t.buildTestCheckFuncOpts(pass, ctxType)
+	if !ok {
 		return nil, nil
 	}
 
-	bHelper, _, _ := types.LookupFieldOrMethod(bObj.Type(), true, bObj.Pkg(), "Helper")
-	if bHelper == nil {
+	bCheckOpts, ok := t.buildBenchmarkCheckFuncOpts(pass, ctxType)
+	if !ok {
 		return nil, nil
 	}
 
-	tCheckOpts := checkFuncOpts{
-		skipPrefix: "Test",
-		varName:    "t",
-		tbHelper:   tHelper,
-		tbType:     types.NewPointer(tObj.Type()),
-		ctxType:    ctxType,
-		checkBegin: t.enabledChecks.Enabled(checkTBegin),
-		checkFirst: t.enabledChecks.Enabled(checkTFirst),
-		checkName:  t.enabledChecks.Enabled(checkTName),
-	}
-
-	bCheckOpts := checkFuncOpts{
-		skipPrefix: "Benchmark",
-		varName:    "b",
-		tbHelper:   bHelper,
-		tbType:     types.NewPointer(bObj.Type()),
-		ctxType:    ctxType,
-		checkBegin: t.enabledChecks.Enabled(checkBBegin),
-		checkFirst: t.enabledChecks.Enabled(checkBFirst),
-		checkName:  t.enabledChecks.Enabled(checkBName),
-	}
-
+	var reports reports
 	inspect := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 	nodeFilter := []ast.Node{
 		(*ast.FuncDecl)(nil),
 		(*ast.FuncLit)(nil),
+		(*ast.CallExpr)(nil),
 	}
 	inspect.Preorder(nodeFilter, func(node ast.Node) {
 		var fd funcDecl
@@ -169,17 +139,24 @@ func (t thelper) run(pass *analysis.Pass) (interface{}, error) {
 			fd.Body = n.Body
 			fd.Name = ast.NewIdent("")
 		case *ast.FuncDecl:
-			fd.Pos = n.Pos()
+			fd.Pos = n.Name.NamePos
 			fd.Type = n.Type
 			fd.Body = n.Body
 			fd.Name = n.Name
+		case *ast.CallExpr:
+			reports.Filter(subtestPos(pass, n, tCheckOpts.tbRun))
+			reports.Filter(subtestPos(pass, n, bCheckOpts.tbRun))
+			return
 		default:
 			return
 		}
 
-		checkFunc(pass, fd, tCheckOpts)
-		checkFunc(pass, fd, bCheckOpts)
+		checkFunc(pass, &reports, fd, tCheckOpts)
+		checkFunc(pass, &reports, fd, bCheckOpts)
 	})
+
+	reports.Flush(pass)
+
 	return nil, nil
 }
 
@@ -187,11 +164,70 @@ type checkFuncOpts struct {
 	skipPrefix string
 	varName    string
 	tbHelper   types.Object
+	tbRun      types.Object
 	tbType     types.Type
 	ctxType    types.Type
 	checkBegin bool
 	checkFirst bool
 	checkName  bool
+}
+
+func (t thelper) buildTestCheckFuncOpts(pass *analysis.Pass, ctxType types.Type) (checkFuncOpts, bool) {
+	tObj := analysisutil.ObjectOf(pass, "testing", "T")
+	if tObj == nil {
+		return checkFuncOpts{}, false
+	}
+
+	tHelper, _, _ := types.LookupFieldOrMethod(tObj.Type(), true, tObj.Pkg(), "Helper")
+	if tHelper == nil {
+		return checkFuncOpts{}, false
+	}
+
+	tRun, _, _ := types.LookupFieldOrMethod(tObj.Type(), true, tObj.Pkg(), "Run")
+	if tRun == nil {
+		return checkFuncOpts{}, false
+	}
+
+	return checkFuncOpts{
+		skipPrefix: "Test",
+		varName:    "t",
+		tbHelper:   tHelper,
+		tbRun:      tRun,
+		tbType:     types.NewPointer(tObj.Type()),
+		ctxType:    ctxType,
+		checkBegin: t.enabledChecks.Enabled(checkTBegin),
+		checkFirst: t.enabledChecks.Enabled(checkTFirst),
+		checkName:  t.enabledChecks.Enabled(checkTName),
+	}, true
+}
+
+func (t thelper) buildBenchmarkCheckFuncOpts(pass *analysis.Pass, ctxType types.Type) (checkFuncOpts, bool) {
+	bObj := analysisutil.ObjectOf(pass, "testing", "B")
+	if bObj == nil {
+		return checkFuncOpts{}, false
+	}
+
+	bHelper, _, _ := types.LookupFieldOrMethod(bObj.Type(), true, bObj.Pkg(), "Helper")
+	if bHelper == nil {
+		return checkFuncOpts{}, false
+	}
+
+	bRun, _, _ := types.LookupFieldOrMethod(bObj.Type(), true, bObj.Pkg(), "Run")
+	if bRun == nil {
+		return checkFuncOpts{}, false
+	}
+
+	return checkFuncOpts{
+		skipPrefix: "Benchmark",
+		varName:    "b",
+		tbHelper:   bHelper,
+		tbRun:      bRun,
+		tbType:     types.NewPointer(bObj.Type()),
+		ctxType:    ctxType,
+		checkBegin: t.enabledChecks.Enabled(checkBBegin),
+		checkFirst: t.enabledChecks.Enabled(checkBFirst),
+		checkName:  t.enabledChecks.Enabled(checkBName),
+	}, true
 }
 
 type funcDecl struct {
@@ -201,7 +237,7 @@ type funcDecl struct {
 	Body *ast.BlockStmt
 }
 
-func checkFunc(pass *analysis.Pass, funcDecl funcDecl, opts checkFuncOpts) {
+func checkFunc(pass *analysis.Pass, reports *reports, funcDecl funcDecl, opts checkFuncOpts) {
 	if strings.HasPrefix(funcDecl.Name.Name, opts.skipPrefix) {
 		return
 	}
@@ -220,20 +256,20 @@ func checkFunc(pass *analysis.Pass, funcDecl funcDecl, opts checkFuncOpts) {
 			}
 
 			if !checkFirstPassed {
-				pass.Reportf(funcDecl.Pos, "parameter %s should be the first or after context.Context", opts.tbType)
+				reports.Reportf(funcDecl.Pos, "parameter %s should be the first or after context.Context", opts.tbType)
 			}
 		}
 	}
 
 	if opts.checkName {
 		if len(p.Names) > 0 && p.Names[0].Name != opts.varName {
-			pass.Reportf(funcDecl.Pos, "parameter %s should have name %s", opts.tbType, opts.varName)
+			reports.Reportf(funcDecl.Pos, "parameter %s should have name %s", opts.tbType, opts.varName)
 		}
 	}
 
 	if opts.checkBegin {
 		if len(funcDecl.Body.List) == 0 || !isTHelperCall(pass, funcDecl.Body.List[0], opts.tbHelper) {
-			pass.Reportf(funcDecl.Pos, "test helper function should start from %s.Helper()", opts.varName)
+			reports.Reportf(funcDecl.Pos, "test helper function should start from %s.Helper()", opts.varName)
 		}
 	}
 }
@@ -268,10 +304,46 @@ func isTHelperCall(pass *analysis.Pass, s ast.Stmt, tHelper types.Object) bool {
 		return false
 	}
 
+	return isSelectorCall(pass, selExpr, tHelper)
+}
+
+func subtestPos(pass *analysis.Pass, e *ast.CallExpr, tbRun types.Object) token.Pos {
+	selExpr, ok := e.Fun.(*ast.SelectorExpr)
+	if !ok {
+		return token.NoPos
+	}
+
+	if !isSelectorCall(pass, selExpr, tbRun) {
+		return token.NoPos
+	}
+
+	if len(e.Args) != 2 {
+		return token.NoPos
+	}
+
+	anonFunLit, ok := e.Args[1].(*ast.FuncLit)
+	if ok {
+		return anonFunLit.Pos()
+	}
+
+	funIdent, ok := e.Args[1].(*ast.Ident)
+	if !ok {
+		return token.NoPos
+	}
+
+	funDef, ok := pass.TypesInfo.Uses[funIdent]
+	if !ok {
+		return token.NoPos
+	}
+
+	return funDef.Pos()
+}
+
+func isSelectorCall(pass *analysis.Pass, selExpr *ast.SelectorExpr, callObj types.Object) bool {
 	sel, ok := pass.TypesInfo.Selections[selExpr]
 	if !ok {
 		return false
 	}
 
-	return sel.Obj() == tHelper
+	return sel.Obj() == callObj
 }

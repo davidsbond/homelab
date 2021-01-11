@@ -219,7 +219,10 @@ func (f *fumpter) printLength(node ast.Node) int {
 //   //extern     | C function declarations for gccgo
 //   //sys(nb)?   | syscall function wrapper prototypes
 //   //nolint     | nolint directive for golangci
-var rxCommentDirective = regexp.MustCompile(`^([a-z]+:|line\b|export\b|extern\b|sys(nb)?\b|nolint\b)`)
+//
+// Note that the "someword:" matching expects a letter afterward, such as
+// "go:generate", to prevent matching false positives like "https://site".
+var rxCommentDirective = regexp.MustCompile(`^([a-z]+:[a-z]+|line\b|export\b|extern\b|sys(nb)?\b|nolint\b)`)
 
 // visit takes either an ast.Node or a []ast.Stmt.
 func (f *fumpter) applyPre(c *astutil.Cursor) {
@@ -488,6 +491,13 @@ func (f *fumpter) applyPre(c *astutil.Cursor) {
 		f.stmts(node.Body)
 
 	case *ast.FieldList:
+		if node.NumFields() == 0 {
+			// Empty field lists should not contain a newline.
+			openLine := f.Line(node.Pos())
+			closeLine := f.Line(node.End())
+			f.removeLines(openLine, closeLine)
+		}
+
 		// Merging adjacent fields (e.g. parameters) is disabled by default.
 		if !f.ExtraRules {
 			break
