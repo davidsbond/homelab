@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/aead/chacha20 v0.0.0-20180709150244-8b13a72661da // indirect
 	github.com/go-ping/ping v0.0.0-20201115131931-3300c582a663
-	github.com/golangci/golangci-lint v1.35.0
+	github.com/golangci/golangci-lint v1.35.2
 	github.com/google/gxui v0.0.0-20151028112939-f85e0a97b3a4 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/grafana-tools/sdk v0.0.0-20201123153837-5fb28a7aa2ef
@@ -26,6 +26,6 @@ require (
 	github.com/zach-klippenstein/goregen v0.0.0-20160303162051-795b5e3961ea // indirect
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a
 	gopkg.in/yaml.v2 v2.4.0
-	mvdan.cc/gofumpt v0.0.0-20201129102820-5c11c50e9475
+	mvdan.cc/gofumpt v0.1.0
 	pkg.dsb.dev v1.6.0
 )

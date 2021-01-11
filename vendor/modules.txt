@@ -69,7 +69,7 @@ github.com/bombsimon/wsl/v3
 github.com/cespare/xxhash/v2
 # github.com/cpuguy83/go-md2man/v2 v2.0.0
 github.com/cpuguy83/go-md2man/v2/md2man
-# github.com/daixiang0/gci v0.2.7
+# github.com/daixiang0/gci v0.2.8
 github.com/daixiang0/gci/pkg/gci
 # github.com/davecgh/go-spew v1.1.1
 github.com/davecgh/go-spew/spew
@@ -158,7 +158,7 @@ github.com/golangci/gocyclo/pkg/gocyclo
 # github.com/golangci/gofmt v0.0.0-20190930125516-244bba706f1a
 github.com/golangci/gofmt/gofmt
 github.com/golangci/gofmt/goimports
-# github.com/golangci/golangci-lint v1.35.0
+# github.com/golangci/golangci-lint v1.35.2
 ## explicit
 github.com/golangci/golangci-lint/cmd/golangci-lint
 github.com/golangci/golangci-lint/internal/cache
@@ -282,7 +282,7 @@ github.com/jmespath/go-jmespath
 # github.com/kisielk/gotool v1.0.0
 github.com/kisielk/gotool
 github.com/kisielk/gotool/internal/load
-# github.com/kulti/thelper v0.2.0
+# github.com/kulti/thelper v0.2.1
 github.com/kulti/thelper/pkg/analyzer
 # github.com/kunwardeep/paralleltest v1.0.2
 github.com/kunwardeep/paralleltest/pkg/paralleltest
@@ -728,7 +728,7 @@ honnef.co/go/tools/staticcheck
 honnef.co/go/tools/stylecheck
 honnef.co/go/tools/unused
 honnef.co/go/tools/version
-# mvdan.cc/gofumpt v0.0.0-20201129102820-5c11c50e9475
+# mvdan.cc/gofumpt v0.1.0
 ## explicit
 mvdan.cc/gofumpt/format
 mvdan.cc/gofumpt/gofumports
