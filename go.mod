@@ -19,7 +19,7 @@ require (
 	github.com/prometheus/client_golang v1.9.0
 	github.com/sebdah/markdown-toc v0.0.0-20171116085747-3bb461875c34
 	github.com/smartystreets/assertions v1.1.1 // indirect
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	github.com/tmthrgd/go-bindata v0.0.0-20190904063317-a4b65675e0fb
 	github.com/tmthrgd/go-rand v0.0.0-20190904060720-34764beea44d // indirect
 	github.com/uw-labs/strongbox v0.2.0
