@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: pihole
-        image: registry.homelab.dsb.dev/pihole/pihole:v5.3.4
+        image: registry.homelab.dsb.dev/pihole/pihole:v5.5.1
         imagePullPolicy: Always
         env:
         - name: TZ
