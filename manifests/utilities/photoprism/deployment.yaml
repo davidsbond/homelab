@@ -17,7 +17,7 @@ spec:
         app: photoprism
     spec:
       containers:
-        - image: registry.homelab.dsb.dev/photoprism/photoprism-arm64:20201224
+        - image: registry.homelab.dsb.dev/photoprism/photoprism-arm64:20210120
           name: photoprism
           readinessProbe:
             tcpSocket:
