@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: alertmanager
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.entrypoints: https
+    cert-manager.io/cluster-issuer: cloudflare
+spec:
+  tls:
+  - hosts:
+    - alertmanager.homelab.dsb.dev
+    secretName: alertmanager-tls
+  rules:
+  - host: alertmanager.homelab.dsb.dev
+    http:
+      paths:
+      - backend:
+          service:
+            name: alertmanager
+            port:
+              number: 9093
+        path: /
+        pathType: Prefix

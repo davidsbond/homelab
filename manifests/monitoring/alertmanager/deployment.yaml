@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alertmanager
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: alertmanager
+  template:
+    metadata:
+      labels:
+        app: alertmanager
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: /metrics
+        prometheus.io/port: '9093'
+    spec:
+      containers:
+        - name: alertmanager
+          image: registry.homelab.dsb.dev/prom/alertmanager:v0.21.0
+          args:
+            - '--config.file=/etc/alertmanager/alertmanager.yaml'
+            - '--storage.path=/alertmanager'
+          readinessProbe:
+            httpGet:
+              path: /#/status
+              port: 9093
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+          volumeMounts:
+            - name: config
+              mountPath: /etc/alertmanager/alertmanager.yaml
+              subPath: alertmanager.yaml
+            - name: data
+              mountPath: "/alertmanager"
+      volumes:
+        - name: config
+          configMap:
+            defaultMode: 420
+            name: alertmanager
+        - name: data
+          persistentVolumeClaim:
+            claimName: alertmanager

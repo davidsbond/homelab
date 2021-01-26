@@ -244,24 +244,6 @@ scrape_configs:
     scrape_timeout: 30s
 alerting:
   alertmanagers:
-    - kubernetes_sd_configs:
-        - role: pod
-      tls_config:
-        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-      relabel_configs:
-        - source_labels: [__meta_kubernetes_namespace]
-          regex: monitoring
-          action: keep
-        - source_labels: [__meta_kubernetes_pod_label_app]
-          regex: prometheus
-          action: keep
-        - source_labels: [__meta_kubernetes_pod_label_component]
-          regex: alertmanager
-          action: keep
-        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_probe]
-          regex: .*
-          action: keep
-        - source_labels: [__meta_kubernetes_pod_container_port_number]
-          regex:
-          action: drop
+    - static_configs:
+        - targets:
+            - alertmanager.monitoring.svc.cluster.local:9093
