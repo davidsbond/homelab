@@ -30,21 +30,16 @@ var (
 
 // checkComments checks every comment accordings to the rules from
 // `settings` argument.
-func checkComments(fset *token.FileSet, comments []comment, settings Settings) []Issue {
+func checkComments(comments []comment, settings Settings) []Issue {
 	var issues []Issue // nolint: prealloc
 	for _, c := range comments {
-		if c.ast == nil || len(c.ast.List) == 0 {
-			continue
-		}
-
 		if settings.Period {
-			if iss := checkCommentForPeriod(fset, c); iss != nil {
+			if iss := checkCommentForPeriod(c); iss != nil {
 				issues = append(issues, *iss)
 			}
 		}
-
 		if settings.Capital {
-			if iss := checkCommentForCapital(fset, c); len(iss) > 0 {
+			if iss := checkCommentForCapital(c); len(iss) > 0 {
 				issues = append(issues, iss...)
 			}
 		}
@@ -54,29 +49,24 @@ func checkComments(fset *token.FileSet, comments []comment, settings Settings) [
 
 // checkCommentForPeriod checks that the last sentense of the comment ends
 // in a period.
-func checkCommentForPeriod(fset *token.FileSet, c comment) *Issue {
-	// Save global line number and indentation
-	start := fset.Position(c.ast.List[0].Slash)
-
-	text := getText(c.ast)
-
-	pos, ok := checkPeriod(text)
+func checkCommentForPeriod(c comment) *Issue {
+	pos, ok := checkPeriod(c.text)
 	if ok {
 		return nil
 	}
 
 	// Shift position by the length of comment's special symbols: /* or //
-	isBlock := strings.HasPrefix(c.ast.List[0].Text, "/*")
+	isBlock := strings.HasPrefix(c.lines[0], "/*")
 	if (isBlock && pos.line == 1) || !isBlock {
 		pos.column += 2
 	}
 
 	iss := Issue{
 		Pos: token.Position{
-			Filename: start.Filename,
-			Offset:   start.Offset,
-			Line:     pos.line + start.Line - 1,
-			Column:   pos.column + start.Column - 1,
+			Filename: c.start.Filename,
+			Offset:   c.start.Offset,
+			Line:     pos.line + c.start.Line - 1,
+			Column:   pos.column + c.start.Column - 1,
 		},
 		Message: noPeriodMessage,
 	}
@@ -98,13 +88,8 @@ func checkCommentForPeriod(fset *token.FileSet, c comment) *Issue {
 // checkCommentForCapital checks that the each sentense of the comment starts with
 // a capital letter.
 // nolint: unparam
-func checkCommentForCapital(fset *token.FileSet, c comment) []Issue {
-	// Save global line number and indent
-	start := fset.Position(c.ast.List[0].Slash)
-
-	text := getText(c.ast)
-
-	pp := checkCapital(text, c.decl)
+func checkCommentForCapital(c comment) []Issue {
+	pp := checkCapital(c.text, c.decl)
 	if len(pp) == 0 {
 		return nil
 	}
@@ -112,17 +97,17 @@ func checkCommentForCapital(fset *token.FileSet, c comment) []Issue {
 	issues := make([]Issue, len(pp))
 	for i, pos := range pp {
 		// Shift position by the length of comment's special symbols: /* or //
-		isBlock := strings.HasPrefix(c.ast.List[0].Text, "/*")
+		isBlock := strings.HasPrefix(c.lines[0], "/*")
 		if (isBlock && pos.line == 1) || !isBlock {
 			pos.column += 2
 		}
 
 		iss := Issue{
 			Pos: token.Position{
-				Filename: start.Filename,
-				Offset:   start.Offset,
-				Line:     pos.line + start.Line - 1,
-				Column:   pos.column + start.Column - 1,
+				Filename: c.start.Filename,
+				Offset:   c.start.Offset,
+				Line:     pos.line + c.start.Line - 1,
+				Column:   pos.column + c.start.Column - 1,
 			},
 			Message: noCapitalMessage,
 		}

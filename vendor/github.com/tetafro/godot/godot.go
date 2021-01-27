@@ -8,6 +8,7 @@ import (
 	"go/token"
 	"io/ioutil"
 	"os"
+	"regexp"
 	"sort"
 	"strings"
 )
@@ -30,23 +31,36 @@ type position struct {
 	column int
 }
 
-// comment is an internal representation of AST comment entity with rendered
-// lines attached. The latter is used for creating a full replacement for
+// comment is an internal representation of AST comment entity with additional
+// data attached. The latter is used for creating a full replacement for
 // the line with issues.
 type comment struct {
-	ast   *ast.CommentGroup
-	lines []string
-	decl  bool
+	lines []string       // unmodified lines from file
+	text  string         // concatenated `lines` with special parts excluded
+	start token.Position // position of the first symbol in comment
+	decl  bool           // whether comment is a special one (should not be checked)
 }
 
 // Run runs this linter on the provided code.
 func Run(file *ast.File, fset *token.FileSet, settings Settings) ([]Issue, error) {
-	comments, err := getComments(file, fset, settings.Scope)
+	pf, err := newParsedFile(file, fset)
+	if err == errEmptyInput {
+		return nil, nil
+	}
 	if err != nil {
-		return nil, fmt.Errorf("get comments: %v", err)
+		return nil, fmt.Errorf("parse input file: %v", err)
 	}
 
-	issues := checkComments(fset, comments, settings)
+	exclude := make([]*regexp.Regexp, len(settings.Exclude))
+	for i := 0; i < len(settings.Exclude); i++ {
+		exclude[i], err = regexp.Compile(settings.Exclude[i])
+		if err != nil {
+			return nil, fmt.Errorf("invalid regexp: %v", err)
+		}
+	}
+
+	comments := pf.getComments(settings.Scope, exclude)
+	issues := checkComments(comments, settings)
 	sortIssues(issues)
 
 	return issues, nil

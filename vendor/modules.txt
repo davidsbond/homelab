@@ -75,6 +75,8 @@ github.com/daixiang0/gci/pkg/gci
 github.com/davecgh/go-spew/spew
 # github.com/denis-tingajkin/go-header v0.4.2
 github.com/denis-tingajkin/go-header
+# github.com/esimonov/ifshort v1.0.0
+github.com/esimonov/ifshort/pkg/analyzer
 # github.com/fatih/color v1.10.0
 github.com/fatih/color
 # github.com/felixge/httpsnoop v1.0.1
@@ -158,7 +160,7 @@ github.com/golangci/gocyclo/pkg/gocyclo
 # github.com/golangci/gofmt v0.0.0-20190930125516-244bba706f1a
 github.com/golangci/gofmt/gofmt
 github.com/golangci/gofmt/goimports
-# github.com/golangci/golangci-lint v1.35.2
+# github.com/golangci/golangci-lint v1.36.0
 ## explicit
 github.com/golangci/golangci-lint/cmd/golangci-lint
 github.com/golangci/golangci-lint/internal/cache
@@ -314,7 +316,7 @@ github.com/moricho/tparallel/pkg/ssafunc
 github.com/moricho/tparallel/pkg/ssainstr
 # github.com/nakabonne/nestif v0.3.0
 github.com/nakabonne/nestif
-# github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d
+# github.com/nbutton23/zxcvbn-go v0.0.0-20201221231540-e56b841a3c88
 github.com/nbutton23/zxcvbn-go
 github.com/nbutton23/zxcvbn-go/adjacency
 github.com/nbutton23/zxcvbn-go/data
@@ -381,7 +383,7 @@ github.com/ryanrolds/sqlclosecheck/pkg/analyzer
 github.com/sebdah/markdown-toc
 github.com/sebdah/markdown-toc/cmd
 github.com/sebdah/markdown-toc/toc
-# github.com/securego/gosec/v2 v2.5.0
+# github.com/securego/gosec/v2 v2.6.1
 github.com/securego/gosec/v2
 github.com/securego/gosec/v2/rules
 # github.com/shazow/go-diff v0.0.0-20160112020656-b6b7b6733b8c
@@ -423,7 +425,7 @@ github.com/stretchr/testify/mock
 github.com/subosito/gotenv
 # github.com/tdakkota/asciicheck v0.0.0-20200416190851-d7f85be797a2
 github.com/tdakkota/asciicheck
-# github.com/tetafro/godot v1.3.2
+# github.com/tetafro/godot v1.4.3
 github.com/tetafro/godot
 # github.com/timakin/bodyclose v0.0.0-20190930140734-f7f2e9bca95e
 github.com/timakin/bodyclose/passes/bodyclose
@@ -437,10 +439,10 @@ github.com/tmthrgd/go-bindata/restore
 ## explicit
 # github.com/tomarrell/wrapcheck v0.0.0-20200807122107-df9e8bcb914d
 github.com/tomarrell/wrapcheck/wrapcheck
-# github.com/tommy-muehle/go-mnd v1.3.1-0.20201008215730-16041ac3fe65
-github.com/tommy-muehle/go-mnd
-github.com/tommy-muehle/go-mnd/checks
-github.com/tommy-muehle/go-mnd/config
+# github.com/tommy-muehle/go-mnd/v2 v2.3.1
+github.com/tommy-muehle/go-mnd/v2
+github.com/tommy-muehle/go-mnd/v2/checks
+github.com/tommy-muehle/go-mnd/v2/config
 # github.com/uber/jaeger-client-go v2.25.0+incompatible
 github.com/uber/jaeger-client-go
 github.com/uber/jaeger-client-go/internal/baggage

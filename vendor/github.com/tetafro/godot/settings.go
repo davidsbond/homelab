@@ -5,6 +5,9 @@ type Settings struct {
 	// Which comments to check (top level declarations, top level, all).
 	Scope Scope
 
+	// Regexp for excluding particular comment lines from check.
+	Exclude []string
+
 	// Check periods at the end of sentences.
 	Period bool
 
