@@ -1,0 +1,41 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: prometheus-exporter-minecraft
+  labels:
+    app: prometheus-exporter-minecraft
+spec:
+  schedule: '*/30 * * * *'
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          imagePullSecrets:
+          - name: registry
+          containers:
+          - image: ghcr.io/davidsbond/homelab:latest
+            name: prometheus-exporter-minecraft
+            command:
+            - /bin/prometheus-exporter-minecraft
+            env:
+            - name: TRACER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: tracer.host
+                  name: tracing
+            - name: METRICS_PUSH_URL
+              valueFrom:
+                configMapKeyRef:
+                  key: push.gateway.url
+                  name: prometheus
+            - name: MINECRAFT_IP
+              valueFrom:
+                secretKeyRef:
+                  key: server.ip
+                  name: minecraft
+            readinessProbe:
+              httpGet:
+                path: /__/health
+                port: 8081
+              initialDelaySeconds: 5
+          restartPolicy: OnFailure
