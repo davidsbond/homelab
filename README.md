@@ -82,6 +82,7 @@ I've implemented several custom prometheus exporters in this repo that power my 
 * `worldping` - Exports world ping times for the local host as prometheus metrics
 * `home-assistant` - Proxies prometheus metrics from a home-assistant server.
 * `synology` - Exports statistics from my NAS drive.
+* `minecraft` - Exports statistics for my Minecraft server.
 
 ## Other tools
 

@@ -10,6 +10,7 @@ resources:
 - home-assistant
 - pihole
 - synology
+- minecraft
 
 secretGenerator:
 - name: weather
@@ -24,3 +25,6 @@ secretGenerator:
 - name: synology
   envs:
   - secrets/synology
+- name: minecraft
+  files:
+  - secrets/minecraft
