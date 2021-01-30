@@ -26,5 +26,5 @@ secretGenerator:
   envs:
   - secrets/synology
 - name: minecraft
-  files:
+  envs:
   - secrets/minecraft
