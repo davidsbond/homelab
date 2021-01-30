@@ -57,3 +57,6 @@ resource "grafana_dashboard" "weather" {
   config_json = file("${path.module}/dashboards/weather.json")
 }
 
+resource "grafana_dashboard" "minecraft" {
+  config_json = file("${path.module}/dashboards/minecraft.json")
+}
