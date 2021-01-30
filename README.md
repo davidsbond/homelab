@@ -164,6 +164,7 @@ This list contains all terraform providers used in the project:
 
 * [cloudflare](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs)
 * [minio](https://github.com/aminueza/terraform-provider-minio)
+* [grafana](https://registry.terraform.io/providers/grafana/grafana/latest)
 
 ### Database provisioning
 

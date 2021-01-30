@@ -15,3 +15,9 @@ module "minio" {
   minio_secret_key = var.minio_secret_key
   minio_url        = var.minio_url
 }
+
+module "grafana" {
+  source           = "./grafana"
+  grafana_password = var.grafana_password
+  grafana_user     = var.grafana_user
+}
