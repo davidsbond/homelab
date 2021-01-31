@@ -28,6 +28,25 @@ provider "registry.terraform.io/cloudflare/cloudflare" {
   ]
 }
 
+provider "registry.terraform.io/davidsbond/tailscale" {
+  version     = "0.0.1"
+  constraints = "0.0.1"
+  hashes = [
+    "h1:jENCg1u3BfND3eqeC6RhYea/zOUxo6ijciSApD7ee78=",
+    "zh:10b338b1c6d668559e7190c007c813abdaf1fa0886edeed2aa7633b0158f3019",
+    "zh:2e3e3c1638a05381c948a234a64401fe749036c9d9099bf23b34c86561c9d4a3",
+    "zh:300628785b60d7d7d471a04a0faddef85366c5d6c583a427d0ae618f08f4515b",
+    "zh:3eac1d0d9ac40280de9373e5a17fff21c8d4c58589ac19d5fde72f1e8831c34a",
+    "zh:439d15c1648ee5200b8580323b6b74222bd7e0ac928f87ed03aa0e1fa75a71c1",
+    "zh:768b3df11946aa9e7e949015d8809caadf31089bc07e56313044c95d64296b30",
+    "zh:8c928fdee098572e906161c70ecc6c3a93effa2aae00140d5052f9c11a523623",
+    "zh:918d3435aad531541dfc139b4bc117814e0370277bbc7cbe3128ebb8c1202cd9",
+    "zh:e2d4d4713eb49034daebf970a125553d9df9764e288d57f8b4e254600d5af0ed",
+    "zh:f97a429e12daa251dc2f159500e7fbc6f085d452afdd51bfb52c3b1819deaaee",
+    "zh:fe5450a74940748fd26574c0af25b53d971f65e93fce6156ea78d9f40d1eb0ed",
+  ]
+}
+
 provider "registry.terraform.io/grafana/grafana" {
   version     = "1.8.1"
   constraints = "1.8.1"
