@@ -21,3 +21,9 @@ module "grafana" {
   grafana_password = var.grafana_password
   grafana_user     = var.grafana_user
 }
+
+module "tailscale" {
+  source            = "./tailscale"
+  tailscale_api_key = var.tailscale_api_key
+  tailscale_domain  = var.tailscale_domain
+}
