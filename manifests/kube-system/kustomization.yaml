@@ -6,6 +6,7 @@ resources:
 - system-upgrade-controller
 - traefik
 - fluent-bit
+- version-checker
 
 secretGenerator:
 - name: traefik

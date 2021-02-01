@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: version-checker
+  name: version-checker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: version-checker
+  template:
+    metadata:
+      labels:
+        app: version-checker
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+    spec:
+      serviceAccountName: version-checker
+      containers:
+        - image: quay.io/jetstack/version-checker:v0.2.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          name: version-checker
+          command: ["version-checker"]
+          args:
+            - --test-all-containers
