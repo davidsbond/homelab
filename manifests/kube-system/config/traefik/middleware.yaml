@@ -4,3 +4,7 @@ http:
       headers:
         customRequestHeaders:
           X-Forwarded-Proto: "https"
+    compression:
+        compress:
+          excludedContentTypes:
+          -  "text/event-stream"

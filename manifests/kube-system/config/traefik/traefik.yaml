@@ -24,6 +24,7 @@ entryPoints:
     http:
       middlewares:
         - sslheader@file
+        - compression@file
   metrics:
     address: :8081
   ping:
