@@ -1,0 +1,6 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: auth-system
+  labels:
+    name: auth-system
