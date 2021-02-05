@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    app: dashboard-metrics-scraper
+  name: dashboard-metrics-scraper
+spec:
+  ports:
+    - port: 8000
+      targetPort: 8000
+  selector:
+    app: dashboard-metrics-scraper
