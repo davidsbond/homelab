@@ -5,7 +5,7 @@ metadata:
   labels:
     app: fluent-bit-cleanup
 spec:
-  schedule: 0 1 * * *
+  schedule: 0 * * * *
   jobTemplate:
     spec:
       template:
@@ -16,7 +16,7 @@ spec:
               command:
                 - psql
                 - -c
-                - "DELETE FROM fluentbit WHERE time < NOW() - INTERVAL '2 days'"
+                - "DELETE FROM fluentbit WHERE time < NOW() - INTERVAL '1 day'"
               env:
                 - name: PGHOST
                   value: postgres.storage.svc.cluster.local

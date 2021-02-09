@@ -24,6 +24,7 @@ configMapGenerator:
 - name: fluent-bit
   files:
   - config/fluent-bit/filter-kubernetes.conf
+  - config/fluent-bit/filter-throttle.conf
   - config/fluent-bit/fluent-bit.conf
   - config/fluent-bit/input-kubernetes.conf
   - config/fluent-bit/output-postgres.conf
