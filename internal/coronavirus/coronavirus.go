@@ -54,7 +54,7 @@ func New() (*Client, error) {
 
 // Ping returns a non-nil error if the API is deemed to be down.
 func (cl *Client) Ping() error {
-	const uri = "/v1/data"
+	const uri = "/"
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
@@ -110,12 +110,18 @@ func (cl *Client) do(req *http.Request, out interface{}) error {
 	}
 	defer closers.Close(res.Body)
 
+	dc := json.NewDecoder(res.Body)
 	if res.StatusCode < http.StatusOK || res.StatusCode > http.StatusIMUsed {
-		return fmt.Errorf("%w: %v", ErrStatus, res.StatusCode)
+		var errResp APIError
+		if err = dc.Decode(&errResp); err != nil {
+			return err
+		}
+
+		return errResp
 	}
 
 	if out != nil {
-		if err := json.NewDecoder(res.Body).Decode(out); err != nil {
+		if err = dc.Decode(out); err != nil {
 			return fmt.Errorf("failed to decode response body: %w", err)
 		}
 	}

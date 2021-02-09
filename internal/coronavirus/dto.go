@@ -18,4 +18,16 @@ type (
 			Last     string      `json:"last"`
 		} `json:"pagination"`
 	}
+
+	// APIError represents the response format from the government coronavirus API when it returns
+	// an error.
+	APIError struct {
+		Response   string `json:"response"`
+		StatusCode int    `json:"status_code"`
+		Status     string `json:"status"`
+	}
 )
+
+func (err APIError) Error() string {
+	return err.Response
+}
