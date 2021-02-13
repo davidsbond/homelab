@@ -6,12 +6,14 @@ metadata:
     app: fluent-bit-cleanup
 spec:
   schedule: 0 * * * *
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 1
   jobTemplate:
     spec:
       template:
         spec:
           containers:
-            - image: registry.homelab.dsb.dev/library/postgres:13.1-alpine
+            - image: registry.homelab.dsb.dev/library/postgres:13.2-alpine
               name: cleanup
               command:
                 - psql
