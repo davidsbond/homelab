@@ -28,3 +28,9 @@ resource "minio_s3_bucket" "bytecrypt_data" {
   bucket = "bytecrypt"
   acl    = "public"
 }
+
+resource "minio_s3_bucket" "minecraft_data" {
+  bucket = "minecraft"
+  acl    = "public"
+}
+
