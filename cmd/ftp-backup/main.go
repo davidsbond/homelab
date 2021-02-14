@@ -4,14 +4,11 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 
 	"pkg.dsb.dev/app"
 	"pkg.dsb.dev/closers"
 	"pkg.dsb.dev/flag"
-	"pkg.dsb.dev/logging"
-	"pkg.dsb.dev/retry"
 	"pkg.dsb.dev/storage/blob"
 	"pkg.dsb.dev/storage/ftp"
 )
@@ -55,12 +52,6 @@ func main() {
 				Destination: &bucketDSN,
 				Required:    true,
 			},
-			&flag.Boolean{
-				Name:        "ignore-ftp-errors",
-				Usage:       "If true, continues iterating over files in the FTP server on error",
-				EnvVar:      "IGNORE_FTP_ERRORS",
-				Destination: &ignoreFTPErrors,
-			},
 		),
 	)
 
@@ -71,12 +62,11 @@ func main() {
 }
 
 var (
-	ftpAddress      string
-	ftpUser         string
-	ftpPassword     string
-	ftpPath         string
-	bucketDSN       string
-	ignoreFTPErrors bool
+	ftpAddress  string
+	ftpUser     string
+	ftpPassword string
+	ftpPath     string
+	bucketDSN   string
 )
 
 func run(ctx context.Context) error {
@@ -104,32 +94,19 @@ func syncFiles(ctx context.Context, bkt *blob.Bucket, conn *ftp.Conn) error {
 			return nil
 		}
 
-		const retries = 10
-		return retry.Do(ctx, retries, func(ctx context.Context) error {
-			wr, err := bkt.NewWriter(ctx, path)
-			if err != nil {
-				return err
-			}
-			defer closers.Close(wr)
+		wr, err := bkt.NewWriter(ctx, path)
+		if err != nil {
+			return err
+		}
+		defer closers.Close(wr)
 
-			rd, err := conn.NewReader(path)
-			if err != nil {
-				return fmt.Errorf("failed to open reader: %w", err)
-			}
-			defer closers.Close(rd)
+		rd, err := conn.NewReader(path)
+		if err != nil {
+			return err
+		}
+		defer closers.Close(rd)
 
-			_, err = io.Copy(wr, rd)
-			switch {
-			case err != nil && ignoreFTPErrors:
-				// Drain the current reader.
-				_, _ = io.Copy(ioutil.Discard, rd)
-				logging.WithError(err).Error("failed to write file")
-				return nil
-			case err != nil:
-				return fmt.Errorf("failed to write file: %w", err)
-			default:
-				return nil
-			}
-		})
+		_, err = io.Copy(wr, rd)
+		return err
 	})
 }
