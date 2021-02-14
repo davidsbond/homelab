@@ -45,6 +45,13 @@ func main() {
 				EnvVar:      "FTP_PATH",
 				Value:       "/",
 			},
+			&flag.String{
+				Name:        "bucket-dsn",
+				Usage:       "DSN for the bucket to place the backup",
+				EnvVar:      "BUCKET_DSN",
+				Destination: &bucketDSN,
+				Required:    true,
+			},
 		),
 	)
 
