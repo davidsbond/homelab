@@ -279,6 +279,8 @@ github.com/jgautheron/goconst
 github.com/jingyugao/rowserrcheck/passes/rowserr
 # github.com/jirfag/go-printf-func-name v0.0.0-20191110105641-45db9963cdd3
 github.com/jirfag/go-printf-func-name/pkg/analyzer
+# github.com/jlaffaye/ftp v0.0.0-20201112195030-9aae4d151126
+github.com/jlaffaye/ftp
 # github.com/jmespath/go-jmespath v0.4.0
 github.com/jmespath/go-jmespath
 # github.com/kisielk/gotool v1.0.0
@@ -766,6 +768,7 @@ pkg.dsb.dev/period
 pkg.dsb.dev/requestid
 pkg.dsb.dev/server
 pkg.dsb.dev/storage/blob
+pkg.dsb.dev/storage/ftp
 pkg.dsb.dev/tracing
 pkg.dsb.dev/transport
 pkg.dsb.dev/transport/v1
