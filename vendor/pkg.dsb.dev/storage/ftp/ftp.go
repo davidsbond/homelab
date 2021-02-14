@@ -12,6 +12,7 @@ import (
 	"github.com/jlaffaye/ftp"
 	"github.com/opentracing/opentracing-go"
 
+	"pkg.dsb.dev/closers"
 	"pkg.dsb.dev/health"
 	"pkg.dsb.dev/multierror"
 	"pkg.dsb.dev/tracing"
@@ -54,17 +55,19 @@ func Open(ctx context.Context, addr string, opts ...Option) (*Conn, error) {
 	}
 
 	out := &Conn{inner: conn}
-	health.AddCheck(addr, out.Ping)
+	health.AddCheck(addr, func() error {
+		return ping(ctx, addr, c)
+	})
 
 	if c.username == "" {
-		return out, out.Ping()
+		return out, nil
 	}
 
 	if err = conn.Login(c.username, c.password); err != nil {
 		return nil, multierror.Append(err, out.Close())
 	}
 
-	return out, out.Ping()
+	return out, nil
 }
 
 // Close the connection to the FTP server.
@@ -130,6 +133,27 @@ func (c *Conn) Walk(ctx context.Context, path string, fn filepath.WalkFunc) erro
 	}
 
 	return walker.Err()
+}
+
+func ping(ctx context.Context, addr string, c *config) error {
+	conn, err := ftp.Dial(addr,
+		ftp.DialWithContext(ctx),
+		ftp.DialWithTimeout(time.Minute),
+	)
+	if err != nil {
+		return err
+	}
+	defer closers.CloseFunc(conn.Quit)
+
+	if c.username == "" {
+		return conn.NoOp()
+	}
+
+	if err = conn.Login(c.username, c.password); err != nil {
+		return err
+	}
+
+	return conn.NoOp()
 }
 
 // Ping asserts that the connection to the FTP server is alive and healthy.

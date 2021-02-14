@@ -1704,8 +1704,8 @@ mvdan.cc/unparam v0.0.0-20190720180237-d51796306d8f/go.mod h1:4G1h5nDURzA3bwVMZI
 mvdan.cc/unparam v0.0.0-20200501210554-b37ab49443f7 h1:kAREL6MPwpsk1/PQPFD3Eg7WAQR5mPTWZJaBiG5LDbY=
 mvdan.cc/unparam v0.0.0-20200501210554-b37ab49443f7/go.mod h1:HGC5lll35J70Y5v7vCGb9oLhHoScFwkHDJm/05RdSTc=
 nhooyr.io/websocket v1.8.6/go.mod h1:B70DZP8IakI65RVQ51MsWP/8jndNma26DVA/nFSCgW0=
-pkg.dsb.dev v1.7.0 h1:S52CkVD6vzJd766M4q73DBsHTD4f2nb1r39ZD6YWBkA=
-pkg.dsb.dev v1.7.0/go.mod h1:gca3IdmbMwvtAJTyyqan+PjbkTOT6GZw9+Y22bysz2w=
+pkg.dsb.dev v1.7.1 h1:htlj7Hqu2CcbLjkJ9Ra4wpcQ8GtCuBuEgxmYaTS/5TQ=
+pkg.dsb.dev v1.7.1/go.mod h1:gca3IdmbMwvtAJTyyqan+PjbkTOT6GZw9+Y22bysz2w=
 rsc.io/binaryregexp v0.2.0/go.mod h1:qTv7/COck+e2FymRvadv62gMdZztPaShugOCi3I+8D8=
 rsc.io/quote/v3 v3.1.0/go.mod h1:yEA65RcK8LyAZtP9Kv3t0HmxON59tX3rD+tICJqUlj0=
 rsc.io/sampler v1.3.0/go.mod h1:T1hPZKmBbMNahiBKFy5HrXp6adAjACjK9JXDnKaTXpA=
