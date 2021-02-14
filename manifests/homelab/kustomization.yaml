@@ -5,6 +5,7 @@ namespace: homelab
 resources:
 - namespace.yaml
 - prometheus-exporters
+- minecraft-backup
 - directory
 
 secretGenerator:
@@ -12,6 +13,9 @@ secretGenerator:
   type: kubernetes.io/dockerconfigjson
   files:
   - .dockerconfigjson=secrets/registry
+- name: minio
+  envs:
+  - secrets/minio
 
 configMapGenerator:
 - name: tracing
