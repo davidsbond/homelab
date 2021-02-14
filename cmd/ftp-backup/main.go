@@ -9,6 +9,7 @@ import (
 	"pkg.dsb.dev/app"
 	"pkg.dsb.dev/closers"
 	"pkg.dsb.dev/flag"
+	"pkg.dsb.dev/logging"
 	"pkg.dsb.dev/storage/blob"
 	"pkg.dsb.dev/storage/ftp"
 )
@@ -52,6 +53,12 @@ func main() {
 				Destination: &bucketDSN,
 				Required:    true,
 			},
+			&flag.Boolean{
+				Name:        "ignore-ftp-errors",
+				Usage:       "If true, continues iterating over files in the FTP server on error",
+				EnvVar:      "IGNORE_FTP_ERRORS",
+				Destination: &ignoreFTPErrors,
+			},
 		),
 	)
 
@@ -62,11 +69,12 @@ func main() {
 }
 
 var (
-	ftpAddress  string
-	ftpUser     string
-	ftpPassword string
-	ftpPath     string
-	bucketDSN   string
+	ftpAddress      string
+	ftpUser         string
+	ftpPassword     string
+	ftpPath         string
+	bucketDSN       string
+	ignoreFTPErrors bool
 )
 
 func run(ctx context.Context) error {
@@ -107,6 +115,11 @@ func syncFiles(ctx context.Context, bkt *blob.Bucket, conn *ftp.Conn) error {
 		defer closers.Close(rd)
 
 		_, err = io.Copy(wr, rd)
+		if ignoreFTPErrors {
+			logging.WithError(err).Error("failed to write file")
+			return nil
+		}
+
 		return err
 	})
 }
