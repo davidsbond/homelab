@@ -65,6 +65,8 @@ github.com/aws/aws-sdk-go/service/sts/stsiface
 github.com/beorn7/perks/quantile
 # github.com/bombsimon/wsl/v3 v3.1.0
 github.com/bombsimon/wsl/v3
+# github.com/cenkalti/backoff v2.2.1+incompatible
+github.com/cenkalti/backoff
 # github.com/cespare/xxhash/v2 v2.1.1
 github.com/cespare/xxhash/v2
 # github.com/cpuguy83/go-md2man/v2 v2.0.0
@@ -766,6 +768,7 @@ pkg.dsb.dev/monitoring
 pkg.dsb.dev/multierror
 pkg.dsb.dev/period
 pkg.dsb.dev/requestid
+pkg.dsb.dev/retry
 pkg.dsb.dev/server
 pkg.dsb.dev/storage/blob
 pkg.dsb.dev/storage/ftp
