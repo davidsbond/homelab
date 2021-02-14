@@ -87,8 +87,11 @@ func run(ctx context.Context) error {
 
 func syncFiles(ctx context.Context, bkt *blob.Bucket, conn *ftp.Conn) error {
 	return conn.Walk(ctx, ftpPath, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
+		switch {
+		case err != nil:
 			return err
+		case info.IsDir():
+			return nil
 		}
 
 		wr, err := bkt.NewWriter(ctx, path)
