@@ -13,7 +13,7 @@ spec:
       template:
         spec:
           containers:
-            - image: registry.homelab.dsb.dev/library/postgres:13.2-alpine
+            - image: registry.homelab.dsb.dev/library/postgres:13.2
               name: cleanup
               command:
                 - psql
