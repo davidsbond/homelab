@@ -3,7 +3,6 @@ package environment
 
 import (
 	"context"
-	"log"
 	"os"
 	"os/signal"
 	"strconv"
@@ -32,14 +31,10 @@ var (
 // Compiled returns the time.Time representation of the application's
 // build timestamp.
 func Compiled() time.Time {
-	if compiled == "" {
-		return time.Time{}
-	}
-
 	unix, err := strconv.ParseInt(compiled, 10, 64)
 	if err != nil {
-		log.Println(err.Error())
-		return time.Time{}
+		logging.WithError(err).Warn("invalid compile time, using now")
+		return time.Now()
 	}
 
 	return time.Unix(unix, 0)

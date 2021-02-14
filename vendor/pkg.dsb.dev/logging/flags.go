@@ -13,4 +13,11 @@ var Flags = flag.Flags{
 		Value:       "error",
 		Destination: &level,
 	},
+	&flag.String{
+		Name:        "log-format",
+		Usage:       "Sets the desired log formatter (text, json)",
+		EnvVar:      "LOG_FORMAT",
+		Value:       "text",
+		Destination: &format,
+	},
 }

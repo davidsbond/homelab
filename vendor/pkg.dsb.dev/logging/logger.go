@@ -8,7 +8,10 @@ import (
 	"github.com/uber/jaeger-client-go"
 )
 
-var level string
+var (
+	level  string
+	format string
+)
 
 // Init initialises the logger.
 func Init() {
@@ -18,8 +21,17 @@ func Init() {
 	}
 
 	logrus.SetLevel(lvl)
-	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetOutput(os.Stdout)
+
+	switch format {
+	default:
+		logrus.SetFormatter(&logrus.TextFormatter{})
+		WithField("format", format).Warn("unknown log format")
+	case "json":
+		logrus.SetFormatter(&logrus.JSONFormatter{})
+	case "text":
+		logrus.SetFormatter(&logrus.TextFormatter{})
+	}
 }
 
 // WithError adds an error to the log.
