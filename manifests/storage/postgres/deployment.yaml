@@ -14,7 +14,7 @@ spec:
         app: postgres
     spec:
       containers:
-      - image: registry.homelab.dsb.dev/library/postgres:13.2-alpine
+      - image: registry.homelab.dsb.dev/library/postgres:13.2
         name: postgres
         command:
           - docker-entrypoint.sh
