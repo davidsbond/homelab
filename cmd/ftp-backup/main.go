@@ -110,16 +110,19 @@ func syncFiles(ctx context.Context, bkt *blob.Bucket, conn *ftp.Conn) error {
 
 		rd, err := conn.NewReader(path)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to open reader: %w", err)
 		}
 		defer closers.Close(rd)
 
 		_, err = io.Copy(wr, rd)
-		if ignoreFTPErrors {
+		switch {
+		case err != nil && ignoreFTPErrors:
 			logging.WithError(err).Error("failed to write file")
 			return nil
+		case err != nil:
+			return fmt.Errorf("failed to write file: %w", err)
+		default:
+			return nil
 		}
-
-		return err
 	})
 }

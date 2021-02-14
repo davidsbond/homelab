@@ -47,6 +47,8 @@ spec:
                 secretKeyRef:
                   key: minio.secret_key
                   name: minio
+            - name: IGNORE_FTP_ERRORS
+              value: "true"
             readinessProbe:
               httpGet:
                 path: /__/health
