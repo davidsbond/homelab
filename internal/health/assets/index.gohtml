@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Homelab Health</title>
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-exp.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1em;
+            padding: 1em;
+        }
+    </style>
+</head>
+<body>
+<div class="grid">
+    {{ range $i, $item := . }}
+    <div class="panel">
+        <div class="panel-header {{ if $item.Healthy }}bg-success{{ else }}bg-error{{ end }}">
+            <div class="panel-title h5 mt-10">{{ $item.PodName }}</div>
+            <div class="panel-subtitle">{{ $item.Namespace }}</div>
+        </div>
+        <div class="panel-body">
+            <div class="tile tile-centered">
+                <div class="tile-content">
+                    <div class="tile-title text-bold">Name</div>
+                    <div class="tile-subtitle">{{ $item.Name }}</div>
+                </div>
+            </div>
+            <div class="tile tile-centered">
+                <div class="tile-content">
+                    <div class="tile-title text-bold">Description</div>
+                    <div class="tile-subtitle">{{ $item.Description }}</div>
+                </div>
+            </div>
+            <div class="tile tile-centered">
+                <div class="tile-content">
+                    <div class="tile-title text-bold">Version</div>
+                    <div class="tile-subtitle">{{ $item.Version }}</div>
+                </div>
+            </div>
+            <div class="tile tile-centered">
+                <div class="tile-content">
+                    <div class="tile-title text-bold">Compiled</div>
+                    <div class="tile-subtitle">{{ $item.Compiled }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+</div>
+</body>
+</html>

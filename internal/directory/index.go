@@ -69,7 +69,7 @@ func (t *HTTP) Register(r *mux.Router) {
 // Get handles an inbound HTTP GET request that renders the index page template with the provided configuration
 // and writes the resulting HTML to the client.
 func (t *HTTP) Get(w http.ResponseWriter, r *http.Request) {
-	const file = "index.html"
+	const file = "index.gohtml"
 
 	data, err := assets.Asset(file)
 	if err != nil {

@@ -17,6 +17,7 @@ spec:
         prometheus.io/scrape: 'true'
         prometheus.io/path: /__/metrics
         prometheus.io/port: '8081'
+        health.dsb.dev/scrape: 'true'
       labels:
         app: directory
     spec:

@@ -17,6 +17,7 @@ spec:
         prometheus.io/scrape: 'true'
         prometheus.io/path: /
         prometheus.io/port: '80'
+        health.dsb.dev/scrape: 'true'
       labels:
         app: prometheus-exporter-home-assistant
     spec:
