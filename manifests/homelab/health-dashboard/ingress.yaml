@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: health-dashboard
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.entrypoints: https
+    cert-manager.io/cluster-issuer: cloudflare
+spec:
+  tls:
+  - hosts:
+    - health.homelab.dsb.dev
+    secretName: health-dashboard-tls
+  rules:
+  - host: health.homelab.dsb.dev
+    http:
+      paths:
+      - backend:
+          service:
+            name: health-dashboard
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
