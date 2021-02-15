@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: health-dashboard
+spec:
+  selector:
+    app: health-dashboard
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80

@@ -9,9 +9,13 @@
     <style>
         .grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, minmax(33%, 1fr));
             gap: 1em;
             padding: 1em;
+        }
+
+        .tile.tile-centered {
+            margin: .75rem 0;
         }
     </style>
 </head>
