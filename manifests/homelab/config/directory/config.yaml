@@ -38,3 +38,6 @@ items:
 - name: Kubernetes Dashboard
   url: https://kubernetes.homelab.dsb.dev
   description: Cluster Overview
+- name: Health Dashboard
+  url: https://health.homelab.dsb.dev
+  description: Health Check Overview

@@ -8,6 +8,7 @@ Monorepo for my personal homelab. It contains applications and kubernetes manife
    1. [Third party applications](#third-party-applications)
    1. [Prometheus exporters](#prometheus-exporters)
    1. [Other tools](#other-tools)
+   1. [User interfaces](#user-interfaces)
    1. [External services](#external-services)
    1. [Cluster upgrades](#cluster-upgrades)
    1. [Node maintenance](#node-maintenance)
@@ -92,6 +93,19 @@ Here are other tools I've implemented for use in the cluster.
 * `grafana-backup` - Copies all dashboards and data sources from grafana and writes them to a MinIO bucket.
 * [db-backup](https://github.com/davidsbond/db-backup) - A backup utility for databases.
 * `ftp-backup` - Copies all files from a specified path of an FTP server and writes them to a MinIO bucket.
+
+## User interfaces
+
+This repo contains a few homemade user interfaces for navigation/overview of the applications running in the cluster.
+
+* `directory` - A simple YAML configured link page to access different services in the homelab.
+
+![Directory](img/directory.png)
+
+* `health-dashboard` - A simple UI that returns the health check status of custom services using the `pkg.dsb.dev`
+flavoured health checks.
+
+![Health Dashboard](img/health.png)
 
 ## External services
 
