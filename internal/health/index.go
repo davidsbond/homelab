@@ -5,6 +5,7 @@ package health
 import (
 	"context"
 	"net/http"
+	"sort"
 	"text/template"
 
 	"github.com/gorilla/mux"
@@ -62,6 +63,10 @@ func (t *HTTP) Get(w http.ResponseWriter, r *http.Request) {
 		t.Error(r.Context(), w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	sort.Slice(apps, func(i, j int) bool {
+		return apps[i].Name < apps[j].Name
+	})
 
 	if err = tpl.Execute(w, apps); err != nil {
 		t.Error(r.Context(), w, http.StatusInternalServerError, err.Error())

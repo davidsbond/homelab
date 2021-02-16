@@ -49,4 +49,8 @@ spec:
                   path: /__/health
                   port: 8081
                 initialDelaySeconds: 5
+              resources:
+                limits:
+                  memory: "128Mi"
+                  cpu: "500m"
           restartPolicy: OnFailure
