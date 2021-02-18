@@ -183,6 +183,11 @@ type LintersSettings struct {
 	Gocyclo struct {
 		MinComplexity int `mapstructure:"min-complexity"`
 	}
+	Cyclop struct {
+		MaxComplexity  int     `mapstructure:"max-complexity"`
+		PackageAverage float64 `mapstructure:"package-average"`
+		SkipTests      bool    `mapstructure:"skip-tests"`
+	}
 	Varcheck struct {
 		CheckExportedFields bool `mapstructure:"exported-fields"`
 	}
@@ -268,6 +273,7 @@ type LintersSettings struct {
 	Gofumpt     GofumptSettings
 	ErrorLint   ErrorLintSettings
 	Makezero    MakezeroSettings
+	Revive      ReviveSettings
 	Thelper     ThelperSettings
 	Forbidigo   ForbidigoSettings
 	Ifshort     IfshortSettings
@@ -356,8 +362,9 @@ type WSLSettings struct {
 }
 
 type GodotSettings struct {
-	Scope   string `mapstructure:"scope"`
-	Capital bool   `mapstructure:"capital"`
+	Scope   string   `mapstructure:"scope"`
+	Exclude []string `mapstructure:"exclude"`
+	Capital bool     `mapstructure:"capital"`
 
 	// Deprecated: use `Scope` instead
 	CheckAll bool `mapstructure:"check-all"`
@@ -396,6 +403,23 @@ type MakezeroSettings struct {
 	Always bool
 }
 
+type ReviveSettings struct {
+	IgnoreGeneratedHeader bool `mapstructure:"ignore-generated-header"`
+	Confidence            float64
+	Severity              string
+	Rules                 []struct {
+		Name      string
+		Arguments []interface{}
+		Severity  string
+	}
+	ErrorCode   int `mapstructure:"error-code"`
+	WarningCode int `mapstructure:"warning-code"`
+	Directives  []struct {
+		Name     string
+		Severity string
+	}
+}
+
 type ThelperSettings struct {
 	Test struct {
 		First bool `mapstructure:"first"`
@@ -407,6 +431,11 @@ type ThelperSettings struct {
 		Name  bool `mapstructure:"name"`
 		Begin bool `mapstructure:"begin"`
 	} `mapstructure:"benchmark"`
+	TB struct {
+		First bool `mapstructure:"first"`
+		Name  bool `mapstructure:"name"`
+		Begin bool `mapstructure:"begin"`
+	} `mapstructure:"tb"`
 }
 
 type IfshortSettings struct {
@@ -415,7 +444,8 @@ type IfshortSettings struct {
 }
 
 type ForbidigoSettings struct {
-	Forbid []string `mapstructure:"forbid"`
+	Forbid               []string `mapstructure:"forbid"`
+	ExcludeGodocExamples bool     `mapstructure:"exclude-godoc-examples"`
 }
 
 type PredeclaredSettings struct {
@@ -483,9 +513,16 @@ var defaultLintersSettings = LintersSettings{
 	ErrorLint: ErrorLintSettings{
 		Errorf: true,
 	},
+	Ifshort: IfshortSettings{
+		MaxDeclLines: 1,
+		MaxDeclChars: 30,
+	},
 	Predeclared: PredeclaredSettings{
 		Ignore:    "",
 		Qualified: false,
+	},
+	Forbidigo: ForbidigoSettings{
+		ExcludeGodocExamples: true,
 	},
 }
 

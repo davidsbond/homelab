@@ -123,9 +123,13 @@ func (nom namedOccurrenceMap) checkStatement(stmt ast.Stmt, ifPos token.Pos) {
 		}
 	case *ast.IncDecStmt:
 		nom.checkExpression(v.X, ifPos)
-
 	case *ast.RangeStmt:
 		nom.checkExpression(v.X, token.NoPos)
+		if v.Body != nil {
+			for _, e := range v.Body.List {
+				nom.checkStatement(e, ifPos)
+			}
+		}
 	case *ast.ReturnStmt:
 		for _, r := range v.Results {
 			nom.checkExpression(r, token.NoPos)
@@ -215,14 +219,19 @@ func (nom namedOccurrenceMap) checkExpression(candidate ast.Expr, ifPos token.Po
 		}
 	case *ast.IndexExpr:
 		nom.checkExpression(v.X, ifPos)
-		if index, ok := v.Index.(*ast.BinaryExpr); ok {
+		switch index := v.Index.(type) {
+		case *ast.BinaryExpr:
 			nom.checkExpression(index.X, ifPos)
+		case *ast.Ident:
+			nom.checkExpression(index, ifPos)
 		}
 	case *ast.SelectorExpr:
 		nom.checkExpression(v.X, ifPos)
 	case *ast.SliceExpr:
 		nom.checkExpression(v.High, ifPos)
 		nom.checkExpression(v.Low, ifPos)
+		nom.checkExpression(v.X, ifPos)
+	case *ast.TypeAssertExpr:
 		nom.checkExpression(v.X, ifPos)
 	case *ast.UnaryExpr:
 		nom.checkExpression(v.X, ifPos)
