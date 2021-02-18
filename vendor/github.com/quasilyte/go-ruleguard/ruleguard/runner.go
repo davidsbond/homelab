@@ -7,33 +7,57 @@ import (
 	"go/printer"
 	"io/ioutil"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 
 	"github.com/quasilyte/go-ruleguard/internal/mvdan.cc/gogrep"
+	"github.com/quasilyte/go-ruleguard/ruleguard/goutil"
 )
 
 type rulesRunner struct {
-	ctx   *Context
-	rules *GoRuleSet
+	state *engineState
+
+	ctx   *RunContext
+	rules *goRuleSet
+
+	importer *goImporter
 
 	filename string
-	imports  map[string]struct{}
 	src      []byte
+
+	// A slice that is used to do a nodes keys sorting in renderMessage().
+	sortScratch []string
+
+	filterParams filterParams
 }
 
-func newRulesRunner(ctx *Context, rules *GoRuleSet) *rulesRunner {
-	return &rulesRunner{
-		ctx:   ctx,
-		rules: rules,
+func newRulesRunner(ctx *RunContext, state *engineState, rules *goRuleSet) *rulesRunner {
+	importer := newGoImporter(state, goImporterConfig{
+		fset:         ctx.Fset,
+		debugImports: ctx.DebugImports,
+		debugPrint:   ctx.DebugPrint,
+	})
+	rr := &rulesRunner{
+		ctx:      ctx,
+		importer: importer,
+		rules:    rules,
+		filterParams: filterParams{
+			env:      state.env.GetEvalEnv(),
+			importer: importer,
+			ctx:      ctx,
+		},
+		sortScratch: make([]string, 0, 8),
 	}
+	rr.filterParams.nodeText = rr.nodeText
+	return rr
 }
 
 func (rr *rulesRunner) nodeText(n ast.Node) []byte {
 	from := rr.ctx.Fset.Position(n.Pos()).Offset
 	to := rr.ctx.Fset.Position(n.End()).Offset
 	src := rr.fileBytes()
-	if (from >= 0 && int(from) < len(src)) && (to >= 0 && int(to) < len(src)) {
+	if (from >= 0 && from < len(src)) && (to >= 0 && to < len(src)) {
 		return src[from:to]
 	}
 	// Fallback to the printer.
@@ -65,6 +89,7 @@ func (rr *rulesRunner) run(f *ast.File) error {
 	// TODO(quasilyte): run local rules as well.
 
 	rr.filename = rr.ctx.Fset.Position(f.Pos()).Filename
+	rr.filterParams.filename = rr.filename
 	rr.collectImports(f)
 
 	for _, rule := range rr.rules.universal.uncategorized {
@@ -92,22 +117,30 @@ func (rr *rulesRunner) run(f *ast.File) error {
 	return nil
 }
 
-func (rr *rulesRunner) reject(rule goRule, reason, sub string, m gogrep.MatchData) {
-	// Note: we accept reason and sub args instead of formatted or
-	// concatenated string so it's cheaper for us to call this
-	// function is debugging is not enabled.
-
+func (rr *rulesRunner) reject(rule goRule, reason string, m gogrep.MatchData) {
 	if rule.group != rr.ctx.Debug {
 		return // This rule is not being debugged
 	}
 
 	pos := rr.ctx.Fset.Position(m.Node.Pos())
-	if sub != "" {
-		reason = "$" + sub + " " + reason
-	}
-	rr.ctx.DebugPrint(fmt.Sprintf("%s:%d: rejected by %s:%d (%s)",
+	rr.ctx.DebugPrint(fmt.Sprintf("%s:%d: [%s:%d] rejected by %s",
 		pos.Filename, pos.Line, filepath.Base(rule.filename), rule.line, reason))
+
+	type namedNode struct {
+		name string
+		node ast.Node
+	}
+	values := make([]namedNode, 0, len(m.Values))
 	for name, node := range m.Values {
+		values = append(values, namedNode{name: name, node: node})
+	}
+	sort.Slice(values, func(i, j int) bool {
+		return values[i].name < values[j].name
+	})
+
+	for _, v := range values {
+		name := v.name
+		node := v.node
 		var expr ast.Expr
 		switch node := node.(type) {
 		case ast.Expr:
@@ -119,102 +152,26 @@ func (rr *rulesRunner) reject(rule goRule, reason, sub string, m gogrep.MatchDat
 		}
 
 		typ := rr.ctx.Types.TypeOf(expr)
-		s := strings.ReplaceAll(sprintNode(rr.ctx.Fset, expr), "\n", `\n`)
-		rr.ctx.DebugPrint(fmt.Sprintf("  $%s %s: %s", name, typ, s))
+		typeString := "<unknown>"
+		if typ != nil {
+			typeString = typ.String()
+		}
+		s := strings.ReplaceAll(goutil.SprintNode(rr.ctx.Fset, expr), "\n", `\n`)
+		rr.ctx.DebugPrint(fmt.Sprintf("  $%s %s: %s", name, typeString, s))
 	}
 }
 
 func (rr *rulesRunner) handleMatch(rule goRule, m gogrep.MatchData) bool {
-	for _, neededImport := range rule.filter.fileImports {
-		if _, ok := rr.imports[neededImport]; !ok {
-			rr.reject(rule, "file imports filter", "", m)
+	if rule.filter.fn != nil {
+		rr.filterParams.values = m.Values
+		filterResult := rule.filter.fn(&rr.filterParams)
+		if !filterResult.Matched() {
+			rr.reject(rule, filterResult.RejectReason(), m)
 			return false
 		}
 	}
 
-	// TODO(quasilyte): do not run filename check for every match.
-	// Exclude rules for the file that will never match due to the
-	// file-scoped filters. Same goes for the fileImports filter
-	// and ideas proposed in #78. Most rules do not have file-scoped
-	// filters, so we don't loose much here, but we can optimize
-	// this file filters in the future.
-	if rule.filter.filenamePred != nil && !rule.filter.filenamePred(rr.filename) {
-		rr.reject(rule, "file name filter", "", m)
-		return false
-	}
-
-	for name, node := range m.Values {
-		var expr ast.Expr
-		switch node := node.(type) {
-		case ast.Expr:
-			expr = node
-		case *ast.ExprStmt:
-			expr = node.X
-		default:
-			continue
-		}
-
-		filter, ok := rule.filter.sub[name]
-		if !ok {
-			continue
-		}
-		if filter.typePred != nil {
-			typ := rr.ctx.Types.TypeOf(expr)
-			q := typeQuery{x: typ, ctx: rr.ctx}
-			if !filter.typePred(q) {
-				rr.reject(rule, "type filter", name, m)
-				return false
-			}
-		}
-		if filter.textPred != nil {
-			if !filter.textPred(string(rr.nodeText(expr))) {
-				rr.reject(rule, "text filter", name, m)
-				return false
-			}
-		}
-		switch filter.addressable {
-		case bool3true:
-			if !isAddressable(rr.ctx.Types, expr) {
-				rr.reject(rule, "is not addressable", name, m)
-				return false
-			}
-		case bool3false:
-			if isAddressable(rr.ctx.Types, expr) {
-				rr.reject(rule, "is addressable", name, m)
-				return false
-			}
-		}
-		switch filter.pure {
-		case bool3true:
-			if !isPure(rr.ctx.Types, expr) {
-				rr.reject(rule, "is not pure", name, m)
-				return false
-			}
-		case bool3false:
-			if isPure(rr.ctx.Types, expr) {
-				rr.reject(rule, "is pure", name, m)
-				return false
-			}
-		}
-		switch filter.constant {
-		case bool3true:
-			if !isConstant(rr.ctx.Types, expr) {
-				rr.reject(rule, "is not const", name, m)
-				return false
-			}
-		case bool3false:
-			if isConstant(rr.ctx.Types, expr) {
-				rr.reject(rule, "is const", name, m)
-				return false
-			}
-		}
-	}
-
-	prefix := ""
-	if rule.severity != "" {
-		prefix = rule.severity + ": "
-	}
-	message := prefix + rr.renderMessage(rule.msg, m.Node, m.Values, true)
+	message := rr.renderMessage(rule.msg, m.Node, m.Values, true)
 	node := m.Node
 	if rule.location != "" {
 		node = m.Values[rule.location]
@@ -228,20 +185,22 @@ func (rr *rulesRunner) handleMatch(rule goRule, m gogrep.MatchData) bool {
 		}
 	}
 	info := GoRuleInfo{
+		Group:    rule.group,
 		Filename: rule.filename,
+		Line:     rule.line,
 	}
 	rr.ctx.Report(info, node, message, suggestion)
 	return true
 }
 
 func (rr *rulesRunner) collectImports(f *ast.File) {
-	rr.imports = make(map[string]struct{}, len(f.Imports))
+	rr.filterParams.imports = make(map[string]struct{}, len(f.Imports))
 	for _, spec := range f.Imports {
 		s, err := strconv.Unquote(spec.Path.Value)
 		if err != nil {
 			continue
 		}
-		rr.imports[s] = struct{}{}
+		rr.filterParams.imports[s] = struct{}{}
 	}
 }
 
@@ -254,7 +213,17 @@ func (rr *rulesRunner) renderMessage(msg string, n ast.Node, nodes map[string]as
 	if len(nodes) == 0 {
 		return msg
 	}
-	for name, n := range nodes {
+
+	rr.sortScratch = rr.sortScratch[:0]
+	for name := range nodes {
+		rr.sortScratch = append(rr.sortScratch, name)
+	}
+	sort.Slice(rr.sortScratch, func(i, j int) bool {
+		return len(rr.sortScratch[i]) > len(rr.sortScratch[j])
+	})
+
+	for _, name := range rr.sortScratch {
+		n := nodes[name]
 		key := "$" + name
 		if !strings.Contains(msg, key) {
 			continue
