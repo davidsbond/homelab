@@ -315,6 +315,9 @@ github.com/kunwardeep/paralleltest/pkg/paralleltest
 github.com/kyoh86/exportloopref
 # github.com/leodido/go-urn v1.2.0
 github.com/leodido/go-urn
+# github.com/magefile/mage v1.10.0
+github.com/magefile/mage/mg
+github.com/magefile/mage/sh
 # github.com/magiconair/properties v1.8.1
 github.com/magiconair/properties
 # github.com/maratori/testpackage v1.0.1
@@ -431,7 +434,7 @@ github.com/securego/gosec/v2/rules
 github.com/shazow/go-diff/difflib
 # github.com/shurcooL/sanitized_anchor_name v1.0.0
 github.com/shurcooL/sanitized_anchor_name
-# github.com/sirupsen/logrus v1.7.0
+# github.com/sirupsen/logrus v1.8.0
 github.com/sirupsen/logrus
 # github.com/smartystreets/assertions v1.1.1
 ## explicit
@@ -966,7 +969,7 @@ mvdan.cc/interfacer/check
 mvdan.cc/lint
 # mvdan.cc/unparam v0.0.0-20200501210554-b37ab49443f7
 mvdan.cc/unparam/check
-# pkg.dsb.dev v1.7.1
+# pkg.dsb.dev v1.8.0
 ## explicit
 pkg.dsb.dev/app
 pkg.dsb.dev/closers
