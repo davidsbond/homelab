@@ -26,9 +26,9 @@ require (
 	github.com/zach-klippenstein/goregen v0.0.0-20160303162051-795b5e3961ea // indirect
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a
 	gopkg.in/yaml.v2 v2.4.0
-	k8s.io/api v0.20.3
-	k8s.io/apimachinery v0.20.3
-	k8s.io/client-go v0.20.3
+	k8s.io/api v0.20.4
+	k8s.io/apimachinery v0.20.4
+	k8s.io/client-go v0.20.4
 	mvdan.cc/gofumpt v0.1.0
 	pkg.dsb.dev v1.7.1
 )
