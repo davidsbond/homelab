@@ -116,6 +116,7 @@ These are devices/services that the cluster interacts with, without being direct
 * [Synology](https://www.synology.com/) NAS - Used as the storage backend for minio, primarily used for volume backups
 * [Phillips Hue](https://www.philips-hue.com/en-gb) - Smart lighting, connected via home-assistant
 * [Cloudflare](https://www.cloudflare.com/) - DNS, used to access my applications under the `*.homelab.dsb.dev` domain.
+* [Sentry](https://sentry.io/) -  Cloud-based error monitoring.
 
 ## Cluster upgrades
 
@@ -181,6 +182,7 @@ This list contains all terraform providers used in the project:
 * [minio](https://github.com/aminueza/terraform-provider-minio)
 * [grafana](https://registry.terraform.io/providers/grafana/grafana/latest/docs)
 * [tailscale](https://registry.terraform.io/providers/davidsbond/tailscale/latest/docs)
+* [sentry](https://registry.terraform.io/providers/jianyuan/sentry/latest/docs)
 
 ### Database provisioning
 
