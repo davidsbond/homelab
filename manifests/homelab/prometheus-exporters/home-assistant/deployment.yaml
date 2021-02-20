@@ -38,6 +38,11 @@ spec:
               name: home-assistant
         - name: TRACER_DISABLED
           value: "true"
+        - name: MONITORING_DSN
+          valueFrom:
+            secretKeyRef:
+              key: sentry.dsn
+              name: sentry
         readinessProbe:
           httpGet:
             path: /__/health

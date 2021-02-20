@@ -27,3 +27,9 @@ module "tailscale" {
   tailscale_api_key = var.tailscale_api_key
   tailscale_domain  = var.tailscale_domain
 }
+
+module "sentry" {
+  source              = "./sentry"
+  sentry_token        = var.sentry_token
+  sentry_organization = var.sentry_organization
+}

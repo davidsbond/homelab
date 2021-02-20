@@ -17,6 +17,9 @@ secretGenerator:
 - name: minio
   envs:
   - secrets/minio
+- name: sentry
+  envs:
+  - secrets/sentry
 
 configMapGenerator:
 - name: tracing
