@@ -47,6 +47,11 @@ spec:
                 secretKeyRef:
                   key: minio.secret_key
                   name: minio
+            - name: MONITORING_DSN
+              valueFrom:
+                secretKeyRef:
+                  key: sentry.dsn
+                  name: sentry
             readinessProbe:
               httpGet:
                 path: /__/health

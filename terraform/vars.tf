@@ -12,3 +12,5 @@ variable "grafana_user" {}
 variable "grafana_password" {}
 variable "tailscale_api_key" {}
 variable "tailscale_domain" {}
+variable "sentry_token" {}
+variable "sentry_organization" {}

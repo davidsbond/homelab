@@ -53,5 +53,5 @@ resource "cloudflare_record" "nas" {
   name    = "nas"
   value   = var.nas_ip
   type    = "A"
-  ttl     = 3600
+  ttl     = 1
 }

@@ -33,6 +33,11 @@ spec:
                 secretKeyRef:
                   key: server.ip
                   name: minecraft
+            - name: MONITORING_DSN
+              valueFrom:
+                secretKeyRef:
+                  key: sentry.dsn
+                  name: sentry
             readinessProbe:
               httpGet:
                 path: /__/health

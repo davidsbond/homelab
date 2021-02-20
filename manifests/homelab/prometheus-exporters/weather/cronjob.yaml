@@ -38,6 +38,11 @@ spec:
                 secretKeyRef:
                   name: weather
                   key: weather.location
+            - name: MONITORING_DSN
+              valueFrom:
+                secretKeyRef:
+                  key: sentry.dsn
+                  name: sentry
             readinessProbe:
               httpGet:
                 path: /__/health

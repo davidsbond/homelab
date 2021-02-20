@@ -33,6 +33,11 @@ spec:
           value: "true"
         - name: CONFIG_PATH
           value: /directory/config.yaml
+        - name: MONITORING_DSN
+          valueFrom:
+            secretKeyRef:
+              key: sentry.dsn
+              name: sentry
         volumeMounts:
           - mountPath: /directory/config.yaml
             name: directory
