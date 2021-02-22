@@ -71,7 +71,7 @@ github.com/bkielbasa/cyclop/pkg/analyzer
 github.com/bombsimon/wsl/v3
 # github.com/cespare/xxhash/v2 v2.1.1
 github.com/cespare/xxhash/v2
-# github.com/charithe/durationcheck v0.0.3
+# github.com/charithe/durationcheck v0.0.4
 github.com/charithe/durationcheck
 # github.com/cpuguy83/go-md2man/v2 v2.0.0
 github.com/cpuguy83/go-md2man/v2/md2man
@@ -173,7 +173,7 @@ github.com/golangci/go-misc/deadcode
 # github.com/golangci/gofmt v0.0.0-20190930125516-244bba706f1a
 github.com/golangci/gofmt/gofmt
 github.com/golangci/gofmt/goimports
-# github.com/golangci/golangci-lint v1.37.0
+# github.com/golangci/golangci-lint v1.37.1
 ## explicit
 github.com/golangci/golangci-lint/cmd/golangci-lint
 github.com/golangci/golangci-lint/internal/cache
