@@ -92,20 +92,24 @@ func (m Manager) GetAllSupportedLinterConfigs() []*linter.Config {
 	var govetCfg *config.GovetSettings
 	var testpackageCfg *config.TestpackageSettings
 	var exhaustiveCfg *config.ExhaustiveSettings
+	var exhaustiveStructCfg *config.ExhaustiveStructSettings
 	var errorlintCfg *config.ErrorLintSettings
 	var thelperCfg *config.ThelperSettings
 	var predeclaredCfg *config.PredeclaredSettings
 	var ifshortCfg *config.IfshortSettings
 	var reviveCfg *config.ReviveSettings
+	var cyclopCfg *config.Cyclop
 	if m.cfg != nil {
 		govetCfg = &m.cfg.LintersSettings.Govet
 		testpackageCfg = &m.cfg.LintersSettings.Testpackage
 		exhaustiveCfg = &m.cfg.LintersSettings.Exhaustive
+		exhaustiveStructCfg = &m.cfg.LintersSettings.ExhaustiveStruct
 		errorlintCfg = &m.cfg.LintersSettings.ErrorLint
 		thelperCfg = &m.cfg.LintersSettings.Thelper
 		predeclaredCfg = &m.cfg.LintersSettings.Predeclared
 		ifshortCfg = &m.cfg.LintersSettings.Ifshort
 		reviveCfg = &m.cfg.LintersSettings.Revive
+		cyclopCfg = &m.cfg.LintersSettings.Cyclop
 	}
 	const megacheckName = "megacheck"
 	lcs := []*linter.Config{
@@ -194,7 +198,7 @@ func (m Manager) GetAllSupportedLinterConfigs() []*linter.Config {
 		linter.NewConfig(golinters.NewGocyclo()).
 			WithPresets(linter.PresetComplexity).
 			WithURL("https://github.com/alecthomas/gocyclo"),
-		linter.NewConfig(golinters.NewCyclop()).
+		linter.NewConfig(golinters.NewCyclop(cyclopCfg)).
 			WithLoadForGoAnalysis().
 			WithPresets(linter.PresetComplexity).
 			WithURL("https://github.com/bkielbasa/cyclop"),
@@ -337,7 +341,7 @@ func (m Manager) GetAllSupportedLinterConfigs() []*linter.Config {
 			WithPresets(linter.PresetStyle).
 			WithLoadForGoAnalysis().
 			WithURL("https://github.com/moricho/tparallel"),
-		linter.NewConfig(golinters.NewExhaustiveStruct()).
+		linter.NewConfig(golinters.NewExhaustiveStruct(exhaustiveStructCfg)).
 			WithPresets(linter.PresetStyle).
 			WithLoadForGoAnalysis().
 			WithURL("https://github.com/mbilski/exhaustivestruct"),

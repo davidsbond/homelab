@@ -183,11 +183,6 @@ type LintersSettings struct {
 	Gocyclo struct {
 		MinComplexity int `mapstructure:"min-complexity"`
 	}
-	Cyclop struct {
-		MaxComplexity  int     `mapstructure:"max-complexity"`
-		PackageAverage float64 `mapstructure:"package-average"`
-		SkipTests      bool    `mapstructure:"skip-tests"`
-	}
 	Varcheck struct {
 		CheckExportedFields bool `mapstructure:"exported-fields"`
 	}
@@ -254,30 +249,32 @@ type LintersSettings struct {
 		} `mapstructure:"blocked"`
 	}
 
-	WSL         WSLSettings
-	Lll         LllSettings
-	Unparam     UnparamSettings
-	Nakedret    NakedretSettings
-	Prealloc    PreallocSettings
-	Errcheck    ErrcheckSettings
-	Gocritic    GocriticSettings
-	Godox       GodoxSettings
-	Dogsled     DogsledSettings
-	Gocognit    GocognitSettings
-	Godot       GodotSettings
-	Goheader    GoHeaderSettings
-	Testpackage TestpackageSettings
-	Nestif      NestifSettings
-	NoLintLint  NoLintLintSettings
-	Exhaustive  ExhaustiveSettings
-	Gofumpt     GofumptSettings
-	ErrorLint   ErrorLintSettings
-	Makezero    MakezeroSettings
-	Revive      ReviveSettings
-	Thelper     ThelperSettings
-	Forbidigo   ForbidigoSettings
-	Ifshort     IfshortSettings
-	Predeclared PredeclaredSettings
+	WSL              WSLSettings
+	Lll              LllSettings
+	Unparam          UnparamSettings
+	Nakedret         NakedretSettings
+	Prealloc         PreallocSettings
+	Errcheck         ErrcheckSettings
+	Gocritic         GocriticSettings
+	Godox            GodoxSettings
+	Dogsled          DogsledSettings
+	Gocognit         GocognitSettings
+	Godot            GodotSettings
+	Goheader         GoHeaderSettings
+	Testpackage      TestpackageSettings
+	Nestif           NestifSettings
+	NoLintLint       NoLintLintSettings
+	Exhaustive       ExhaustiveSettings
+	ExhaustiveStruct ExhaustiveStructSettings
+	Gofumpt          GofumptSettings
+	ErrorLint        ErrorLintSettings
+	Makezero         MakezeroSettings
+	Revive           ReviveSettings
+	Thelper          ThelperSettings
+	Forbidigo        ForbidigoSettings
+	Ifshort          IfshortSettings
+	Predeclared      PredeclaredSettings
+	Cyclop           Cyclop
 
 	Custom map[string]CustomLinterSettings
 }
@@ -391,6 +388,10 @@ type ExhaustiveSettings struct {
 	DefaultSignifiesExhaustive bool `mapstructure:"default-signifies-exhaustive"`
 }
 
+type ExhaustiveStructSettings struct {
+	StructPatterns []string `mapstructure:"struct-patterns"`
+}
+
 type GofumptSettings struct {
 	ExtraRules bool `mapstructure:"extra-rules"`
 }
@@ -451,6 +452,12 @@ type ForbidigoSettings struct {
 type PredeclaredSettings struct {
 	Ignore    string `mapstructure:"ignore"`
 	Qualified bool   `mapstructure:"q"`
+}
+
+type Cyclop struct {
+	MaxComplexity  int     `mapstructure:"max-complexity"`
+	PackageAverage float64 `mapstructure:"package-average"`
+	SkipTests      bool    `mapstructure:"skip-tests"`
 }
 
 var defaultLintersSettings = LintersSettings{
