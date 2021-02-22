@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: nats
+
+resources:
+- namespace.yaml
+- server
+- streaming
+
+configMapGenerator:
+- name: nats-server
+  files:
+  - config/nats.conf
+- name: nats-stan
+  files:
+  - config/stan.conf
+

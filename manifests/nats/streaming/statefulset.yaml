@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: stan
+  labels:
+    app: stan
+spec:
+  selector:
+    matchLabels:
+      app: stan
+  serviceName: stan
+  replicas: 1
+  volumeClaimTemplates:
+    - metadata:
+        name: stan-sts-vol
+      spec:
+        storageClassName: longhorn
+        accessModes:
+          - ReadWriteOnce
+        volumeMode: "Filesystem"
+        resources:
+          requests:
+            storage: 1Gi
+  template:
+    metadata:
+      labels:
+        app: stan
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "kubernetes.io/hostname"
+              labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - stan
+      containers:
+        - name: stan
+          image: registry.homelab.dsb.dev/library/nats-streaming:0.16.2
+          ports:
+            - containerPort: 8222
+              name: monitor
+            - containerPort: 7777
+              name: metrics
+          args:
+            - "-sc"
+            - "/etc/stan-config/stan.conf"
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/stan-config
+            - name: stan-sts-vol
+              mountPath: /data/stan
+          resources:
+            requests:
+              cpu: "0"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8222
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+      volumes:
+        - name: config-volume
+          configMap:
+            name: nats-stan
