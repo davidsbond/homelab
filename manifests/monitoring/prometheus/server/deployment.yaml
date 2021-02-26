@@ -31,6 +31,7 @@ spec:
           resources:
             limits:
               memory: 2Gi
+              cpu: 500m
           livenessProbe:
             httpGet:
               path: /-/healthy
