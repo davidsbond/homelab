@@ -1,10 +1,13 @@
 package main
 
 import (
+	"archive/zip"
 	"context"
 	"fmt"
 	"io"
 	"os"
+	"strings"
+	"time"
 
 	"pkg.dsb.dev/app"
 	"pkg.dsb.dev/closers"
@@ -52,6 +55,13 @@ func main() {
 				Destination: &bucketDSN,
 				Required:    true,
 			},
+			&flag.String{
+				Name:        "zip-name-layout",
+				Usage:       "Layout string for the bucket name, should use Go's date strings",
+				EnvVar:      "ZIP_NAME_LAYOUT",
+				Value:       "2006-01-02.zip",
+				Destination: &zipNameLayout,
+			},
 		),
 	)
 
@@ -62,19 +72,20 @@ func main() {
 }
 
 var (
-	ftpAddress  string
-	ftpUser     string
-	ftpPassword string
-	ftpPath     string
-	bucketDSN   string
+	ftpAddress    string
+	ftpUser       string
+	ftpPassword   string
+	ftpPath       string
+	bucketDSN     string
+	zipNameLayout string
 )
 
 func run(ctx context.Context) error {
-	bkt, err := blob.OpenBucket(ctx, bucketDSN)
+	bucket, err := blob.OpenBucket(ctx, bucketDSN)
 	if err != nil {
 		return err
 	}
-	defer closers.Close(bkt)
+	defer closers.Close(bucket)
 
 	conn, err := ftp.Open(ctx, ftpAddress, ftp.WithCredentials(ftpUser, ftpPassword))
 	if err != nil {
@@ -82,10 +93,20 @@ func run(ctx context.Context) error {
 	}
 	defer closers.Close(conn)
 
-	return syncFiles(ctx, bkt, conn)
+	key := time.Now().Format(zipNameLayout)
+	blobWriter, err := bucket.NewWriter(ctx, key)
+	if err != nil {
+		return err
+	}
+	defer closers.Close(blobWriter)
+
+	zipWriter := zip.NewWriter(blobWriter)
+	defer closers.Close(zipWriter)
+
+	return backup(ctx, zipWriter, conn)
 }
 
-func syncFiles(ctx context.Context, bkt *blob.Bucket, conn *ftp.Conn) error {
+func backup(ctx context.Context, writer *zip.Writer, conn *ftp.Conn) error {
 	return conn.Walk(ctx, ftpPath, func(path string, info os.FileInfo, err error) error {
 		switch {
 		case err != nil:
@@ -94,19 +115,22 @@ func syncFiles(ctx context.Context, bkt *blob.Bucket, conn *ftp.Conn) error {
 			return nil
 		}
 
-		wr, err := bkt.NewWriter(ctx, path)
+		fileWriter, err := writer.CreateHeader(&zip.FileHeader{
+			Name:     strings.TrimPrefix(path, "/"),
+			Modified: info.ModTime(),
+			Method:   zip.Deflate,
+		})
 		if err != nil {
 			return err
 		}
-		defer closers.Close(wr)
 
-		rd, err := conn.NewReader(path)
+		fileReader, err := conn.NewReader(path)
 		if err != nil {
 			return err
 		}
-		defer closers.Close(rd)
+		defer closers.Close(fileReader)
 
-		_, err = io.Copy(wr, rd)
+		_, err = io.Copy(fileWriter, fileReader)
 		return err
 	})
 }
