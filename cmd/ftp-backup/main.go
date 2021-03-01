@@ -130,7 +130,10 @@ func backup(ctx context.Context, writer *zip.Writer, conn *ftp.Conn) error {
 		}
 		defer closers.Close(fileReader)
 
-		_, err = io.Copy(fileWriter, fileReader)
-		return err
+		if _, err = io.Copy(fileWriter, fileReader); err != nil {
+			return err
+		}
+
+		return writer.Flush()
 	})
 }

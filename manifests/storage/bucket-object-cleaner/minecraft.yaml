@@ -1,7 +1,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: bucket-object-cleaner
+  name: bucket-object-cleaner-minecraft
   labels:
     app: bucket-object-cleaner
 spec:
@@ -19,7 +19,7 @@ spec:
             - /bin/bucket-object-cleaner
             env:
             - name: BUCKET_DSN
-              value: s3://databases?endpoint=minio.storage.svc.cluster.local:9000&region=none&s3ForcePathStyle=true&disableSSL=true
+              value: s3://minecraft?endpoint=minio.storage.svc.cluster.local:9000&region=none&s3ForcePathStyle=true&disableSSL=true
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
