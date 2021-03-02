@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 4,
+  "id": 9,
   "links": [],
   "panels": [
     {
@@ -532,7 +532,13 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "Average",
+          "dashes": true,
+          "legend": false
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -542,6 +548,12 @@
           "interval": "",
           "legendFormat": "{{ kubernetes_node }}",
           "refId": "A"
+        },
+        {
+          "expr": "avg(node_hwmon_temp_celsius)",
+          "interval": "",
+          "legendFormat": "Average",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -709,12 +721,12 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Kubernetes",
   "uid": "FPoeRa2Mz",
-  "version": 2
+  "version": 4
 }
