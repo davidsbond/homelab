@@ -27,6 +27,7 @@ spec:
       - name: registry
       containers:
       - image: ghcr.io/davidsbond/homelab:latest
+        imagePullPolicy: IfNotPresent
         name: health-dashboard
         command:
         - /bin/health-dashboard

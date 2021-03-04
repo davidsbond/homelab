@@ -24,6 +24,7 @@ spec:
         - name: registry
       containers:
         - image: ghcr.io/davidsbond/bytecrypt:latest
+          imagePullPolicy: IfNotPresent
           name: bytecrypt
           command:
             - /bin/server

@@ -25,6 +25,7 @@ spec:
       - name: registry
       containers:
       - image: ghcr.io/davidsbond/homelab:latest
+        imagePullPolicy: IfNotPresent
         name: prometheus-exporter-home-assistant
         command:
         - /bin/prometheus-exporter-home-assistant
