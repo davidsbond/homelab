@@ -25,6 +25,7 @@ spec:
             - name: registry
           containers:
             - image: ghcr.io/davidsbond/db-backup:latest
+              imagePullPolicy: IfNotPresent
               name: db-backup
               env:
                 - name: BUCKET_DSN
