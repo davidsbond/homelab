@@ -997,7 +997,7 @@ k8s.io/client-go/util/workqueue
 k8s.io/klog/v2
 # k8s.io/utils v0.0.0-20201110183641-67b214c5f920
 k8s.io/utils/integer
-# mvdan.cc/gofumpt v0.1.0
+# mvdan.cc/gofumpt v0.1.1
 ## explicit
 mvdan.cc/gofumpt/format
 mvdan.cc/gofumpt/gofumports

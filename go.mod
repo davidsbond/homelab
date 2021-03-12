@@ -29,6 +29,6 @@ require (
 	k8s.io/api v0.20.4
 	k8s.io/apimachinery v0.20.4
 	k8s.io/client-go v0.20.4
-	mvdan.cc/gofumpt v0.1.0
+	mvdan.cc/gofumpt v0.1.1
 	pkg.dsb.dev v1.8.0
 )
