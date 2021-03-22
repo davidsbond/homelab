@@ -81,6 +81,16 @@ type Configuration struct {
 	//  x = AnotherAssign()
 	AllowAssignAndCallCuddle bool
 
+	// AllowAssignAndCallCuddle allows assignments to be cuddled with anything.
+	// Example supported with this set to true:
+	//  if x == 1 {
+	//  	x = 0
+	//  }
+	//  z := x + 2
+	// 	fmt.Println("x")
+	//  y := "x"
+	AllowAssignAndAnythingCuddle bool
+
 	// AllowMultiLineAssignCuddle allows cuddling to assignments even if they
 	// span over multiple lines. This defaults to true which allows the
 	// following example:
@@ -156,6 +166,7 @@ func DefaultConfig() Configuration {
 	return Configuration{
 		StrictAppend:                     true,
 		AllowAssignAndCallCuddle:         true,
+		AllowAssignAndAnythingCuddle:     false,
 		AllowMultiLineAssignCuddle:       true,
 		AllowTrailingComment:             false,
 		AllowSeparatedLeadingComment:     false,
@@ -284,11 +295,17 @@ func (p *Processor) parseBlockStatements(statements []ast.Stmt) {
 		}
 
 		previousStatement := statements[i-1]
+		previousStatementIsMultiline := p.nodeStart(previousStatement) != p.nodeEnd(previousStatement)
 		cuddledWithLastStmt := p.nodeEnd(previousStatement) == p.nodeStart(stmt)-1
 
 		// If we're not cuddled and we don't need to enforce err-check cuddling
 		// then we can bail out here
 		if !cuddledWithLastStmt && !p.config.ForceCuddleErrCheckAndAssign {
+			continue
+		}
+
+		// We don't force error cuddling for multilines. (#86)
+		if p.config.ForceCuddleErrCheckAndAssign && previousStatementIsMultiline && !cuddledWithLastStmt {
 			continue
 		}
 
@@ -321,10 +338,10 @@ func (p *Processor) parseBlockStatements(statements []ast.Stmt) {
 
 		// We could potentially have a block which require us to check the first
 		// argument before ruling out an allowed cuddle.
-		var assignedFirstInBlock []string
+		var calledOrAssignedFirstInBlock []string
 
 		if firstBodyStatement != nil {
-			assignedFirstInBlock = p.findLHS(firstBodyStatement)
+			calledOrAssignedFirstInBlock = append(p.findLHS(firstBodyStatement), p.findRHS(firstBodyStatement)...)
 		}
 
 		var (
@@ -436,7 +453,7 @@ func (p *Processor) parseBlockStatements(statements []ast.Stmt) {
 				continue
 			}
 
-			if atLeastOneInListsMatch(assignedOnLineAbove, assignedFirstInBlock) {
+			if atLeastOneInListsMatch(assignedOnLineAbove, calledOrAssignedFirstInBlock) {
 				continue
 			}
 
@@ -470,6 +487,14 @@ func (p *Processor) parseBlockStatements(statements []ast.Stmt) {
 				continue
 			}
 
+			if p.config.AllowAssignAndAnythingCuddle {
+				continue
+			}
+
+			if _, ok := previousStatement.(*ast.DeclStmt); ok && p.config.AllowCuddleDeclaration {
+				continue
+			}
+
 			// If the assignment is from a type or variable called on the line
 			// above we can allow it by setting AllowAssignAndCallCuddle to
 			// true.
@@ -490,6 +515,10 @@ func (p *Processor) parseBlockStatements(statements []ast.Stmt) {
 		case *ast.ExprStmt:
 			switch previousStatement.(type) {
 			case *ast.DeclStmt, *ast.ReturnStmt:
+				if p.config.AllowAssignAndCallCuddle && p.config.AllowCuddleDeclaration {
+					continue
+				}
+
 				p.addError(t.Pos(), reasonExpressionCuddledWithDeclOrRet)
 			case *ast.IfStmt, *ast.RangeStmt, *ast.SwitchStmt:
 				p.addError(t.Pos(), reasonExpressionCuddledWithBlock)
@@ -519,7 +548,7 @@ func (p *Processor) parseBlockStatements(statements []ast.Stmt) {
 			}
 
 			if !atLeastOneInListsMatch(rightAndLeftHandSide, assignedOnLineAbove) {
-				if !atLeastOneInListsMatch(assignedOnLineAbove, assignedFirstInBlock) {
+				if !atLeastOneInListsMatch(assignedOnLineAbove, calledOrAssignedFirstInBlock) {
 					p.addError(t.Pos(), reasonRangeCuddledWithoutUse)
 				}
 			}
@@ -562,6 +591,24 @@ func (p *Processor) parseBlockStatements(statements []ast.Stmt) {
 				continue
 			}
 
+			// Allow use to cuddled defer func literals with usages on line
+			// abouve. Example:
+			// b := getB()
+			// defer func() {
+			//     makesSenseToUse(b)
+			// }()
+			if c, ok := t.Call.Fun.(*ast.FuncLit); ok {
+				funcLitFirstStmt := append(p.findLHS(c.Body), p.findRHS(c.Body)...)
+
+				if atLeastOneInListsMatch(assignedOnLineAbove, funcLitFirstStmt) {
+					continue
+				}
+			}
+
+			if atLeastOneInListsMatch(assignedOnLineAbove, calledOrAssignedFirstInBlock) {
+				continue
+			}
+
 			if !atLeastOneInListsMatch(rightAndLeftHandSide, assignedOnLineAbove) {
 				p.addError(t.Pos(), reasonDeferCuddledWithOtherVar)
 			}
@@ -582,7 +629,7 @@ func (p *Processor) parseBlockStatements(statements []ast.Stmt) {
 			// comments regarding variable usages on the line before or as the
 			// first line in the block for details.
 			if !atLeastOneInListsMatch(rightAndLeftHandSide, assignedOnLineAbove) {
-				if !atLeastOneInListsMatch(assignedOnLineAbove, assignedFirstInBlock) {
+				if !atLeastOneInListsMatch(assignedOnLineAbove, calledOrAssignedFirstInBlock) {
 					p.addError(t.Pos(), reasonForCuddledAssignWithoutUse)
 				}
 			}
@@ -625,7 +672,7 @@ func (p *Processor) parseBlockStatements(statements []ast.Stmt) {
 			if !atLeastOneInListsMatch(rightHandSide, assignedOnLineAbove) {
 				// Allow type assertion on variables used in the first case
 				// immediately.
-				if !atLeastOneInListsMatch(assignedOnLineAbove, assignedFirstInBlock) {
+				if !atLeastOneInListsMatch(assignedOnLineAbove, calledOrAssignedFirstInBlock) {
 					p.addError(t.Pos(), reasonTypeSwitchCuddledWithoutUse)
 				}
 			}
@@ -1109,7 +1156,24 @@ func (p *Processor) nodeStart(node ast.Node) int {
 }
 
 func (p *Processor) nodeEnd(node ast.Node) int {
-	return p.fileSet.Position(node.End()).Line
+	var line = p.fileSet.Position(node.End()).Line
+
+	if isEmptyLabeledStmt(node) {
+		return p.fileSet.Position(node.Pos()).Line
+	}
+
+	return line
+}
+
+func isEmptyLabeledStmt(node ast.Node) bool {
+	v, ok := node.(*ast.LabeledStmt)
+	if !ok {
+		return false
+	}
+
+	_, empty := v.Stmt.(*ast.EmptyStmt)
+
+	return empty
 }
 
 // Add an error for the file and line number for the current token.Pos with the

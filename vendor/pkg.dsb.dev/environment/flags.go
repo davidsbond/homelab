@@ -9,6 +9,7 @@ var Flags = flag.Flags{
 		Usage:       "Disables automatically setting GOMAXPROCS to the linux CPU quota",
 		EnvVar:      "AUTO_MAX_PROCS_DISABLED",
 		Destination: &autoMaxProcsDisabled,
+		Hidden:      true,
 	},
 }
 

@@ -11,11 +11,13 @@ var Flags = flag.Flags{
 		Usage:       "Disables exporting prometheus metrics",
 		EnvVar:      "METRICS_DISABLED",
 		Destination: &disabled,
+		Hidden:      true,
 	},
 	&flag.String{
 		Name:        "metrics-push-url",
 		Usage:       "URL of the prometheus push gateway, if set, metrics are pushed",
 		EnvVar:      "METRICS_PUSH_URL",
 		Destination: &pushURL,
+		Hidden:      true,
 	},
 }

@@ -31,7 +31,6 @@ type (
 )
 
 var config = &options{
-	host:                "jaeger:6831",
 	sampleRate:          1,
 	bufferFlushInterval: time.Second,
 }
@@ -39,7 +38,7 @@ var config = &options{
 // New sets up the global tracer. The io.Closer instance returned is
 // used to stop tracing.
 func New() (io.Closer, error) {
-	if config.disabled {
+	if config.disabled || config.host == "" {
 		return closers.Noop, nil
 	}
 

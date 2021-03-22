@@ -11,6 +11,7 @@ var Flags = flag.Flags{
 		Usage:       "Disables application monitoring",
 		EnvVar:      "MONITORING_DISABLED",
 		Destination: &config.disabled,
+		Hidden:      true,
 	},
 	&flag.String{
 		Name:        "monitoring-environment",
@@ -18,11 +19,13 @@ var Flags = flag.Flags{
 		EnvVar:      "MONITORING_ENVIRONMENT",
 		Destination: &config.environment,
 		Value:       "development",
+		Hidden:      true,
 	},
 	&flag.String{
 		Name:        "monitoring-dsn",
 		Usage:       "DSN to use for sending reports to sentry",
 		EnvVar:      "MONITORING_DSN",
 		Destination: &config.dsn,
+		Hidden:      true,
 	},
 }
