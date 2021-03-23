@@ -275,6 +275,7 @@ type LintersSettings struct {
 	Ifshort          IfshortSettings
 	Predeclared      PredeclaredSettings
 	Cyclop           Cyclop
+	ImportAs         ImportAsSettings
 
 	Custom map[string]CustomLinterSettings
 }
@@ -350,6 +351,7 @@ type GocognitSettings struct {
 type WSLSettings struct {
 	StrictAppend                     bool `mapstructure:"strict-append"`
 	AllowAssignAndCallCuddle         bool `mapstructure:"allow-assign-and-call"`
+	AllowAssignAndAnythingCuddle     bool `mapstructure:"allow-assign-and-anything"`
 	AllowMultiLineAssignCuddle       bool `mapstructure:"allow-multiline-assign"`
 	AllowCuddleDeclaration           bool `mapstructure:"allow-cuddle-declarations"`
 	AllowTrailingComment             bool `mapstructure:"allow-trailing-comment"`
@@ -460,6 +462,8 @@ type Cyclop struct {
 	SkipTests      bool    `mapstructure:"skip-tests"`
 }
 
+type ImportAsSettings map[string]string
+
 var defaultLintersSettings = LintersSettings{
 	Lll: LllSettings{
 		LineLength: 120,
@@ -491,6 +495,7 @@ var defaultLintersSettings = LintersSettings{
 	WSL: WSLSettings{
 		StrictAppend:                     true,
 		AllowAssignAndCallCuddle:         true,
+		AllowAssignAndAnythingCuddle:     false,
 		AllowMultiLineAssignCuddle:       true,
 		AllowCuddleDeclaration:           false,
 		AllowTrailingComment:             false,
@@ -661,7 +666,8 @@ type Config struct {
 	Severity        Severity
 	Version         Version
 
-	InternalTest bool // Option is used only for testing golangci-lint code, don't use it
+	InternalCmdTest bool `mapstructure:"internal-cmd-test"` // Option is used only for testing golangci-lint command, don't use it
+	InternalTest    bool // Option is used only for testing golangci-lint code, don't use it
 }
 
 func NewDefault() *Config {
