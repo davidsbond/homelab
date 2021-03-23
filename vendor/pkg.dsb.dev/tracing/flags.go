@@ -13,13 +13,14 @@ var Flags = flag.Flags{
 		Usage:       "If true, disables opentracing",
 		EnvVar:      "TRACER_DISABLED",
 		Destination: &config.disabled,
+		Hidden:      true,
 	},
 	&flag.String{
 		Name:        "tracer-host",
 		Usage:       "Host for opentracing",
 		EnvVar:      "TRACER_HOST",
-		Value:       "jaeger:6831",
 		Destination: &config.host,
+		Hidden:      true,
 	},
 	&flag.Float64{
 		Name:        "tracer-sample-rate",
@@ -27,6 +28,7 @@ var Flags = flag.Flags{
 		EnvVar:      "TRACER_SAMPLE_RATE",
 		Value:       1,
 		Destination: &config.sampleRate,
+		Hidden:      true,
 	},
 	&flag.Duration{
 		Name:        "tracer-flush-interval",
@@ -34,5 +36,6 @@ var Flags = flag.Flags{
 		EnvVar:      "TRACER_BUFFER_FLUSH_INTERVAL",
 		Value:       time.Second,
 		Destination: &config.bufferFlushInterval,
+		Hidden:      true,
 	},
 }

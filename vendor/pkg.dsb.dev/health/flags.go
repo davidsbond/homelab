@@ -11,5 +11,6 @@ var Flags = flag.Flags{
 		Usage:       "Disables the health check endpoint",
 		EnvVar:      "HEALTH_CHECK_DISABLED",
 		Destination: &disabled,
+		Hidden:      true,
 	},
 }
