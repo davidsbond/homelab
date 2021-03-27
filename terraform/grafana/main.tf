@@ -16,6 +16,17 @@ provider "grafana" {
   org_id = 1
 }
 
+resource "grafana_alert_notification" "alerts" {
+  name       = "Discord"
+  type       = "discord"
+  is_default = true
+
+  settings = {
+    url         = var.grafana_alert_webhook_url
+    uploadImage = true
+  }
+}
+
 resource "grafana_data_source" "jaeger" {
   type = "jaeger"
   name = "Jaeger"

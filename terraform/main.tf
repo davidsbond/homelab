@@ -17,9 +17,10 @@ module "minio" {
 }
 
 module "grafana" {
-  source           = "./grafana"
-  grafana_password = var.grafana_password
-  grafana_user     = var.grafana_user
+  source                    = "./grafana"
+  grafana_password          = var.grafana_password
+  grafana_user              = var.grafana_user
+  grafana_alert_webhook_url = var.grafana_alert_webhook_url
 }
 
 module "tailscale" {

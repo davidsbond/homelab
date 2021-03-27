@@ -2,7 +2,7 @@ terraform {
   required_providers {
     minio = {
       source  = "registry.terraform.io/aminueza/minio"
-      version = "1.1.0"
+      version = "1.2.0"
     }
   }
 }
