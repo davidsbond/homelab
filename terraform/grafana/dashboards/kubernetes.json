@@ -131,6 +131,42 @@
       }
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                90
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "keep_state",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "message": "Pod ${pod}'s CPU usage has exceeded 90%",
+        "name": "Pod CPU Usage alert",
+        "noDataState": "ok",
+        "notifications": []
+      },
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -186,7 +222,15 @@
           "refId": "A"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 90
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
@@ -242,6 +286,42 @@
       "type": "row"
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                80
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "keep_state",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "message": "Node ${kubernetes_node}'s memory usage has exceeded 80%",
+        "name": "Node Memory Usage alert",
+        "noDataState": "ok",
+        "notifications": []
+      },
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -314,7 +394,15 @@
           "refId": "A"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 80
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
@@ -356,6 +444,42 @@
       }
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                80
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "keep_state",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "message": "Node ${kubernetes_node}'s CPU usage has exceeded 80 percent",
+        "name": "Node CPU Usage alert",
+        "noDataState": "ok",
+        "notifications": []
+      },
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -428,7 +552,15 @@
           "refId": "A"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 80
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
@@ -471,10 +603,7 @@
     },
     {
       "alert": {
-        "alertRuleTags": {
-          "Node": "${kubernetes_node}",
-          "Temperature": "${node_hwmon_temp_celsius}"
-        },
+        "alertRuleTags": {},
         "conditions": [
           {
             "evaluator": {
@@ -645,6 +774,42 @@
       }
     },
     {
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                85
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "keep_state",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "message": "Node ${kubernetes_node}'s file system usage has exceeded 85%",
+        "name": "Node Filesystem Usage alert",
+        "noDataState": "ok",
+        "notifications": []
+      },
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -719,7 +884,15 @@
           "refId": "A"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 85
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
@@ -775,5 +948,5 @@
   "timezone": "",
   "title": "Kubernetes",
   "uid": "FPoeRa2Mz",
-  "version": 8
+  "version": 14
 }
