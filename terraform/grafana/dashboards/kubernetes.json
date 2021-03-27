@@ -470,6 +470,45 @@
       }
     },
     {
+      "alert": {
+        "alertRuleTags": {
+          "Node": "${kubernetes_node}",
+          "Temperature": "${node_hwmon_temp_celsius}"
+        },
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                85
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "5m",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "max"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "keep_state",
+        "for": "5m",
+        "frequency": "1m",
+        "handler": 1,
+        "message": "Node ${kubernetes_node}'s temperature has exceeded 85 degrees",
+        "name": "Node Temperature alert",
+        "noDataState": "ok",
+        "notifications": []
+      },
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -556,7 +595,15 @@
           "refId": "B"
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "value": 85
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
@@ -728,5 +775,5 @@
   "timezone": "",
   "title": "Kubernetes",
   "uid": "FPoeRa2Mz",
-  "version": 4
+  "version": 8
 }
