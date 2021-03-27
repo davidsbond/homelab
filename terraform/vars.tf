@@ -10,6 +10,7 @@ variable "minio_access_key" {}
 variable "minio_secret_key" {}
 variable "grafana_user" {}
 variable "grafana_password" {}
+variable "grafana_alert_webhook_url" {}
 variable "tailscale_api_key" {}
 variable "tailscale_domain" {}
 variable "sentry_token" {}
