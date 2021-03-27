@@ -23,7 +23,7 @@ resource "grafana_alert_notification" "alerts" {
 
   settings = {
     url         = var.grafana_alert_webhook_url
-    uploadImage = true
+    uploadImage = false
   }
 }
 

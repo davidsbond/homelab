@@ -162,7 +162,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
-        "message": "Pod ${pod}'s CPU usage has exceeded 90%",
+        "message": "Pod CPU usage has exceeded 90%",
         "name": "Pod CPU Usage alert",
         "noDataState": "ok",
         "notifications": []
@@ -317,7 +317,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
-        "message": "Node ${kubernetes_node}'s memory usage has exceeded 80%",
+        "message": "Node's memory usage has exceeded 80%",
         "name": "Node Memory Usage alert",
         "noDataState": "ok",
         "notifications": []
@@ -475,7 +475,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
-        "message": "Node ${kubernetes_node}'s CPU usage has exceeded 80 percent",
+        "message": "Node's CPU usage has exceeded 80 percent",
         "name": "Node CPU Usage alert",
         "noDataState": "ok",
         "notifications": []
@@ -633,7 +633,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
-        "message": "Node ${kubernetes_node}'s temperature has exceeded 85 degrees",
+        "message": "Node's temperature has exceeded 85 degrees",
         "name": "Node Temperature alert",
         "noDataState": "ok",
         "notifications": []
@@ -805,7 +805,7 @@
         "for": "5m",
         "frequency": "1m",
         "handler": 1,
-        "message": "Node ${kubernetes_node}'s file system usage has exceeded 85%",
+        "message": "Node's file system usage has exceeded 85%",
         "name": "Node Filesystem Usage alert",
         "noDataState": "ok",
         "notifications": []
@@ -948,5 +948,5 @@
   "timezone": "",
   "title": "Kubernetes",
   "uid": "FPoeRa2Mz",
-  "version": 14
+  "version": 15
 }
