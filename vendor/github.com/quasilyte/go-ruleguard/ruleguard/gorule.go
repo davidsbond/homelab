@@ -17,7 +17,6 @@ type goRuleSet struct {
 }
 
 type scopedGoRuleSet struct {
-	uncategorized   []goRule
 	categorizedNum  int
 	rulesByCategory [nodeCategoriesCount][]goRule
 }
@@ -54,7 +53,7 @@ type filterParams struct {
 
 	importer *goImporter
 
-	values map[string]ast.Node
+	match gogrep.MatchData
 
 	nodeText func(n ast.Node) []byte
 
@@ -63,7 +62,8 @@ type filterParams struct {
 }
 
 func (params *filterParams) subExpr(name string) ast.Expr {
-	switch n := params.values[name].(type) {
+	n, _ := params.match.CapturedByName(name)
+	switch n := n.(type) {
 	case ast.Expr:
 		return n
 	case *ast.ExprStmt:
@@ -113,7 +113,6 @@ func mergeRuleSets(toMerge []*goRuleSet) (*goRuleSet, error) {
 }
 
 func appendScopedRuleSet(dst, src *scopedGoRuleSet) *scopedGoRuleSet {
-	dst.uncategorized = append(dst.uncategorized, cloneRuleSlice(src.uncategorized)...)
 	for cat, rules := range src.rulesByCategory {
 		dst.rulesByCategory[cat] = append(dst.rulesByCategory[cat], cloneRuleSlice(rules)...)
 		dst.categorizedNum += len(rules)

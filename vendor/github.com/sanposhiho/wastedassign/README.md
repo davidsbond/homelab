@@ -41,17 +41,12 @@ go get -u github.com/sanposhiho/wastedassign/cmd/wastedassign
 go vet -vettool=`which wastedassign` ./...
 ```
 
-# wastedassign(Japanese)
-`wastedassign` は無駄な代入を発見してくれる静的解析ツールです。
+## Contribution
 
-以下のようなケースに役立ちます
+I am waiting for your contribution. Feel free to create an issue or a PR!
 
-- 無駄な代入文を省くことによる可読性アップ
-- 無駄な再代入を検出することによる使用忘れの確認
+### Run test
 
-また、使用しないことが明示的にわかることで、
-
-- なぜ使用しないのか
-- 使用しない変数が関数の返り値として存在した場合、関数の返り値として返す必要がないのではないか
-
-などの議論が生まれるきっかけとなります。
+```
+go test
+```

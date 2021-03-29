@@ -52,9 +52,16 @@ func NewRunner(cfg *config.Config, log logutils.Log, goenv *goutil.Env, es *lint
 	// print deprecated messages
 	if !cfg.InternalCmdTest {
 		for name, lc := range enabledLinters {
-			if lc.IsDeprecated() {
-				log.Warnf("The linter '%s' is deprecated due to: %s", name, lc.DeprecatedMessage)
+			if !lc.IsDeprecated() {
+				continue
 			}
+
+			var extra string
+			if lc.Deprecation.Replacement != "" {
+				extra = fmt.Sprintf(" Replaced by %s.", lc.Deprecation.Replacement)
+			}
+
+			log.Warnf("The linter '%s' is deprecated (since %s) due to: %s %s", name, lc.Deprecation.Since, lc.Deprecation.Message, extra)
 		}
 	}
 
@@ -193,7 +200,7 @@ func (r Runner) Run(ctx context.Context, linters []*linter.Config, lintCtx *lint
 		sw.TrackStage(lc.Name(), func() {
 			linterIssues, err := r.runLinterSafe(ctx, lintCtx, lc)
 			if err != nil {
-				r.Log.Warnf("Can't run linter %s: %s", lc.Linter.Name(), err)
+				r.Log.Warnf("Can't run linter %s: %v", lc.Linter.Name(), err)
 				if os.Getenv("GOLANGCI_COM_RUN") == "" {
 					// Don't stop all linters on one linter failure for golangci.com.
 					runErr = err

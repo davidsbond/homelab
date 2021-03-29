@@ -1,7 +1,7 @@
 package wastedassign
 
 import (
-	"fmt"
+	"errors"
 	"go/ast"
 	"go/token"
 	"go/types"
@@ -14,7 +14,7 @@ import (
 
 const doc = "wastedassign finds wasted assignment statements."
 
-// Analyzer is ...
+// Analyzer is the wastedassign analyzer.
 var Analyzer = &analysis.Analyzer{
 	Name: "wastedassign",
 	Doc:  doc,
@@ -31,8 +31,7 @@ type wastedAssignStruct struct {
 
 func run(pass *analysis.Pass) (interface{}, error) {
 	// Plundered from buildssa.Run.
-	mode := ssa.NaiveForm
-	prog := ssa.NewProgram(pass.Fset, mode)
+	prog := ssa.NewProgram(pass.Fset, ssa.NaiveForm)
 
 	// Create SSA packages for all imports.
 	// Order is not significant.
@@ -73,12 +72,12 @@ func run(pass *analysis.Pass) (interface{}, error) {
 
 				fn := pass.TypesInfo.Defs[fdecl.Name].(*types.Func)
 				if fn == nil {
-					return nil, fmt.Errorf("failed to get func's typesinfo")
+					return nil, errors.New("failed to get func's typesinfo")
 				}
 
 				f := ssapkg.Prog.FuncValue(fn)
 				if f == nil {
-					return nil, fmt.Errorf("failed to get func's SSA-form intermediate representation")
+					return nil, errors.New("failed to get func's SSA-form intermediate representation")
 				}
 
 				var addAnons func(f *ssa.Function)
@@ -96,41 +95,50 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	typeSwitchPos := map[int]bool{}
 	inspect := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 	inspect.Preorder([]ast.Node{new(ast.TypeSwitchStmt)}, func(n ast.Node) {
-		switch n := n.(type) {
-		case *ast.TypeSwitchStmt:
+		if _, ok := n.(*ast.TypeSwitchStmt); ok {
 			typeSwitchPos[pass.Fset.Position(n.Pos()).Line] = true
 		}
 	})
 
-	wastedAssignMap := []wastedAssignStruct{}
+	var wastedAssignMap []wastedAssignStruct
 
 	for _, sf := range srcFuncs {
 		for _, bl := range sf.Blocks {
 			blCopy := *bl
 			for _, ist := range bl.Instrs {
 				blCopy.Instrs = rmInstrFromInstrs(blCopy.Instrs, ist)
-				switch ist.(type) {
-				case *ssa.Store:
-					var buf [10]*ssa.Value
-					for _, op := range ist.Operands(buf[:0]) {
-						if (*op) != nil && opInLocals(sf.Locals, op) {
-							if reason := isNextOperationToOpIsStore([]*ssa.BasicBlock{&blCopy}, op, nil); reason != notWasted {
-								if ist.Pos() != 0 && !typeSwitchPos[pass.Fset.Position(ist.Pos()).Line] {
-									wastedAssignMap = append(wastedAssignMap, wastedAssignStruct{
-										pos:    ist.Pos(),
-										reason: reason.String(),
-									})
-								}
-							}
-						}
+				if _, ok := ist.(*ssa.Store); !ok {
+					continue
+				}
+
+				var buf [10]*ssa.Value
+				for _, op := range ist.Operands(buf[:0]) {
+					if (*op) == nil || !opInLocals(sf.Locals, op) {
+						continue
 					}
+
+					reason := isNextOperationToOpIsStore([]*ssa.BasicBlock{&blCopy}, op, nil)
+					if reason == notWasted {
+						continue
+					}
+
+					if ist.Pos() == 0 || typeSwitchPos[pass.Fset.Position(ist.Pos()).Line] {
+						continue
+					}
+
+					wastedAssignMap = append(wastedAssignMap, wastedAssignStruct{
+						pos:    ist.Pos(),
+						reason: reason.String(),
+					})
 				}
 			}
 		}
 	}
+
 	for _, was := range wastedAssignMap {
 		pass.Reportf(was.pos, was.reason)
 	}
+
 	return nil, nil
 }
 
@@ -147,31 +155,34 @@ func (wr wastedReason) String() string {
 	case noUseUntilReturn:
 		return "reassigned, but never used afterwards"
 	case reassignedSoon:
-		return "wasted assignment"
+		return "reassigned, but reassigned without using the value"
 	case notWasted:
 		return ""
+	default:
+		return ""
 	}
-	return ""
 }
 
-func isNextOperationToOpIsStore(bls []*ssa.BasicBlock, currentOp *ssa.Value, haveCheckedMap *map[int]bool) wastedReason {
-	wastedReasons := []wastedReason{}
-	wastedReasonsCurrentBls := []wastedReason{}
+func isNextOperationToOpIsStore(bls []*ssa.BasicBlock, currentOp *ssa.Value, haveCheckedMap map[int]int) wastedReason {
+	var wastedReasons []wastedReason
+	var wastedReasonsCurrentBls []wastedReason
 
 	if haveCheckedMap == nil {
-		haveCheckedMap = &map[int]bool{}
+		haveCheckedMap = map[int]int{}
 	}
 
 	for _, bl := range bls {
-		if (*haveCheckedMap)[bl.Index] == true {
+		if haveCheckedMap[bl.Index] == 2 {
 			continue
 		}
-		(*haveCheckedMap)[bl.Index] = true
+
+		haveCheckedMap[bl.Index]++
 		breakFlag := false
 		for _, ist := range bl.Instrs {
 			if breakFlag {
 				break
 			}
+
 			switch w := ist.(type) {
 			case *ssa.Store:
 				var buf [10]*ssa.Value
@@ -190,12 +201,13 @@ func isNextOperationToOpIsStore(bls []*ssa.BasicBlock, currentOp *ssa.Value, hav
 				var buf [10]*ssa.Value
 				for _, op := range ist.Operands(buf[:0]) {
 					if *op == *currentOp {
-						// 連続storeではなかった
+						// It wasn't a continuous store.
 						return notWasted
 					}
 				}
 			}
 		}
+
 		if len(bl.Succs) != 0 && !breakFlag {
 			wastedReason := isNextOperationToOpIsStore(rmSameBlock(bl.Succs, bl), currentOp, haveCheckedMap)
 			if wastedReason == notWasted {
@@ -207,17 +219,15 @@ func isNextOperationToOpIsStore(bls []*ssa.BasicBlock, currentOp *ssa.Value, hav
 
 	wastedReasons = append(wastedReasons, wastedReasonsCurrentBls...)
 
-	if len(wastedReasons) != 0 {
-		if containReassignedSoon(wastedReasons) {
-			return reassignedSoon
-		}
-		return noUseUntilReturn
+	if len(wastedReasons) != 0 && containReassignedSoon(wastedReasons) {
+		return reassignedSoon
 	}
+
 	return noUseUntilReturn
 }
 
 func rmSameBlock(bls []*ssa.BasicBlock, currentBl *ssa.BasicBlock) []*ssa.BasicBlock {
-	rto := []*ssa.BasicBlock{}
+	var rto []*ssa.BasicBlock
 
 	for _, bl := range bls {
 		if bl != currentBl {
@@ -225,15 +235,6 @@ func rmSameBlock(bls []*ssa.BasicBlock, currentBl *ssa.BasicBlock) []*ssa.BasicB
 		}
 	}
 	return rto
-}
-
-func containNotWasted(ws []wastedReason) bool {
-	for _, w := range ws {
-		if w == notWasted {
-			return true
-		}
-	}
-	return false
 }
 
 func containReassignedSoon(ws []wastedReason) bool {
