@@ -78,32 +78,12 @@ type engineState struct {
 func newEngineState() *engineState {
 	env := quasigo.NewEnv()
 	state := &engineState{
-		env:      env,
-		pkgCache: make(map[string]*types.Package),
-		typeByFQN: map[string]types.Type{
-			// Predeclared types.
-			`error`:      types.Universe.Lookup("error").Type(),
-			`bool`:       types.Typ[types.Bool],
-			`int`:        types.Typ[types.Int],
-			`int8`:       types.Typ[types.Int8],
-			`int16`:      types.Typ[types.Int16],
-			`int32`:      types.Typ[types.Int32],
-			`int64`:      types.Typ[types.Int64],
-			`uint`:       types.Typ[types.Uint],
-			`uint8`:      types.Typ[types.Uint8],
-			`uint16`:     types.Typ[types.Uint16],
-			`uint32`:     types.Typ[types.Uint32],
-			`uint64`:     types.Typ[types.Uint64],
-			`uintptr`:    types.Typ[types.Uintptr],
-			`string`:     types.Typ[types.String],
-			`float32`:    types.Typ[types.Float32],
-			`float64`:    types.Typ[types.Float64],
-			`complex64`:  types.Typ[types.Complex64],
-			`complex128`: types.Typ[types.Complex128],
-			// Predeclared aliases (provided for convenience).
-			`byte`: types.Typ[types.Uint8],
-			`rune`: types.Typ[types.Int32],
-		},
+		env:       env,
+		pkgCache:  make(map[string]*types.Package),
+		typeByFQN: map[string]types.Type{},
+	}
+	for key, typ := range typeByName {
+		state.typeByFQN[key] = typ
 	}
 	initEnv(state, env)
 	return state
@@ -118,8 +98,25 @@ func (state *engineState) GetCachedPackage(pkgPath string) *types.Package {
 
 func (state *engineState) AddCachedPackage(pkgPath string, pkg *types.Package) {
 	state.pkgCacheMu.Lock()
-	state.pkgCache[pkgPath] = pkg
+	state.addCachedPackage(pkgPath, pkg)
 	state.pkgCacheMu.Unlock()
+}
+
+func (state *engineState) addCachedPackage(pkgPath string, pkg *types.Package) {
+	state.pkgCache[pkgPath] = pkg
+
+	// Also add all complete packages that are dependencies of the pkg.
+	// This way we cache more and avoid duplicated package loading
+	// which can lead to typechecking issues.
+	//
+	// Note that it does not increase our memory consumption
+	// as these packages are reachable via pkg, so they'll
+	// not be freed by GC anyway.
+	for _, imported := range pkg.Imports() {
+		if imported.Complete() {
+			state.addCachedPackage(imported.Path(), imported)
+		}
+	}
 }
 
 func (state *engineState) FindType(importer *goImporter, currentPkg *types.Package, fqn string) (types.Type, error) {
