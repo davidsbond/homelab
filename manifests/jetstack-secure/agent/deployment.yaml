@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent
+  labels:
+    app: agent
+spec:
+  selector:
+    matchLabels:
+      app: agent
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: agent
+    spec:
+      containers:
+        - args:
+            - agent
+            - -c
+            - /etc/jetstack-secure/agent/config/config.yaml
+            - -k
+            - /etc/jetstack-secure/agent/credentials/credentials.json
+            - -p
+            - 0h1m0s
+          image: quay.io/jetstack/preflight:b2384c5add501ec97516fc906ceab6967ff868a8
+          name: agent
+          resources:
+            limits:
+              cpu: 200m
+              memory: 200Mi
+            requests:
+              cpu: 200m
+              memory: 200Mi
+          volumeMounts:
+            - mountPath: /etc/jetstack-secure/agent/config
+              name: config
+              readOnly: true
+            - mountPath: /etc/jetstack-secure/agent/credentials
+              name: credentials
+              readOnly: true
+      restartPolicy: Always
+      serviceAccountName: agent
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: agent-config
+          name: config
+        - name: credentials
+          secret:
+            defaultMode: 420
+            secretName: agent-credentials
