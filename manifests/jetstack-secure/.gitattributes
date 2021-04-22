@@ -1,0 +1,2 @@
+secrets/* filter=strongbox diff=strongbox
+secrets/agent/* filter=strongbox diff=strongbox

@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: jetstack-secure
+
+resources:
+  - namespace.yaml
+  - agent
+
+commonAnnotations:
+  fluentbit.io/exclude: "true"
+
+configMapGenerator:
+  - name: agent-config
+    files:
+      - config/agent/config.yaml
+
+secretGenerator:
+  - name: agent-credentials
+    files:
+      - secrets/agent/credentials.json
