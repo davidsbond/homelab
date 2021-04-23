@@ -13,3 +13,5 @@ resources:
 - volumesnapshotclass.yaml
 - volumesnapshotcontents.yaml
 - sharemanager.yaml
+- backingimage.yaml
+- backingimagemanager.yaml
