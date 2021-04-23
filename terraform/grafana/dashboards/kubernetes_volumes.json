@@ -210,7 +210,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "(longhorn_disk_usage_bytes / longhorn_disk_capacity_bytes) * 100",
+          "expr": "max by (node) ((longhorn_disk_usage_bytes / longhorn_disk_capacity_bytes) * 100)",
           "interval": "",
           "legendFormat": "{{ node }} {{disk }} usage",
           "refId": "B"
