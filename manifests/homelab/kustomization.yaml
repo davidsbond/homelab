@@ -8,6 +8,7 @@ resources:
 - minecraft-backup
 - directory
 - health-dashboard
+- alertmanager-discord
 
 secretGenerator:
 - name: registry
@@ -20,6 +21,9 @@ secretGenerator:
 - name: sentry
   envs:
   - secrets/sentry
+- name: discord
+  envs:
+  - secrets/discord
 
 configMapGenerator:
 - name: tracing

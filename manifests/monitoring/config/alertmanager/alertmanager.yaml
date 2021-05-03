@@ -8,4 +8,4 @@ route:
 receivers:
 - name: 'default'
   webhook_configs:
-  - url: 'https://google.com'
+  - url: 'http://alertmanager-discord.homelab.svc.cluster.local:80/webhook'

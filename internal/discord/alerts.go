@@ -26,16 +26,23 @@ type (
 
 	// The Embed type represents embeddable data in a discord message.
 	Embed struct {
-		Title       string  `json:"title"`
-		Description string  `json:"description"`
-		Colour      int     `json:"color"`
-		Fields      []Field `json:"fields"`
+		Title       string    `json:"title"`
+		Description string    `json:"description"`
+		Colour      int       `json:"color"`
+		Fields      []Field   `json:"fields"`
+		URL         string    `json:"url"`
+		Timestamp   time.Time `json:"timestamp"`
 	}
 
 	// The Field type represents a single field in a discord message.
 	Field struct {
 		Name  string `json:"name"`
 		Value string `json:"value"`
+	}
+
+	// The APIError type represents an error returned from the discord API.
+	APIError struct {
+		Message string `json:"message"`
 	}
 )
 
@@ -66,6 +73,8 @@ func (a *AlertDispatcher) Dispatch(ctx context.Context, webhook alertmanager.Web
 			Title:       webhook.CommonLabels["alertname"],
 			Description: webhook.CommonAnnotations["summary"],
 			Colour:      ColourGrey,
+			URL:         alert.GeneratorURL,
+			Timestamp:   alert.StartsAt,
 		}
 
 		switch alert.Status {
@@ -104,11 +113,27 @@ func (a *AlertDispatcher) Dispatch(ctx context.Context, webhook alertmanager.Web
 		if err != nil {
 			return err
 		}
+		req.Header.Set("Content-Type", "application/json")
 
-		if _, err = a.client.Do(req); err != nil {
+		resp, err := a.client.Do(req)
+		if err != nil {
 			return err
 		}
+
+		if resp.StatusCode < http.StatusIMUsed {
+			continue
+		}
+
+		var e APIError
+		if err = json.NewDecoder(resp.Body).Decode(&e); err != nil {
+			return err
+		}
+		return e
 	}
 
 	return nil
+}
+
+func (err APIError) Error() string {
+	return err.Message
 }
