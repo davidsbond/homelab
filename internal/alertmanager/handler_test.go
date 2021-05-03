@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
@@ -35,8 +36,7 @@ func TestWebhookHandler_Handle(t *testing.T) {
 						Annotations: map[string]string{
 							"description": "some description",
 						},
-						StartsAt:     "2018-08-03T09:52:26.739266876+02:00",
-						EndsAt:       "0001-01-01T00:00:00Z",
+						StartsAt:     time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 						GeneratorURL: "https://example.com:9090/graph?g0.expr=go_memstats_alloc_bytes+%3E+0\u0026g0.tab=1",
 					},
 				},

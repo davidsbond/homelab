@@ -27,6 +27,7 @@ linters:
     - wrapcheck
     - forbidigo
     - wastedassign
+    - cyclop
 
 issues:
   exclude-use-default: false

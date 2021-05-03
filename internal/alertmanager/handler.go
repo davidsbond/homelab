@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 
@@ -27,10 +28,10 @@ type (
 	// The Alert type represents a single alert within a webhook payload.
 	Alert struct {
 		Annotations  map[string]string `json:"annotations"`
-		EndsAt       string            `json:"endsAt"`
+		EndsAt       time.Time         `json:"endsAt"`
 		GeneratorURL string            `json:"generatorURL"`
 		Labels       map[string]string `json:"labels"`
-		StartsAt     string            `json:"startsAt"`
+		StartsAt     time.Time         `json:"startsAt"`
 		Status       string            `json:"status"`
 	}
 
