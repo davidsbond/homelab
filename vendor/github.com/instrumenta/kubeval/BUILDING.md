@@ -8,7 +8,7 @@ be useful in getting started.
 For building Kubeval you'll need the following:
 
 * Make
-* Go 1.12
+* Go 1.15
 
 For releasing Kubeval you'll also need:
 
@@ -53,10 +53,9 @@ are run using the following target. Note that this runs the tests using Docker.
 make acceptance
 ```
 
-If you would prefer to run them directly you need to make sure you have Kubeval
-on your PATH and then run:
+If you would prefer to run them directly
 
 ```
-./acceptance.bats
+make build && PATH=./bin:$PATH ./acceptance.bats
 ```
 
