@@ -4,6 +4,7 @@ namespace: homelab
 
 resources:
 - namespace.yaml
+- limitrange.yaml
 - prometheus-exporters
 - minecraft-backup
 - directory

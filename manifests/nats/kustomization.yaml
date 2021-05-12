@@ -4,6 +4,7 @@ namespace: nats
 
 resources:
 - namespace.yaml
+- limitrange.yaml
 - server
 - streaming
 

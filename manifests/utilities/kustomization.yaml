@@ -4,6 +4,7 @@ namespace: utilities
 
 resources:
 - namespace.yaml
+- limitrange.yaml
 - home-assistant
 - pihole
 - bitwarden

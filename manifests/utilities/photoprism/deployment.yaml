@@ -18,6 +18,7 @@ spec:
     spec:
       containers:
         - image: registry.homelab.dsb.dev/photoprism/photoprism-arm64:20210120
+          imagePullPolicy: IfNotPresent
           name: photoprism
           readinessProbe:
             tcpSocket:

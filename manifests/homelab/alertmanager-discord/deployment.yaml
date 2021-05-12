@@ -25,7 +25,7 @@ spec:
       - name: registry
       containers:
       - image: ghcr.io/davidsbond/homelab:latest
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         name: alertmanager-discord
         command:
         - /bin/alertmanager-discord

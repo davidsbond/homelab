@@ -18,6 +18,7 @@ spec:
     spec:
       containers:
         - image: registry.homelab.dsb.dev/fireflyiii/csv-importer:version-2.3.3
+          imagePullPolicy: IfNotPresent
           name: firefly-csv-importer
           env:
           - name: FIREFLY_III_URI

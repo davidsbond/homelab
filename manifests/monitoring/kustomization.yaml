@@ -4,6 +4,7 @@ namespace: monitoring
 
 resources:
 - namespace.yaml
+- limitrange.yaml
 - jaeger
 - grafana
 - prometheus
