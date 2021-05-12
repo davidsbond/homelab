@@ -19,6 +19,7 @@ spec:
       containers:
       - image: registry.homelab.dsb.dev/homeassistant/home-assistant:2021.1.5
         name: home-assistant
+        imagePullPolicy: IfNotPresent
         readinessProbe:
           tcpSocket:
             port: 8123

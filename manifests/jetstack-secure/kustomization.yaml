@@ -4,6 +4,7 @@ namespace: jetstack-secure
 
 resources:
   - namespace.yaml
+  - limitrange.yaml
   - agent
 
 commonAnnotations:

@@ -4,6 +4,7 @@ namespace: storage
 
 resources:
 - namespace.yaml
+- limitrange.yaml
 - minio
 - postgres
 - bucket-object-cleaner

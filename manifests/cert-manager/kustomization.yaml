@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - namespace.yaml
+- limitrange.yaml
 - cainjector
 - cert-manager
 - controller

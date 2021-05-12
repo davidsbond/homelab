@@ -4,6 +4,7 @@ namespace: experimental
 
 resources:
 - namespace.yaml
+- limitrange.yaml
 - bytecrypt
 
 secretGenerator:

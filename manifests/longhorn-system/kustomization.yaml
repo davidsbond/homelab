@@ -4,6 +4,7 @@ namespace: longhorn-system
 
 resources:
   - namespace.yaml
+  - limitrange.yaml
   - longhorn
 
 configMapGenerator:

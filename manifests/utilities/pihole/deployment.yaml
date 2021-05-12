@@ -20,7 +20,7 @@ spec:
       containers:
       - name: pihole
         image: registry.homelab.dsb.dev/pihole/pihole:v5.6
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         env:
         - name: TZ
           value: Europe/London

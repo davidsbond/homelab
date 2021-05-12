@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: kube-system
 
 resources:
+- limitrange.yaml
 - system-upgrade-controller
 - traefik
 - fluent-bit
