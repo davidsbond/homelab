@@ -1,19 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+namespace: cert-manager
 
 resources:
-- namespace.yaml
 - limitrange.yaml
-- cainjector
-- cert-manager
-- controller
-- crd
+- cert-manager.yaml
 - issuers
-- webhook
 
 secretGenerator:
   - name: cloudflare
-    namespace: cert-manager
     envs:
     - secrets/cloudflare
 
