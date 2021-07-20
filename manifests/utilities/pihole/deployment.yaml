@@ -13,13 +13,17 @@ spec:
       app: pihole
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: /metrics
+        prometheus.io/port: '8081'
       labels:
         app: pihole
         name: pihole
     spec:
       containers:
       - name: pihole
-        image: registry.homelab.dsb.dev/pihole/pihole:v5.6
+        image: registry.homelab.dsb.dev/pihole/pihole:v5.8.1
         imagePullPolicy: IfNotPresent
         env:
         - name: TZ
@@ -45,7 +49,21 @@ spec:
           tcpSocket:
             port: 80
       - name: cloudflared
-        image: registry.homelab.dsb.dev/klutchell/cloudflared:2019.12.0
+        image: registry.homelab.dsb.dev/raspbernetes/cloudflared:2021.7.0
+        env:
+        - name: TUNNEL_DNS_ADDRESS
+          value: 0.0.0.0
+        - name: TUNNEL_DNS_PORT
+          value: "5053"
+        - name: TUNNEL_DNS_UPSTREAM
+          value: https://1.1.1.1/dns-query,https://1.0.0.1/dns-query
+        - name: TUNNEL_METRICS
+          value: 0.0.0.0:8081
+        command:
+          - cloudflared
+        args:
+          - --no-autoupdate
+          - proxy-dns
       volumes:
       - name: pihole
         persistentVolumeClaim:
