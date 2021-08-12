@@ -14,4 +14,4 @@ spec:
   - nfsvers=3
   nfs:
     path: /volume1/minio
-    server: 192.168.1.69
+    server: 192.168.0.22
