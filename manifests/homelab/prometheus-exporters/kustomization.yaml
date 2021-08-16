@@ -6,25 +6,17 @@ resources:
 - speedtest
 - weather
 - worldping
-- homehub
 - home-assistant
 - pihole
 - synology
-- minecraft
 
 secretGenerator:
 - name: weather
   envs:
   - secrets/weather
-- name: homehub
-  envs:
-  - secrets/homehub
 - name: home-assistant
   envs:
   - secrets/home-assistant
 - name: synology
   envs:
   - secrets/synology
-- name: minecraft
-  envs:
-  - secrets/minecraft
