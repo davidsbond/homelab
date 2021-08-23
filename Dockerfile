@@ -1,4 +1,4 @@
-FROM golang:1.16 as builder
+FROM golang:1.17.0 as builder
 
 # Install required tools
 RUN apt-get update -y
