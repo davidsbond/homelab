@@ -11,10 +11,10 @@ import (
 	"strings"
 
 	"honnef.co/go/tools/analysis/facts"
+	"honnef.co/go/tools/go/ast/astutil"
 	"honnef.co/go/tools/go/types/typeutil"
 
 	"golang.org/x/tools/go/analysis"
-	"golang.org/x/tools/go/ast/astutil"
 )
 
 type Positioner interface {
@@ -209,7 +209,7 @@ func MayHaveSideEffects(pass *analysis.Pass, expr ast.Expr, purity facts.PurityR
 	case *ast.Ellipsis:
 		return MayHaveSideEffects(pass, expr.Elt, purity)
 	case *ast.FuncLit:
-		// the literal itself cannot have side ffects, only calling it
+		// the literal itself cannot have side effects, only calling it
 		// might, which is handled by CallExpr.
 		return false
 	case *ast.ArrayType, *ast.StructType, *ast.FuncType, *ast.InterfaceType, *ast.MapType, *ast.ChanType:

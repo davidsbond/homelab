@@ -27,8 +27,16 @@ import (
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
 	"golang.org/x/tools/go/ast/inspector"
-	gotypeutil "golang.org/x/tools/go/types/typeutil"
 )
+
+func docText(doc *ast.CommentGroup) (string, bool) {
+	if doc == nil {
+		return "", false
+	}
+	// We trim spaces primarily because of /**/ style comments, which often have leading space.
+	text := strings.TrimSpace(doc.Text())
+	return text, text != ""
+}
 
 func CheckPackageComment(pass *analysis.Pass) (interface{}, error) {
 	// - At least one file in a non-main package should have a package comment
@@ -47,10 +55,11 @@ func CheckPackageComment(pass *analysis.Pass) (interface{}, error) {
 		if code.IsInTest(pass, f) {
 			continue
 		}
-		if f.Doc != nil && len(f.Doc.List) > 0 {
+		text, ok := docText(f.Doc)
+		if ok {
 			hasDocs = true
 			prefix := "Package " + f.Name.Name + " "
-			if !strings.HasPrefix(strings.TrimSpace(f.Doc.Text()), prefix) {
+			if !strings.HasPrefix(text, prefix) {
 				report.Report(pass, f.Doc, fmt.Sprintf(`package comment should be of the form "%s..."`, prefix))
 			}
 		}
@@ -261,7 +270,7 @@ func CheckReceiverNames(pass *analysis.Pass) (interface{}, error) {
 	irpkg := pass.ResultOf[buildir.Analyzer].(*buildir.IR).Pkg
 	for _, m := range irpkg.Members {
 		if T, ok := m.Object().(*types.TypeName); ok && !T.IsAlias() {
-			ms := gotypeutil.IntuitiveMethodSet(T.Type(), nil)
+			ms := typeutil.IntuitiveMethodSet(T.Type(), nil)
 			for _, sel := range ms {
 				fn := sel.Obj().(*types.Func)
 				recv := fn.Type().(*types.Signature).Recv()
@@ -288,7 +297,7 @@ func CheckReceiverNamesIdentical(pass *analysis.Pass) (interface{}, error) {
 
 		var firstFn *types.Func
 		if T, ok := m.Object().(*types.TypeName); ok && !T.IsAlias() {
-			ms := gotypeutil.IntuitiveMethodSet(T.Type(), nil)
+			ms := typeutil.IntuitiveMethodSet(T.Type(), nil)
 			for _, sel := range ms {
 				fn := sel.Obj().(*types.Func)
 				recv := fn.Type().(*types.Signature).Recv()
@@ -775,7 +784,8 @@ func CheckExportedFunctionDocs(pass *analysis.Pass) (interface{}, error) {
 		}
 
 		decl := node.(*ast.FuncDecl)
-		if decl.Doc == nil {
+		text, ok := docText(decl.Doc)
+		if !ok {
 			return
 		}
 		if !ast.IsExported(decl.Name.Name) {
@@ -798,7 +808,7 @@ func CheckExportedFunctionDocs(pass *analysis.Pass) (interface{}, error) {
 			}
 		}
 		prefix := decl.Name.Name + " "
-		if !strings.HasPrefix(decl.Doc.Text(), prefix) {
+		if !strings.HasPrefix(text, prefix) {
 			report.Report(pass, decl.Doc, fmt.Sprintf(`comment on exported %s %s should be of the form "%s..."`, kind, decl.Name.Name, prefix), report.FilterGenerated())
 		}
 	}
@@ -831,7 +841,8 @@ func CheckExportedTypeDocs(pass *analysis.Pass) (interface{}, error) {
 			}
 
 			doc := node.Doc
-			if doc == nil {
+			text, ok := docText(doc)
+			if !ok {
 				if len(genDecl.Specs) != 1 {
 					// more than one spec in the GenDecl, don't validate the
 					// docstring
@@ -842,12 +853,13 @@ func CheckExportedTypeDocs(pass *analysis.Pass) (interface{}, error) {
 					return false
 				}
 				doc = genDecl.Doc
-				if doc == nil {
+				text, ok = docText(doc)
+				if !ok {
 					return false
 				}
 			}
 
-			s := doc.Text()
+			s := text
 			articles := [...]string{"A", "An", "The"}
 			for _, a := range articles {
 				if strings.HasPrefix(s, a+" ") {
@@ -898,11 +910,12 @@ func CheckExportedVarDocs(pass *analysis.Pass) (interface{}, error) {
 			if !ast.IsExported(name) {
 				return false
 			}
-			if genDecl.Doc == nil {
+			text, ok := docText(genDecl.Doc)
+			if !ok {
 				return false
 			}
 			prefix := name + " "
-			if !strings.HasPrefix(genDecl.Doc.Text(), prefix) {
+			if !strings.HasPrefix(text, prefix) {
 				kind := "var"
 				if genDecl.Tok == token.CONST {
 					kind = "const"

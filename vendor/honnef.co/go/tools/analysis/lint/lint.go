@@ -2,7 +2,6 @@
 package lint
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"go/ast"
@@ -14,15 +13,74 @@ import (
 	"golang.org/x/tools/go/analysis"
 )
 
+type Analyzer struct {
+	// The analyzer's documentation. Unlike go/analysis.Analyzer.Doc,
+	// this field is structured, providing access to severity, options
+	// etc.
+	Doc      *Documentation
+	Analyzer *analysis.Analyzer
+}
+
+func (a *Analyzer) initialize() {
+	a.Analyzer.Doc = a.Doc.String()
+	if a.Analyzer.Flags.Usage == nil {
+		fs := flag.NewFlagSet("", flag.PanicOnError)
+		fs.Var(newVersionFlag(), "go", "Target Go version")
+		a.Analyzer.Flags = *fs
+	}
+}
+
+func InitializeAnalyzers(docs map[string]*Documentation, analyzers map[string]*analysis.Analyzer) []*Analyzer {
+	out := make([]*Analyzer, 0, len(analyzers))
+	for k, v := range analyzers {
+		v.Name = k
+		a := &Analyzer{
+			Doc:      docs[k],
+			Analyzer: v,
+		}
+		a.initialize()
+		out = append(out, a)
+	}
+	return out
+}
+
+type Severity int
+
+const (
+	SeverityNone Severity = iota
+	SeverityError
+	SeverityDeprecated
+	SeverityWarning
+	SeverityInfo
+	SeverityHint
+)
+
 type Documentation struct {
 	Title      string
 	Text       string
 	Since      string
 	NonDefault bool
 	Options    []string
+	Severity   Severity
+}
+
+func Markdownify(m map[string]*Documentation) map[string]*Documentation {
+	for _, v := range m {
+		v.Title = toMarkdown(v.Title)
+		v.Text = toMarkdown(v.Text)
+	}
+	return m
+}
+
+func toMarkdown(s string) string {
+	return strings.ReplaceAll(s, `\'`, "`")
 }
 
 func (doc *Documentation) String() string {
+	if doc == nil {
+		return "Error: No documentation."
+	}
+
 	b := &strings.Builder{}
 	fmt.Fprintf(b, "%s\n\n", doc.Title)
 	if doc.Text != "" {
@@ -66,42 +124,24 @@ func (v *VersionFlag) String() string {
 
 func (v *VersionFlag) Set(s string) error {
 	if len(s) < 3 {
-		return errors.New("invalid Go version")
+		return fmt.Errorf("invalid Go version: %q", s)
 	}
 	if s[0] != '1' {
-		return errors.New("invalid Go version")
+		return fmt.Errorf("invalid Go version: %q", s)
 	}
 	if s[1] != '.' {
-		return errors.New("invalid Go version")
+		return fmt.Errorf("invalid Go version: %q", s)
 	}
 	i, err := strconv.Atoi(s[2:])
+	if err != nil {
+		return fmt.Errorf("invalid Go version: %q", s)
+	}
 	*v = VersionFlag(i)
-	return err
+	return nil
 }
 
 func (v *VersionFlag) Get() interface{} {
 	return int(*v)
-}
-
-func InitializeAnalyzers(docs map[string]*Documentation, analyzers map[string]*analysis.Analyzer) map[string]*analysis.Analyzer {
-	out := make(map[string]*analysis.Analyzer, len(analyzers))
-	for k, v := range analyzers {
-		vc := *v
-		out[k] = &vc
-
-		vc.Name = k
-		doc, ok := docs[k]
-		if !ok {
-			panic(fmt.Sprintf("missing documentation for check %s", k))
-		}
-		vc.Doc = fmt.Sprintf("%s\nOnline documentation\n    https://staticcheck.io/docs/checks#%s", doc.String(), k)
-		if vc.Flags.Usage == nil {
-			fs := flag.NewFlagSet("", flag.PanicOnError)
-			fs.Var(newVersionFlag(), "go", "Target Go version")
-			vc.Flags = *fs
-		}
-	}
-	return out
 }
 
 // ExhaustiveTypeSwitch panics when called. It can be used to ensure
@@ -132,7 +172,7 @@ func parseDirective(s string) (cmd string, args []string) {
 func ParseDirectives(files []*ast.File, fset *token.FileSet) []Directive {
 	var dirs []Directive
 	for _, f := range files {
-		// OPT(dh): in our old code, we skip all the commentmap work if we
+		// OPT(dh): in our old code, we skip all the comment map work if we
 		// couldn't find any directives, benchmark if that's actually
 		// worth doing
 		cm := ast.NewCommentMap(fset, f, f.Comments)

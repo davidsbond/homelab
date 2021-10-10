@@ -54,27 +54,27 @@ package ping
 
 import (
 	"bytes"
-	"encoding/binary"
 	"errors"
 	"fmt"
 	"log"
 	"math"
 	"math/rand"
 	"net"
-	"runtime"
 	"sync"
 	"sync/atomic"
 	"syscall"
 	"time"
 
+	"github.com/google/uuid"
 	"golang.org/x/net/icmp"
 	"golang.org/x/net/ipv4"
 	"golang.org/x/net/ipv6"
+	"golang.org/x/sync/errgroup"
 )
 
 const (
 	timeSliceLength  = 8
-	trackerLength    = 8
+	trackerLength    = len(uuid.UUID{})
 	protocolICMP     = 1
 	protocolIPv6ICMP = 58
 )
@@ -87,22 +87,25 @@ var (
 // New returns a new Pinger struct pointer.
 func New(addr string) *Pinger {
 	r := rand.New(rand.NewSource(getSeed()))
+	firstUUID := uuid.New()
+	var firstSequence = map[uuid.UUID]map[int]struct{}{}
+	firstSequence[firstUUID] = make(map[int]struct{})
 	return &Pinger{
 		Count:      -1,
 		Interval:   time.Second,
 		RecordRtts: true,
 		Size:       timeSliceLength + trackerLength,
 		Timeout:    time.Duration(math.MaxInt64),
-		Tracker:    r.Uint64(),
 
 		addr:              addr,
 		done:              make(chan interface{}),
 		id:                r.Intn(math.MaxUint16),
+		trackerUUIDs:      []uuid.UUID{firstUUID},
 		ipaddr:            nil,
 		ipv4:              false,
 		network:           "ip",
 		protocol:          "udp",
-		awaitingSequences: map[int]struct{}{},
+		awaitingSequences: firstSequence,
 		logger:            StdLogger{Logger: log.New(log.Writer(), log.Prefix(), log.Flags())},
 	}
 }
@@ -172,7 +175,7 @@ type Pinger struct {
 	// Size of packet being sent
 	Size int
 
-	// Tracker: Used to uniquely identify packets
+	// Tracker: Used to uniquely identify packets - Deprecated
 	Tracker uint64
 
 	// Source is the source IP address
@@ -185,11 +188,14 @@ type Pinger struct {
 	ipaddr *net.IPAddr
 	addr   string
 
+	// trackerUUIDs is the list of UUIDs being used for sending packets.
+	trackerUUIDs []uuid.UUID
+
 	ipv4     bool
 	id       int
 	sequence int
 	// awaitingSequences are in-flight sequence numbers we keep track of to help remove duplicate receipts
-	awaitingSequences map[int]struct{}
+	awaitingSequences map[uuid.UUID]map[int]struct{}
 	// network is one of "ip", "ip4", or "ip6".
 	network string
 	// protocol is "icmp" or "udp".
@@ -380,46 +386,60 @@ func (p *Pinger) SetLogger(logger Logger) {
 // done. If Count or Interval are not specified, it will run continuously until
 // it is interrupted.
 func (p *Pinger) Run() error {
-	logger := p.logger
-	if logger == nil {
-		logger = NoopLogger{}
-	}
-
-	var conn *icmp.PacketConn
+	var conn packetConn
 	var err error
+	if p.Size < timeSliceLength+trackerLength {
+		return fmt.Errorf("size %d is less than minimum required size %d", p.Size, timeSliceLength+trackerLength)
+	}
 	if p.ipaddr == nil {
 		err = p.Resolve()
 	}
 	if err != nil {
 		return err
 	}
-	if p.ipv4 {
-		if conn, err = p.listen(ipv4Proto[p.protocol]); err != nil {
-			return err
-		}
-		if err = conn.IPv4PacketConn().SetControlMessage(ipv4.FlagTTL, true); runtime.GOOS != "windows" && err != nil {
-			return err
-		}
-	} else {
-		if conn, err = p.listen(ipv6Proto[p.protocol]); err != nil {
-			return err
-		}
-		if err = conn.IPv6PacketConn().SetControlMessage(ipv6.FlagHopLimit, true); runtime.GOOS != "windows" && err != nil {
-			return err
-		}
+	if conn, err = p.listen(); err != nil {
+		return err
 	}
 	defer conn.Close()
+
+	return p.run(conn)
+}
+
+func (p *Pinger) run(conn packetConn) error {
+	if err := conn.SetFlagTTL(); err != nil {
+		return err
+	}
 	defer p.finish()
 
-	var wg sync.WaitGroup
 	recv := make(chan *packet, 5)
 	defer close(recv)
-	wg.Add(1)
-	//nolint:errcheck
-	go p.recvICMP(conn, recv, &wg)
 
 	if handler := p.OnSetup; handler != nil {
 		handler()
+	}
+
+	var g errgroup.Group
+
+	g.Go(func() error {
+		defer p.Stop()
+		return p.recvICMP(conn, recv)
+	})
+
+	g.Go(func() error {
+		defer p.Stop()
+		return p.runLoop(conn, recv)
+	})
+
+	return g.Wait()
+}
+
+func (p *Pinger) runLoop(
+	conn packetConn,
+	recvCh <-chan *packet,
+) error {
+	logger := p.logger
+	if logger == nil {
+		logger = NoopLogger{}
 	}
 
 	timeout := time.NewTicker(p.Timeout)
@@ -428,11 +448,9 @@ func (p *Pinger) Run() error {
 		p.Stop()
 		interval.Stop()
 		timeout.Stop()
-		wg.Wait()
 	}()
 
-	err = p.sendICMP(conn)
-	if err != nil {
+	if err := p.sendICMP(conn); err != nil {
 		return err
 	}
 
@@ -440,20 +458,23 @@ func (p *Pinger) Run() error {
 		select {
 		case <-p.done:
 			return nil
+
 		case <-timeout.C:
 			return nil
-		case r := <-recv:
+
+		case r := <-recvCh:
 			err := p.processPacket(r)
 			if err != nil {
 				// FIXME: this logs as FATAL but continues
 				logger.Fatalf("processing received packet: %s", err)
 			}
+
 		case <-interval.C:
 			if p.Count > 0 && p.PacketsSent >= p.Count {
 				interval.Stop()
 				continue
 			}
-			err = p.sendICMP(conn)
+			err := p.sendICMP(conn)
 			if err != nil {
 				// FIXME: this logs as FATAL but continues
 				logger.Fatalf("sending packet: %s", err)
@@ -531,12 +552,9 @@ func newExpBackoff(baseDelay time.Duration, maxExp int64) expBackoff {
 }
 
 func (p *Pinger) recvICMP(
-	conn *icmp.PacketConn,
+	conn packetConn,
 	recv chan<- *packet,
-	wg *sync.WaitGroup,
 ) error {
-	defer wg.Done()
-
 	// Start by waiting for 50 µs and increase to a possible maximum of ~ 100 ms.
 	expBackoff := newExpBackoff(50*time.Microsecond, 11)
 	delay := expBackoff.Get()
@@ -552,30 +570,16 @@ func (p *Pinger) recvICMP(
 			}
 			var n, ttl int
 			var err error
-			if p.ipv4 {
-				var cm *ipv4.ControlMessage
-				n, cm, _, err = conn.IPv4PacketConn().ReadFrom(bytes)
-				if cm != nil {
-					ttl = cm.TTL
-				}
-			} else {
-				var cm *ipv6.ControlMessage
-				n, cm, _, err = conn.IPv6PacketConn().ReadFrom(bytes)
-				if cm != nil {
-					ttl = cm.HopLimit
-				}
-			}
+			n, ttl, _, err = conn.ReadFrom(bytes)
 			if err != nil {
 				if neterr, ok := err.(*net.OpError); ok {
 					if neterr.Timeout() {
 						// Read timeout
 						delay = expBackoff.Get()
 						continue
-					} else {
-						p.Stop()
-						return err
 					}
 				}
+				return err
 			}
 
 			select {
@@ -585,6 +589,27 @@ func (p *Pinger) recvICMP(
 			}
 		}
 	}
+}
+
+// getPacketUUID scans the tracking slice for matches.
+func (p *Pinger) getPacketUUID(pkt []byte) (*uuid.UUID, error) {
+	var packetUUID uuid.UUID
+	err := packetUUID.UnmarshalBinary(pkt[timeSliceLength : timeSliceLength+trackerLength])
+	if err != nil {
+		return nil, fmt.Errorf("error decoding tracking UUID: %w", err)
+	}
+
+	for _, item := range p.trackerUUIDs {
+		if item == packetUUID {
+			return &packetUUID, nil
+		}
+	}
+	return nil, nil
+}
+
+// getCurrentTrackerUUID grabs the latest tracker UUID.
+func (p *Pinger) getCurrentTrackerUUID() uuid.UUID {
+	return p.trackerUUIDs[len(p.trackerUUIDs)-1]
 }
 
 func (p *Pinger) processPacket(recv *packet) error {
@@ -625,17 +650,16 @@ func (p *Pinger) processPacket(recv *packet) error {
 				len(pkt.Data), pkt.Data)
 		}
 
-		tracker := bytesToUint(pkt.Data[timeSliceLength:])
-		timestamp := bytesToTime(pkt.Data[:timeSliceLength])
-
-		if tracker != p.Tracker {
-			return nil
+		pktUUID, err := p.getPacketUUID(pkt.Data)
+		if err != nil || pktUUID == nil {
+			return err
 		}
 
+		timestamp := bytesToTime(pkt.Data[:timeSliceLength])
 		inPkt.Rtt = receivedAt.Sub(timestamp)
 		inPkt.Seq = pkt.Seq
 		// If we've already received this sequence, ignore it.
-		if _, inflight := p.awaitingSequences[pkt.Seq]; !inflight {
+		if _, inflight := p.awaitingSequences[*pktUUID][pkt.Seq]; !inflight {
 			p.PacketsRecvDuplicates++
 			if p.OnDuplicateRecv != nil {
 				p.OnDuplicateRecv(inPkt)
@@ -643,7 +667,7 @@ func (p *Pinger) processPacket(recv *packet) error {
 			return nil
 		}
 		// remove it from the list of sequences we're waiting for so we don't get duplicates.
-		delete(p.awaitingSequences, pkt.Seq)
+		delete(p.awaitingSequences[*pktUUID], pkt.Seq)
 		p.updateStatistics(inPkt)
 	default:
 		// Very bad, not sure how this can happen
@@ -658,20 +682,18 @@ func (p *Pinger) processPacket(recv *packet) error {
 	return nil
 }
 
-func (p *Pinger) sendICMP(conn *icmp.PacketConn) error {
-	var typ icmp.Type
-	if p.ipv4 {
-		typ = ipv4.ICMPTypeEcho
-	} else {
-		typ = ipv6.ICMPTypeEchoRequest
-	}
-
+func (p *Pinger) sendICMP(conn packetConn) error {
 	var dst net.Addr = p.ipaddr
 	if p.protocol == "udp" {
 		dst = &net.UDPAddr{IP: p.ipaddr.IP, Zone: p.ipaddr.Zone}
 	}
 
-	t := append(timeToBytes(time.Now()), uintToBytes(p.Tracker)...)
+	currentUUID := p.getCurrentTrackerUUID()
+	uuidEncoded, err := currentUUID.MarshalBinary()
+	if err != nil {
+		return fmt.Errorf("unable to marshal UUID binary: %w", err)
+	}
+	t := append(timeToBytes(time.Now()), uuidEncoded...)
 	if remainSize := p.Size - timeSliceLength - trackerLength; remainSize > 0 {
 		t = append(t, bytes.Repeat([]byte{1}, remainSize)...)
 	}
@@ -683,7 +705,7 @@ func (p *Pinger) sendICMP(conn *icmp.PacketConn) error {
 	}
 
 	msg := &icmp.Message{
-		Type: typ,
+		Type: conn.ICMPRequestType(),
 		Code: 0,
 		Body: body,
 	}
@@ -700,6 +722,7 @@ func (p *Pinger) sendICMP(conn *icmp.PacketConn) error {
 					continue
 				}
 			}
+			return err
 		}
 		handler := p.OnSend
 		if handler != nil {
@@ -712,17 +735,37 @@ func (p *Pinger) sendICMP(conn *icmp.PacketConn) error {
 			handler(outPkt)
 		}
 		// mark this sequence as in-flight
-		p.awaitingSequences[p.sequence] = struct{}{}
+		p.awaitingSequences[currentUUID][p.sequence] = struct{}{}
 		p.PacketsSent++
 		p.sequence++
+		if p.sequence > 65535 {
+			newUUID := uuid.New()
+			p.trackerUUIDs = append(p.trackerUUIDs, newUUID)
+			p.awaitingSequences[newUUID] = make(map[int]struct{})
+			p.sequence = 0
+		}
 		break
 	}
 
 	return nil
 }
 
-func (p *Pinger) listen(netProto string) (*icmp.PacketConn, error) {
-	conn, err := icmp.ListenPacket(netProto, p.Source)
+func (p *Pinger) listen() (packetConn, error) {
+	var (
+		conn packetConn
+		err  error
+	)
+
+	if p.ipv4 {
+		var c icmpv4Conn
+		c.c, err = icmp.ListenPacket(ipv4Proto[p.protocol], p.Source)
+		conn = &c
+	} else {
+		var c icmpV6Conn
+		c.c, err = icmp.ListenPacket(ipv6Proto[p.protocol], p.Source)
+		conn = &c
+	}
+
 	if err != nil {
 		p.Stop()
 		return nil, err
@@ -748,16 +791,6 @@ func timeToBytes(t time.Time) []byte {
 	for i := uint8(0); i < 8; i++ {
 		b[i] = byte((nsec >> ((7 - i) * 8)) & 0xff)
 	}
-	return b
-}
-
-func bytesToUint(b []byte) uint64 {
-	return uint64(binary.BigEndian.Uint64(b))
-}
-
-func uintToBytes(tracker uint64) []byte {
-	b := make([]byte, 8)
-	binary.BigEndian.PutUint64(b, tracker)
 	return b
 }
 

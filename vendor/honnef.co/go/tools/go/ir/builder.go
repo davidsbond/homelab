@@ -654,6 +654,10 @@ func (b *builder) expr0(fn *Function, e ast.Expr, tv types.TypeAndValue) Value {
 	case *ast.SelectorExpr:
 		sel, ok := fn.Pkg.info.Selections[e]
 		if !ok {
+			// builtin unsafe.{Add,Slice}
+			if obj, ok := fn.Pkg.info.Uses[e.Sel].(*types.Builtin); ok {
+				return &Builtin{name: "Unsafe" + obj.Name(), sig: tv.Type.(*types.Signature)}
+			}
 			// qualified identifier
 			return b.expr(fn, e.Sel)
 		}
@@ -2119,7 +2123,7 @@ start:
 		fn.emit(&v, s)
 
 	case *ast.ReturnStmt:
-		// TODO(dh): we could emit tigher position information by
+		// TODO(dh): we could emit tighter position information by
 		// using the ith returned expression
 
 		var results []Value
@@ -2290,6 +2294,7 @@ func (b *builder) buildFunction(fn *Function) {
 		defer logStack("build function %s @ %s", fn, fn.Prog.Fset.Position(fn.Pos()))()
 	}
 	fn.blocksets = b.blocksets
+	fn.Blocks = make([]*BasicBlock, 0, avgBlocks)
 	fn.startBody()
 	fn.createSyntacticParams(recvField, functype)
 	fn.exitBlock()

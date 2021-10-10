@@ -137,7 +137,7 @@ var Debug io.Writer
 
 - (11.1) anonymous struct types use all their fields. we cannot
   deduplicate struct types, as that leads to order-dependent
-  reportings. we can't not deduplicate struct types while still
+  reports. we can't not deduplicate struct types while still
   tracking fields, because then each instance of the unnamed type in
   the data flow chain will get its own fields, causing false
   positives. Thus, we only accurately track fields of named struct
@@ -415,12 +415,17 @@ type SerializedResult struct {
 	Unused []SerializedObject
 }
 
-var Analyzer = &analysis.Analyzer{
-	Name:       "U1000",
-	Doc:        "Unused code",
-	Run:        run,
-	Requires:   []*analysis.Analyzer{buildir.Analyzer, facts.Generated, facts.Directives},
-	ResultType: reflect.TypeOf(Result{}),
+var Analyzer = &lint.Analyzer{
+	Doc: &lint.Documentation{
+		Title: "Unused code",
+	},
+	Analyzer: &analysis.Analyzer{
+		Name:       "U1000",
+		Doc:        "Unused code",
+		Run:        run,
+		Requires:   []*analysis.Analyzer{buildir.Analyzer, facts.Generated, facts.Directives},
+		ResultType: reflect.TypeOf(Result{}),
+	},
 }
 
 type SerializedObject struct {
@@ -1548,7 +1553,7 @@ func (g *graph) instructions(fn *ir.Function) {
 			case *ir.Slice:
 				// nothing to do, handled generically by operands
 			case *ir.RunDefers:
-				// nothing to do, the deferred functions are already marked use by defering them.
+				// nothing to do, the deferred functions are already marked use by deferring them.
 			case *ir.Convert:
 				// to unsafe.Pointer
 				if typ, ok := instr.Type().(*types.Basic); ok && typ.Kind() == types.UnsafePointer {

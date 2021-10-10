@@ -20,7 +20,10 @@ type (
 // NewClient creates a new grafana client for the given url that authenticates using the given API key, returns an
 // error if the health check fails.
 func NewClient(url, apiKey string) (*Client, error) {
-	grafana := sdk.NewClient(url, apiKey, sdk.DefaultHTTPClient)
+	grafana, err := sdk.NewClient(url, apiKey, sdk.DefaultHTTPClient)
+	if err != nil {
+		return nil, err
+	}
 
 	cl := &Client{grafana: grafana}
 	health.AddCheck(url, cl.Ping)
