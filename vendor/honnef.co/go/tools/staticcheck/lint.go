@@ -37,9 +37,7 @@ import (
 
 	"golang.org/x/tools/go/analysis"
 	"golang.org/x/tools/go/analysis/passes/inspect"
-	goastutil "golang.org/x/tools/go/ast/astutil"
 	"golang.org/x/tools/go/ast/inspector"
-	gotypeutil "golang.org/x/tools/go/types/typeutil"
 )
 
 func checkSortSlice(call *Call) {
@@ -293,7 +291,110 @@ var (
 	checkWithValueKeyRules = map[string]CallCheck{
 		"context.WithValue": checkWithValueKey,
 	}
+
+	checkStrconvRules = map[string]CallCheck{
+		"strconv.ParseComplex": func(call *Call) {
+			validateComplexBitSize(call.Args[knowledge.Arg("strconv.ParseComplex.bitSize")])
+		},
+		"strconv.ParseFloat": func(call *Call) {
+			validateFloatBitSize(call.Args[knowledge.Arg("strconv.ParseFloat.bitSize")])
+		},
+		"strconv.ParseInt": func(call *Call) {
+			validateContinuousBitSize(call.Args[knowledge.Arg("strconv.ParseInt.bitSize")], 0, 64)
+			validateIntBaseAllowZero(call.Args[knowledge.Arg("strconv.ParseInt.base")])
+		},
+		"strconv.ParseUint": func(call *Call) {
+			validateContinuousBitSize(call.Args[knowledge.Arg("strconv.ParseUint.bitSize")], 0, 64)
+			validateIntBaseAllowZero(call.Args[knowledge.Arg("strconv.ParseUint.base")])
+		},
+
+		"strconv.FormatComplex": func(call *Call) {
+			validateComplexFormat(call.Args[knowledge.Arg("strconv.FormatComplex.fmt")])
+			validateComplexBitSize(call.Args[knowledge.Arg("strconv.FormatComplex.bitSize")])
+		},
+		"strconv.FormatFloat": func(call *Call) {
+			validateFloatFormat(call.Args[knowledge.Arg("strconv.FormatFloat.fmt")])
+			validateFloatBitSize(call.Args[knowledge.Arg("strconv.FormatFloat.bitSize")])
+		},
+		"strconv.FormatInt": func(call *Call) {
+			validateIntBase(call.Args[knowledge.Arg("strconv.FormatInt.base")])
+		},
+		"strconv.FormatUint": func(call *Call) {
+			validateIntBase(call.Args[knowledge.Arg("strconv.FormatUint.base")])
+		},
+
+		"strconv.AppendFloat": func(call *Call) {
+			validateFloatFormat(call.Args[knowledge.Arg("strconv.AppendFloat.fmt")])
+			validateFloatBitSize(call.Args[knowledge.Arg("strconv.AppendFloat.bitSize")])
+		},
+		"strconv.AppendInt": func(call *Call) {
+			validateIntBase(call.Args[knowledge.Arg("strconv.AppendInt.base")])
+		},
+		"strconv.AppendUint": func(call *Call) {
+			validateIntBase(call.Args[knowledge.Arg("strconv.AppendUint.base")])
+		},
+	}
 )
+
+func validateIntBase(arg *Argument) {
+	if c := extractConstExpectKind(arg.Value.Value, constant.Int); c != nil {
+		val, _ := constant.Int64Val(c.Value)
+		if val < 2 {
+			arg.Invalid("'base' must not be smaller than 2")
+		}
+		if val > 36 {
+			arg.Invalid("'base' must not be larger than 36")
+		}
+	}
+}
+
+func validateIntBaseAllowZero(arg *Argument) {
+	if c := extractConstExpectKind(arg.Value.Value, constant.Int); c != nil {
+		val, _ := constant.Int64Val(c.Value)
+		if val < 2 && val != 0 {
+			arg.Invalid("'base' must not be smaller than 2, unless it is 0")
+		}
+		if val > 36 {
+			arg.Invalid("'base' must not be larger than 36")
+		}
+	}
+}
+
+func validateComplexFormat(arg *Argument) {
+	validateFloatFormat(arg)
+}
+
+func validateFloatFormat(arg *Argument) {
+	if c := extractConstExpectKind(arg.Value.Value, constant.Int); c != nil {
+		val, _ := constant.Int64Val(c.Value)
+		switch val {
+		case 'b', 'e', 'E', 'f', 'g', 'G', 'x', 'X':
+		default:
+			arg.Invalid(fmt.Sprintf("'fmt' argument is invalid: unknown format %q", val))
+		}
+	}
+}
+
+func validateComplexBitSize(arg *Argument) { validateDiscreetBitSize(arg, 64, 128) }
+func validateFloatBitSize(arg *Argument)   { validateDiscreetBitSize(arg, 32, 64) }
+
+func validateDiscreetBitSize(arg *Argument, size1 int, size2 int) {
+	if c := extractConstExpectKind(arg.Value.Value, constant.Int); c != nil {
+		val, _ := constant.Int64Val(c.Value)
+		if val != int64(size1) && val != int64(size2) {
+			arg.Invalid(fmt.Sprintf("'bitSize' argument is invalid, must be either %d or %d", size1, size2))
+		}
+	}
+}
+
+func validateContinuousBitSize(arg *Argument, min int, max int) {
+	if c := extractConstExpectKind(arg.Value.Value, constant.Int); c != nil {
+		val, _ := constant.Int64Val(c.Value)
+		if val < int64(min) || val > int64(max) {
+			arg.Invalid(fmt.Sprintf("'bitSize' argument is invalid, must be within %d and %d", min, max))
+		}
+	}
+}
 
 func checkPrintfCall(call *Call, fIdx, vIdx int) {
 	f := call.Args[fIdx]
@@ -356,7 +457,7 @@ var verbs = [...]verbFlag{
 }
 
 func checkPrintfCallImpl(carg *Argument, f ir.Value, args []ir.Value) {
-	var msCache *gotypeutil.MethodSetCache
+	var msCache *typeutil.MethodSetCache
 	if f.Parent() != nil {
 		msCache = &f.Parent().Prog.MethodSets
 	}
@@ -763,7 +864,7 @@ func checkNoopMarshalImpl(argN int, meths ...string) CallCheck {
 				return
 			}
 		}
-		arg.Invalid("struct doesn't have any exported fields, nor custom marshaling")
+		arg.Invalid(fmt.Sprintf("struct type '%s' doesn't have any exported fields, nor custom marshaling", typeutil.Dereference(T)))
 	}
 }
 
@@ -1034,7 +1135,7 @@ func CheckInfiniteEmptyLoop(pass *analysis.Pass) (interface{}, error) {
 			}
 			report.Report(pass, loop, "loop condition never changes or has a race condition")
 		}
-		report.Report(pass, loop, "this loop will spin, using 100%% CPU", report.ShortRange())
+		report.Report(pass, loop, "this loop will spin, using 100% CPU", report.ShortRange())
 	}
 	code.Preorder(pass, fn, (*ast.ForStmt)(nil))
 	return nil, nil
@@ -1263,15 +1364,17 @@ func CheckLhsRhsIdentical(pass *analysis.Pass) (interface{}, error) {
 		op := node.(*ast.BinaryExpr)
 		switch op.Op {
 		case token.EQL, token.NEQ:
-			if isFloat(pass.TypesInfo.TypeOf(op.X)) {
-				// f == f and f != f might be used to check for NaN
-				return
-			}
 		case token.SUB, token.QUO, token.AND, token.REM, token.OR, token.XOR, token.AND_NOT,
 			token.LAND, token.LOR, token.LSS, token.GTR, token.LEQ, token.GEQ:
 		default:
 			// For some ops, such as + and *, it can make sense to
 			// have identical operands
+			return
+		}
+
+		if isFloat(pass.TypesInfo.TypeOf(op.X)) {
+			// 'float <op> float' makes sense for several operators.
+			// We've tried keeping an exact list of operators to allow, but floats keep surprising us. Let's just give up instead.
 			return
 		}
 
@@ -2154,6 +2257,12 @@ func CheckIneffectiveLoop(pass *analysis.Pass) (interface{}, error) {
 				return true
 			}
 			if len(body.List) < 2 {
+				// TODO(dh): is this check needed? when body.List < 2,
+				// then we can't find both an unconditional exit and a
+				// branching statement (if, ...). and we don't flag
+				// unconditional exits if there has been no branching
+				// in the loop body.
+
 				// avoid flagging the somewhat common pattern of using
 				// a range loop to get the first element in a slice,
 				// or the first rune in a string.
@@ -2282,6 +2391,105 @@ func CheckIneffectiveAppend(pass *analysis.Pass) (interface{}, error) {
 		return true
 	}
 
+	// We have to be careful about aliasing.
+	// Multiple slices may refer to the same backing array,
+	// making appends observable even when we don't see the result of append be used anywhere.
+	//
+	// We will have to restrict ourselves to slices that have been allocated within the function,
+	// haven't been sliced,
+	// and haven't been passed anywhere that could retain them (such as function calls or memory stores).
+	//
+	// We check whether an append should be flagged in two steps.
+	//
+	// In the first step, we look at the data flow graph, starting in reverse from the argument to append, till we reach the root.
+	// This graph must only consist of the following instructions:
+	//
+	// - phi
+	// - sigma
+	// - slice
+	// - const nil
+	// - MakeSlice
+	// - Alloc
+	// - calls to append
+	//
+	// If this step succeeds, we look at all referrers of the values found in the first step, recursively.
+	// These referrers must either be in the set of values found in the first step,
+	// be DebugRefs,
+	// or fulfill the same type requirements as step 1, with the exception of appends, which are forbidden.
+	//
+	// If both steps succeed then we know that the backing array hasn't been aliased in an observable manner.
+	//
+	// We could relax these restrictions by making use of additional information:
+	// - if we passed the slice to a function that doesn't retain the slice then we can still flag it
+	// - if a slice has been sliced but is dead afterwards, we can flag appends to the new slice
+
+	// OPT(dh): We could cache the results of both validate functions.
+	// However, we only use these functions on values that we otherwise want to flag, which are very few.
+	// Not caching values hasn't increased the runtimes for the standard library nor k8s.
+	var validateArgument func(v ir.Value, seen map[ir.Value]struct{}) bool
+	validateArgument = func(v ir.Value, seen map[ir.Value]struct{}) bool {
+		if _, ok := seen[v]; ok {
+			// break cycle
+			return true
+		}
+		seen[v] = struct{}{}
+		switch v := v.(type) {
+		case *ir.Phi:
+			for _, edge := range v.Edges {
+				if !validateArgument(edge, seen) {
+					return false
+				}
+			}
+			return true
+		case *ir.Sigma:
+			return validateArgument(v.X, seen)
+		case *ir.Slice:
+			return validateArgument(v.X, seen)
+		case *ir.Const:
+			return true
+		case *ir.MakeSlice:
+			return true
+		case *ir.Alloc:
+			return true
+		case *ir.Call:
+			if isAppend(v) {
+				return validateArgument(v.Call.Args[0], seen)
+			}
+			return false
+		default:
+			return false
+		}
+	}
+
+	var validateReferrers func(v ir.Value, seen map[ir.Instruction]struct{}) bool
+	validateReferrers = func(v ir.Value, seen map[ir.Instruction]struct{}) bool {
+		for _, ref := range *v.Referrers() {
+			if _, ok := seen[ref]; ok {
+				continue
+			}
+
+			seen[ref] = struct{}{}
+			switch ref.(type) {
+			case *ir.Phi:
+			case *ir.Sigma:
+			case *ir.Slice:
+			case *ir.Const:
+			case *ir.MakeSlice:
+			case *ir.Alloc:
+			case *ir.DebugRef:
+			default:
+				return false
+			}
+
+			if ref, ok := ref.(ir.Value); ok {
+				if !validateReferrers(ref, seen) {
+					return false
+				}
+			}
+		}
+		return true
+	}
+
 	for _, fn := range pass.ResultOf[buildir.Analyzer].(*buildir.IR).SrcFuncs {
 		for _, block := range fn.Blocks {
 			for _, ins := range block.Instrs {
@@ -2327,7 +2535,29 @@ func CheckIneffectiveAppend(pass *analysis.Pass) (interface{}, error) {
 				}
 				walkRefs(*refs)
 
-				if !isUsed {
+				if isUsed {
+					continue
+				}
+
+				seen := map[ir.Value]struct{}{}
+				if !validateArgument(ins.(*ir.Call).Call.Args[0], seen) {
+					continue
+				}
+
+				seen2 := map[ir.Instruction]struct{}{}
+				for k := range seen {
+					// the only values we allow are also instructions, so this type assertion cannot fail
+					seen2[k.(ir.Instruction)] = struct{}{}
+				}
+				seen2[ins] = struct{}{}
+				failed := false
+				for v := range seen {
+					if !validateReferrers(v, seen2) {
+						failed = true
+						break
+					}
+				}
+				if !failed {
 					report.Report(pass, ins, "this result of append is never used, except maybe in other appends")
 				}
 			}
@@ -2687,45 +2917,6 @@ func CheckRepeatedIfElse(pass *analysis.Pass) (interface{}, error) {
 }
 
 func CheckSillyBitwiseOps(pass *analysis.Pass) (interface{}, error) {
-	// FIXME(dh): what happened here?
-	if false {
-		for _, fn := range pass.ResultOf[buildir.Analyzer].(*buildir.IR).SrcFuncs {
-			for _, block := range fn.Blocks {
-				for _, ins := range block.Instrs {
-					ins, ok := ins.(*ir.BinOp)
-					if !ok {
-						continue
-					}
-
-					if c, ok := ins.Y.(*ir.Const); !ok || c.Value == nil || c.Value.Kind() != constant.Int || c.Uint64() != 0 {
-						continue
-					}
-					switch ins.Op {
-					case token.AND, token.OR, token.XOR:
-					default:
-						// we do not flag shifts because too often, x<<0 is part
-						// of a pattern, x<<0, x<<8, x<<16, ...
-						continue
-					}
-					path, _ := goastutil.PathEnclosingInterval(code.File(pass, ins), ins.Pos(), ins.Pos())
-					if len(path) == 0 {
-						continue
-					}
-
-					if node, ok := path[0].(*ast.BinaryExpr); !ok || !astutil.IsIntLiteral(node.Y, "0") {
-						continue
-					}
-
-					switch ins.Op {
-					case token.AND:
-						report.Report(pass, ins, "x & 0 always equals 0")
-					case token.OR, token.XOR:
-						report.Report(pass, ins, fmt.Sprintf("x %s 0 always equals x", ins.Op))
-					}
-				}
-			}
-		}
-	}
 	fn := func(node ast.Node) {
 		binop := node.(*ast.BinaryExpr)
 		b, ok := pass.TypesInfo.TypeOf(binop).Underlying().(*types.Basic)
@@ -2755,7 +2946,7 @@ func CheckSillyBitwiseOps(pass *analysis.Pass) (interface{}, error) {
 			if v, _ := constant.Int64Val(obj.Val()); v != 0 {
 				return
 			}
-			path, _ := goastutil.PathEnclosingInterval(code.File(pass, obj), obj.Pos(), obj.Pos())
+			path, _ := astutil.PathEnclosingInterval(code.File(pass, obj), obj.Pos(), obj.Pos())
 			if len(path) < 2 {
 				return
 			}
@@ -2930,6 +3121,13 @@ func CheckDeprecated(pass *analysis.Pass) (interface{}, error) {
 			return true
 		}
 		if depr, ok := deprs.Objects[obj]; ok {
+			// Note: gopls doesn't correctly run analyzers on
+			// dependencies, so we'll never be able to find deprecated
+			// objects in imported code. We've experimented with
+			// lifting the stdlib handling out of the general check,
+			// to at least work for deprecated objects in the stdlib,
+			// but we gave up on that, because we wouldn't have access
+			// to the deprecation message.
 			std, ok := knowledge.StdlibDeprecations[code.SelectorName(pass, sel)]
 			if ok {
 				switch std.AlternativeAvailableSince {
@@ -2959,9 +3157,6 @@ func CheckDeprecated(pass *analysis.Pass) (interface{}, error) {
 						return true
 					}
 				}
-			}
-			if ok && !code.IsGoVersion(pass, std.AlternativeAvailableSince) {
-				return true
 			}
 
 			if tfn != nil {
@@ -3878,14 +4073,18 @@ func CheckMaybeNil(pass *analysis.Pass) (interface{}, error) {
 		maybeNil := map[ir.Value]ir.Instruction{}
 		for _, b := range fn.Blocks {
 			for _, instr := range b.Instrs {
-				if instr, ok := instr.(*ir.BinOp); ok {
-					var ptr ir.Value
-					if isNilConst(instr.X) {
-						ptr = instr.Y
-					} else if isNilConst(instr.Y) {
-						ptr = instr.X
+				// Originally we looked at all ir.BinOp, but that would lead to calls like 'assert(x != nil)' causing false positives.
+				// Restrict ourselves to actual if statements, as these are more likely to affect control flow in a way we can observe.
+				if instr, ok := instr.(*ir.If); ok {
+					if cond, ok := instr.Cond.(*ir.BinOp); ok {
+						var ptr ir.Value
+						if isNilConst(cond.X) {
+							ptr = cond.Y
+						} else if isNilConst(cond.Y) {
+							ptr = cond.X
+						}
+						maybeNil[ptr] = cond
 					}
-					maybeNil[ptr] = instr
 				}
 			}
 		}
@@ -3900,6 +4099,13 @@ func CheckMaybeNil(pass *analysis.Pass) (interface{}, error) {
 					ptr = instr.Addr
 				case *ir.IndexAddr:
 					ptr = instr.X
+					if _, ok := ptr.Type().Underlying().(*types.Slice); ok {
+						// indexing a nil slice does not cause a nil pointer panic
+						//
+						// Note: This also works around the bad lowering of range loops over slices
+						// (https://github.com/dominikh/go-tools/issues/1053)
+						continue
+					}
 				case *ir.FieldAddr:
 					ptr = instr.X
 				}
@@ -4119,7 +4325,7 @@ func findIndirectSliceLenChecks(pass *analysis.Pass) {
 					// parameter, because Params is not populated for
 					// external functions. In our modular analysis.
 					// any function in any package that isn't the
-					// current package is consided "external", as it
+					// current package is considered "external", as it
 					// has been loaded from export data only.
 					sigParams := callee.Signature.Params()
 
@@ -4306,8 +4512,13 @@ func CheckTypedNilInterface(pass *analysis.Pass) (interface{}, error) {
 					default:
 						panic("unreachable")
 					}
-					report.Report(pass, binop, fmt.Sprintf("this comparison is %s true", qualifier),
-						report.Related(x.X, "the lhs of the comparison gets its value from here and has a concrete type"))
+					if report.HasRange(x.X) {
+						report.Report(pass, binop, fmt.Sprintf("this comparison is %s true", qualifier),
+							report.Related(x.X, "the lhs of the comparison gets its value from here and has a concrete type"))
+					} else {
+						// we can't generate related information for this, so make the diagnostic itself slightly more useful
+						report.Report(pass, binop, fmt.Sprintf("this comparison is %s true; the lhs of the comparison has been assigned a concretely typed value", qualifier))
+					}
 					continue
 				}
 				if obj == nil {
@@ -4338,5 +4549,245 @@ func CheckTypedNilInterface(pass *analysis.Pass) (interface{}, error) {
 		}
 	}
 
+	return nil, nil
+}
+
+var builtinLessThanZeroQ = pattern.MustParse(`
+	(Or
+		(BinaryExpr
+			(BasicLit "INT" "0")
+			">"
+			(CallExpr builtin@(Builtin (Or "len" "cap")) _))
+		(BinaryExpr
+			(CallExpr builtin@(Builtin (Or "len" "cap")) _)
+			"<"
+			(BasicLit "INT" "0")))
+`)
+
+func CheckBuiltinZeroComparison(pass *analysis.Pass) (interface{}, error) {
+	fn := func(node ast.Node) {
+		matcher, ok := code.Match(pass, builtinLessThanZeroQ, node)
+		if !ok {
+			return
+		}
+
+		builtin := matcher.State["builtin"].(*ast.Ident)
+		report.Report(pass, node, fmt.Sprintf("builtin function %s does not return negative values", builtin.Name))
+	}
+	code.Preorder(pass, fn, (*ast.BinaryExpr)(nil))
+
+	return nil, nil
+}
+
+var integerDivisionQ = pattern.MustParse(`(BinaryExpr (BasicLit "INT" _) "/" (BasicLit "INT" _))`)
+
+func CheckIntegerDivisionEqualsZero(pass *analysis.Pass) (interface{}, error) {
+	fn := func(node ast.Node) {
+		_, ok := code.Match(pass, integerDivisionQ, node)
+		if !ok {
+			return
+		}
+
+		val := constant.ToInt(pass.TypesInfo.Types[node.(ast.Expr)].Value)
+		if v, ok := constant.Uint64Val(val); ok && v == 0 {
+			report.Report(pass, node, fmt.Sprintf("the integer division '%s' results in zero", report.Render(pass, node)))
+		}
+
+		// TODO: we could offer a suggested fix here, but I am not
+		// sure what it should be. There are many options to choose
+		// from.
+
+		// Note: we experimented with flagging divisions that truncate
+		// (e.g. 4 / 3), but it ran into false positives in Go's
+		// 'time' package, which does this, deliberately:
+		//
+		//   unixToInternal int64 = (1969*365 + 1969/4 - 1969/100 + 1969/400) * secondsPerDay
+		//
+		// The check also found a real bug in other code, but I don't
+		// think we can outright ban this kind of division.
+	}
+	code.Preorder(pass, fn, (*ast.BinaryExpr)(nil))
+
+	return nil, nil
+}
+
+func CheckIneffectiveFieldAssignments(pass *analysis.Pass) (interface{}, error) {
+	// The analysis only considers the receiver and its first level
+	// fields. It doesn't look at other parameters, nor at nested
+	// fields.
+	//
+	// The analysis does not detect all kinds of dead stores, only
+	// those of fields that are never read after the write. That is,
+	// we do not flag 'a.x = 1; a.x = 2; _ = a.x'. We might explore
+	// this again if we add support for SROA to go/ir and implement
+	// https://github.com/dominikh/go-tools/issues/191.
+
+	irpkg := pass.ResultOf[buildir.Analyzer].(*buildir.IR)
+fnLoop:
+	for _, fn := range irpkg.SrcFuncs {
+		if recv := fn.Signature.Recv(); recv == nil {
+			continue
+		} else if _, ok := recv.Type().Underlying().(*types.Struct); !ok {
+			continue
+		}
+
+		recv := fn.Params[0]
+		refs := irutil.FilterDebug(*recv.Referrers())
+		if len(refs) != 1 {
+			continue
+		}
+		store, ok := refs[0].(*ir.Store)
+		if !ok {
+			continue
+		}
+		alloc, ok := store.Addr.(*ir.Alloc)
+		if !ok || alloc.Heap {
+			continue
+		}
+
+		reads := map[int][]ir.Instruction{}
+		writes := map[int][]ir.Instruction{}
+		for _, ref := range *alloc.Referrers() {
+			switch ref := ref.(type) {
+			case *ir.FieldAddr:
+				for _, refref := range *ref.Referrers() {
+					switch refref.(type) {
+					case *ir.Store:
+						writes[ref.Field] = append(writes[ref.Field], refref)
+					case *ir.Load:
+						reads[ref.Field] = append(reads[ref.Field], refref)
+					case *ir.DebugRef:
+						continue
+					default:
+						// this should be safe… if the field address
+						// escapes, then alloc.Heap will be true.
+						// there should be no instructions left that,
+						// given this FieldAddr, without escaping, can
+						// effect a load or store.
+						continue
+					}
+				}
+			case *ir.Store:
+				// we could treat this as a store to every field, but
+				// we don't want to decide the semantics of partial
+				// struct initializers. should `v = t{x: 1}` also mark
+				// v.y as being written to?
+				if ref != store {
+					continue fnLoop
+				}
+			case *ir.Load:
+				// a load of the entire struct loads every field
+				for i := 0; i < recv.Type().Underlying().(*types.Struct).NumFields(); i++ {
+					reads[i] = append(reads[i], ref)
+				}
+			case *ir.DebugRef:
+				continue
+			default:
+				continue fnLoop
+			}
+		}
+
+		offset := func(instr ir.Instruction) int {
+			for i, other := range instr.Block().Instrs {
+				if instr == other {
+					return i
+				}
+			}
+			panic("couldn't find instruction in its block")
+		}
+
+		for field, ws := range writes {
+			rs := reads[field]
+		wLoop:
+			for _, w := range ws {
+				for _, r := range rs {
+					if w.Block() == r.Block() {
+						if offset(r) > offset(w) {
+							// found a reachable read of our write
+							continue wLoop
+						}
+					} else if irutil.Reachable(w.Block(), r.Block()) {
+						// found a reachable read of our write
+						continue wLoop
+					}
+				}
+				fieldName := recv.Type().Underlying().(*types.Struct).Field(field).Name()
+				report.Report(pass, w, fmt.Sprintf("ineffective assignment to field %s.%s", recv.Type().(*types.Named).Obj().Name(), fieldName))
+			}
+		}
+	}
+	return nil, nil
+}
+
+var negativeZeroFloatQ = pattern.MustParse(`
+	(Or
+		(UnaryExpr
+			"-"
+			(BasicLit "FLOAT" "0.0"))
+
+		(UnaryExpr
+			"-"
+			(CallExpr conv@(Object (Or "float32" "float64")) lit@(Or (BasicLit "INT" "0") (BasicLit "FLOAT" "0.0"))))
+
+		(CallExpr
+			conv@(Object (Or "float32" "float64"))
+			(UnaryExpr "-" lit@(BasicLit "INT" "0"))))`)
+
+func CheckNegativeZeroFloat(pass *analysis.Pass) (interface{}, error) {
+	fn := func(node ast.Node) {
+		m, ok := code.Match(pass, negativeZeroFloatQ, node)
+		if !ok {
+			return
+		}
+
+		if conv, ok := m.State["conv"].(*types.TypeName); ok {
+			var replacement string
+			// TODO(dh): how does this handle type aliases?
+			if conv.Name() == "float32" {
+				replacement = `float32(math.Copysign(0, -1))`
+			} else {
+				replacement = `math.Copysign(0, -1)`
+			}
+			report.Report(pass, node,
+				fmt.Sprintf("in Go, the floating-point expression '%s' is the same as '%s(%s)', it does not produce a negative zero",
+					report.Render(pass, node),
+					conv.Name(),
+					report.Render(pass, m.State["lit"])),
+				report.Fixes(edit.Fix("use math.Copysign to create negative zero", edit.ReplaceWithString(pass.Fset, node, replacement))))
+		} else {
+			const replacement = `math.Copysign(0, -1)`
+			report.Report(pass, node,
+				"in Go, the floating-point literal '-0.0' is the same as '0.0', it does not produce a negative zero",
+				report.Fixes(edit.Fix("use math.Copysign to create negative zero", edit.ReplaceWithString(pass.Fset, node, replacement))))
+		}
+	}
+	code.Preorder(pass, fn, (*ast.UnaryExpr)(nil), (*ast.CallExpr)(nil))
+	return nil, nil
+}
+
+var ineffectiveURLQueryAddQ = pattern.MustParse(`(CallExpr (SelectorExpr (CallExpr (SelectorExpr recv (Ident "Query")) []) (Ident meth)) _)`)
+
+func CheckIneffectiveURLQueryModification(pass *analysis.Pass) (interface{}, error) {
+	// TODO(dh): We could make this check more complex and detect
+	// pointless modifications of net/url.Values in general, but that
+	// requires us to get the state machine correct, else we'll cause
+	// false positives.
+
+	fn := func(node ast.Node) {
+		m, ok := code.Match(pass, ineffectiveURLQueryAddQ, node)
+		if !ok {
+			return
+		}
+		if !code.IsOfType(pass, m.State["recv"].(ast.Expr), "*net/url.URL") {
+			return
+		}
+		switch m.State["meth"].(string) {
+		case "Add", "Del", "Set":
+		default:
+			return
+		}
+		report.Report(pass, node, "(*net/url.URL).Query returns a copy, modifying it doesn't change the URL")
+	}
+	code.Preorder(pass, fn, (*ast.CallExpr)(nil))
 	return nil, nil
 }

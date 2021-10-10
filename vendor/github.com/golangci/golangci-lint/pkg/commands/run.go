@@ -203,7 +203,6 @@ func initFlagSet(fs *pflag.FlagSet, cfg *config.Config, m *lintersdb.Manager, is
 	if err := fs.MarkHidden("enable-all"); err != nil {
 		panic(err)
 	}
-	// TODO: run hideFlag("enable-all") to print deprecation message.
 
 	fs.BoolVar(&lc.DisableAll, "disable-all", false, wh("Disable all linters"))
 	fs.StringSliceVarP(&lc.Presets, "presets", "p", nil,
@@ -313,8 +312,15 @@ func fixSlicesFlags(fs *pflag.FlagSet) {
 			return
 		}
 
+		var safe []string
+		for _, v := range s {
+			// add quotes to escape comma because spf13/pflag use a CSV parser:
+			// https://github.com/spf13/pflag/blob/85dd5c8bc61cfa382fecd072378089d4e856579d/string_slice.go#L43
+			safe = append(safe, `"`+v+`"`)
+		}
+
 		// calling Set sets Changed to true: next Set calls will append, not overwrite
-		_ = f.Value.Set(strings.Join(s, ","))
+		_ = f.Value.Set(strings.Join(safe, ","))
 	})
 }
 
@@ -426,6 +432,8 @@ func (e *Executor) createPrinter() (printers.Printer, error) {
 		p = printers.NewCheckstyle()
 	case config.OutFormatCodeClimate:
 		p = printers.NewCodeClimate()
+	case config.OutFormatHTML:
+		p = printers.NewHTML()
 	case config.OutFormatJunitXML:
 		p = printers.NewJunitXML()
 	case config.OutFormatGithubActions:

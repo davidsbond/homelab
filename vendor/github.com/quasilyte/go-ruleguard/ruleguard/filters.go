@@ -9,6 +9,7 @@ import (
 	"regexp"
 
 	"github.com/quasilyte/go-ruleguard/internal/xtypes"
+	"github.com/quasilyte/go-ruleguard/nodetag"
 	"github.com/quasilyte/go-ruleguard/ruleguard/quasigo"
 	"github.com/quasilyte/go-ruleguard/ruleguard/typematch"
 )
@@ -211,7 +212,7 @@ func makeValueIntFilter(src, varname string, op token.Token, rhsVarname string) 
 
 func makeTextConstFilter(src, varname string, op token.Token, rhsValue constant.Value) filterFunc {
 	return func(params *filterParams) matchFilterResult {
-		s := params.nodeText(params.subExpr(varname))
+		s := params.nodeText(params.subNode(varname))
 		lhsValue := constant.MakeString(string(s))
 		if constant.Compare(lhsValue, op, rhsValue) {
 			return filterSuccess
@@ -222,7 +223,7 @@ func makeTextConstFilter(src, varname string, op token.Token, rhsValue constant.
 
 func makeTextFilter(src, varname string, op token.Token, rhsVarname string) filterFunc {
 	return func(params *filterParams) matchFilterResult {
-		s1 := params.nodeText(params.subExpr(varname))
+		s1 := params.nodeText(params.subNode(varname))
 		lhsValue := constant.MakeString(string(s1))
 		n, _ := params.match.CapturedByName(rhsVarname)
 		s2 := params.nodeText(n)
@@ -236,24 +237,27 @@ func makeTextFilter(src, varname string, op token.Token, rhsVarname string) filt
 
 func makeTextMatchesFilter(src, varname string, re *regexp.Regexp) filterFunc {
 	return func(params *filterParams) matchFilterResult {
-		if re.Match(params.nodeText(params.subExpr(varname))) {
+		if re.Match(params.nodeText(params.subNode(varname))) {
 			return filterSuccess
 		}
 		return filterFailure(src)
 	}
 }
 
-func makeNodeIsFilter(src, varname string, cat nodeCategory) filterFunc {
+func makeNodeIsFilter(src, varname string, tag nodetag.Value) filterFunc {
+	// TODO: add comment nodes support?
 	return func(params *filterParams) matchFilterResult {
 		n := params.subExpr(varname)
 		var matched bool
-		switch cat {
-		case nodeExpr:
+		switch tag {
+		case nodetag.Expr:
 			_, matched = n.(ast.Expr)
-		case nodeStmt:
+		case nodetag.Stmt:
 			_, matched = n.(ast.Stmt)
+		case nodetag.Node:
+			_, matched = n.(ast.Node)
 		default:
-			matched = (cat == categorizeNode(n))
+			matched = (tag == nodetag.FromNode(n))
 		}
 		if matched {
 			return filterSuccess

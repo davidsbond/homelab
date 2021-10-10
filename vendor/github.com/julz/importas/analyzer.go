@@ -12,8 +12,8 @@ import (
 	"golang.org/x/tools/go/ast/inspector"
 )
 
-type Config struct {
-	RequiredAlias map[string]string // path -> alias.
+var config = &Config{
+	RequiredAlias: make(map[string]string),
 }
 
 var Analyzer = &analysis.Analyzer{
@@ -21,34 +21,38 @@ var Analyzer = &analysis.Analyzer{
 	Doc:  "Enforces consistent import aliases",
 	Run:  run,
 
-	Flags: flags(),
+	Flags: flags(config),
 
 	Requires: []*analysis.Analyzer{inspect.Analyzer},
-}
-
-var config = Config{
-	RequiredAlias: make(map[string]string),
 }
 
 func run(pass *analysis.Pass) (interface{}, error) {
 	return runWithConfig(config, pass)
 }
 
-func runWithConfig(config Config, pass *analysis.Pass) (interface{}, error) {
+func runWithConfig(config *Config, pass *analysis.Pass) (interface{}, error) {
+	if err := config.CompileRegexp(); err != nil {
+		return nil, err
+	}
+
 	inspect := pass.ResultOf[inspect.Analyzer].(*inspector.Inspector)
 	inspect.Preorder([]ast.Node{(*ast.ImportSpec)(nil)}, func(n ast.Node) {
-		visitImportSpecNode(n.(*ast.ImportSpec), pass)
+		visitImportSpecNode(config, n.(*ast.ImportSpec), pass)
 	})
 
 	return nil, nil
 }
 
-func visitImportSpecNode(node *ast.ImportSpec, pass *analysis.Pass) {
-	if node.Name == nil {
-		return // not aliased at all, ignore. (Maybe add strict mode for this?).
+func visitImportSpecNode(config *Config, node *ast.ImportSpec, pass *analysis.Pass) {
+	if !config.DisallowUnaliased && node.Name == nil {
+		return
 	}
 
-	alias := node.Name.String()
+	alias := ""
+	if node.Name != nil {
+		alias = node.Name.String()
+	}
+
 	if alias == "." {
 		return // Dot aliases are generally used in tests, so ignore.
 	}
@@ -62,11 +66,16 @@ func visitImportSpecNode(node *ast.ImportSpec, pass *analysis.Pass) {
 		pass.Reportf(node.Pos(), "import not quoted")
 	}
 
-	if required, exists := config.RequiredAlias[path]; exists && required != alias {
+	if required, exists := config.AliasFor(path); exists && required != alias {
+		message := fmt.Sprintf("import %q imported as %q but must be %q according to config", path, alias, required)
+		if alias == "" {
+			message = fmt.Sprintf("import %q imported without alias but must be with alias %q according to config", path, required)
+		}
+
 		pass.Report(analysis.Diagnostic{
 			Pos:     node.Pos(),
 			End:     node.End(),
-			Message: fmt.Sprintf("import %q imported as %q but must be %q according to config", path, alias, required),
+			Message: message,
 			SuggestedFixes: []analysis.SuggestedFix{{
 				Message:   "Use correct alias",
 				TextEdits: findEdits(node, pass.TypesInfo.Uses, path, alias, required),
@@ -96,13 +105,11 @@ func findEdits(node ast.Node, uses map[*ast.Ident]types.Object, importPath, orig
 			continue
 		}
 
-		if original == pkgName.Name() {
-			result = append(result, analysis.TextEdit{
-				Pos:     use.Pos(),
-				End:     use.End(),
-				NewText: []byte(required),
-			})
-		}
+		result = append(result, analysis.TextEdit{
+			Pos:     use.Pos(),
+			End:     use.End(),
+			NewText: []byte(required),
+		})
 	}
 
 	return result

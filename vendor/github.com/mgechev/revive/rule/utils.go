@@ -29,6 +29,7 @@ var commonMethods = map[string]bool{
 	"ServeHTTP": true,
 	"String":    true,
 	"Write":     true,
+	"Unwrap":    true,
 }
 
 func receiverType(fn *ast.FuncDecl) string {
@@ -188,4 +189,11 @@ func gofmt(x interface{}) string {
 	fs := token.NewFileSet()
 	printer.Fprint(&buf, fs, x)
 	return buf.String()
+}
+
+// checkNumberOfArguments fails if the given number of arguments is not, at least, the expected one
+func checkNumberOfArguments(expected int, args lint.Arguments, ruleName string) {
+	if len(args) < expected {
+		panic(fmt.Sprintf("not enough arguments for %s rule, expected %d, got %d. Please check the rule's documentation", ruleName, expected, len(args)))
+	}
 }

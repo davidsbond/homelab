@@ -24,7 +24,6 @@ import (
 	"honnef.co/go/tools/pattern"
 
 	"golang.org/x/tools/go/analysis"
-	gotypeutil "golang.org/x/tools/go/types/typeutil"
 )
 
 var (
@@ -473,7 +472,15 @@ func negate(expr ast.Expr) ast.Expr {
 			out.Op = token.LSS
 		}
 		return &out
-	case *ast.Ident, *ast.CallExpr, *ast.IndexExpr:
+	case *ast.Ident, *ast.CallExpr, *ast.IndexExpr, *ast.StarExpr:
+		return &ast.UnaryExpr{
+			Op: token.NOT,
+			X:  expr,
+		}
+	case *ast.UnaryExpr:
+		if expr.Op == token.NOT {
+			return expr.X
+		}
 		return &ast.UnaryExpr{
 			Op: token.NOT,
 			X:  expr,
@@ -929,10 +936,10 @@ func CheckTrim(pass *analysis.Pass) (interface{}, error) {
 		switch node1 := node1.(type) {
 		case *ast.Ident:
 			return node1.Obj == node2.(*ast.Ident).Obj
-		case *ast.SelectorExpr:
-			return report.Render(pass, node1) == report.Render(pass, node2)
-		case *ast.IndexExpr:
-			return report.Render(pass, node1) == report.Render(pass, node2)
+		case *ast.SelectorExpr, *ast.IndexExpr:
+			return astutil.Equal(node1, node2)
+		case *ast.BasicLit:
+			return astutil.Equal(node1, node2)
 		}
 		return false
 	}
@@ -942,7 +949,7 @@ func CheckTrim(pass *analysis.Pass) (interface{}, error) {
 		if !ok {
 			return false
 		}
-		if fn, ok := call.Fun.(*ast.Ident); !ok || fn.Name != "len" {
+		if !code.IsCallTo(pass, call, "len") {
 			return false
 		}
 		if len(call.Args) != 1 {
@@ -1023,7 +1030,6 @@ func CheckTrim(pass *analysis.Pass) (interface{}, error) {
 				condCallName == "bytes.Contains" && rhsName == "bytes.Replace" {
 				report.Report(pass, ifstmt, fmt.Sprintf("should replace this if statement with an unconditional %s", rhsName), report.FilterGenerated())
 			}
-			return
 		case *ast.SliceExpr:
 			slice := rhs
 			if !ok {
@@ -1035,7 +1041,32 @@ func CheckTrim(pass *analysis.Pass) (interface{}, error) {
 			if !sameNonDynamic(slice.X, condCall.Args[0]) {
 				return
 			}
-			var index ast.Expr
+
+			validateOffset := func(off ast.Expr) bool {
+				switch off := off.(type) {
+				case *ast.CallExpr:
+					return isLenOnIdent(off, condCall.Args[1])
+				case *ast.BasicLit:
+					if pkg != "strings" {
+						return false
+					}
+					if _, ok := condCall.Args[1].(*ast.BasicLit); !ok {
+						// Only allow manual slicing with an integer
+						// literal if the second argument to HasPrefix
+						// was a string literal.
+						return false
+					}
+					s, ok1 := code.ExprToString(pass, condCall.Args[1])
+					n, ok2 := code.ExprToInt(pass, off)
+					if !ok1 || !ok2 || n != int64(len(s)) {
+						return false
+					}
+					return true
+				default:
+					return false
+				}
+			}
+
 			switch fun {
 			case "HasPrefix":
 				// TODO(dh) We could detect a High that is len(s), but another
@@ -1043,7 +1074,9 @@ func CheckTrim(pass *analysis.Pass) (interface{}, error) {
 				if slice.High != nil {
 					return
 				}
-				index = slice.Low
+				if !validateOffset(slice.Low) {
+					return
+				}
 			case "HasSuffix":
 				if slice.Low != nil {
 					n, ok := code.ExprToInt(pass, slice.Low)
@@ -1051,61 +1084,18 @@ func CheckTrim(pass *analysis.Pass) (interface{}, error) {
 						return
 					}
 				}
-				index = slice.High
-			}
-
-			switch index := index.(type) {
-			case *ast.CallExpr:
-				if fun != "HasPrefix" {
-					return
-				}
-				if fn, ok := index.Fun.(*ast.Ident); !ok || fn.Name != "len" {
-					return
-				}
-				if len(index.Args) != 1 {
-					return
-				}
-				id3 := index.Args[knowledge.Arg("len.v")]
-				switch oid3 := condCall.Args[1].(type) {
-				case *ast.BasicLit:
-					if pkg != "strings" {
+				switch index := slice.High.(type) {
+				case *ast.BinaryExpr:
+					if index.Op != token.SUB {
 						return
 					}
-					lit, ok := id3.(*ast.BasicLit)
-					if !ok {
+					if !isLenOnIdent(index.X, condCall.Args[0]) {
 						return
 					}
-					s1, ok1 := code.ExprToString(pass, lit)
-					s2, ok2 := code.ExprToString(pass, condCall.Args[1])
-					if !ok1 || !ok2 || s1 != s2 {
+					if !validateOffset(index.Y) {
 						return
 					}
 				default:
-					if !sameNonDynamic(id3, oid3) {
-						return
-					}
-				}
-			case *ast.BasicLit, *ast.Ident:
-				if fun != "HasPrefix" {
-					return
-				}
-				if pkg != "strings" {
-					return
-				}
-				string, ok1 := code.ExprToString(pass, condCall.Args[1])
-				int, ok2 := code.ExprToInt(pass, slice.Low)
-				if !ok1 || !ok2 || int != int64(len(string)) {
-					return
-				}
-			case *ast.BinaryExpr:
-				if fun != "HasSuffix" {
-					return
-				}
-				if index.Op != token.SUB {
-					return
-				}
-				if !isLenOnIdent(index.X, condCall.Args[0]) ||
-					!isLenOnIdent(index.Y, condCall.Args[1]) {
 					return
 				}
 			default:
@@ -1220,7 +1210,7 @@ var (
 					(AssignStmt [(Ident "_") ok@(Object _)] _ [(TypeAssertExpr lhs _)])
 					ok
 					_
-					_)
+					nil)
 			]
 			nil)`)
 )
@@ -1383,7 +1373,7 @@ func CheckRedundantBreak(pass *analysis.Pass) (interface{}, error) {
 	return nil, nil
 }
 
-func isStringer(T types.Type, msCache *gotypeutil.MethodSetCache) bool {
+func isStringer(T types.Type, msCache *typeutil.MethodSetCache) bool {
 	ms := msCache.MethodSet(T)
 	sel := ms.Lookup(nil, "String")
 	if sel == nil {
@@ -1407,7 +1397,7 @@ func isStringer(T types.Type, msCache *gotypeutil.MethodSetCache) bool {
 	return true
 }
 
-func isFormatter(T types.Type, msCache *gotypeutil.MethodSetCache) bool {
+func isFormatter(T types.Type, msCache *typeutil.MethodSetCache) bool {
 	// TODO(dh): this function also exists in staticcheck/lint.go – deduplicate.
 
 	ms := msCache.MethodSet(T)
@@ -1443,6 +1433,9 @@ func CheckRedundantSprintf(pass *analysis.Pass) (interface{}, error) {
 
 		format := m.State["format"].(ast.Expr)
 		arg := m.State["arg"].(ast.Expr)
+		// TODO(dh): should we really support named constants here?
+		// shouldn't we only look for string literals? to avoid false
+		// positives via build tags?
 		if s, ok := code.ExprToString(pass, format); !ok || s != "%s" {
 			return
 		}
@@ -1469,24 +1462,29 @@ func CheckRedundantSprintf(pass *analysis.Pass) (interface{}, error) {
 			}
 			report.Report(pass, node, "should use String() instead of fmt.Sprintf",
 				report.Fixes(edit.Fix("replace with call to String method", edit.ReplaceWithNode(pass.Fset, node, replacement))))
-			return
+		} else if typ == types.Universe.Lookup("string").Type() {
+			report.Report(pass, node, "the argument is already a string, there's no need to use fmt.Sprintf",
+				report.FilterGenerated(),
+				report.Fixes(edit.Fix("remove unnecessary call to fmt.Sprintf", edit.ReplaceWithNode(pass.Fset, node, arg))))
+		} else if typ.Underlying() == types.Universe.Lookup("string").Type() {
+			replacement := &ast.CallExpr{
+				Fun:  &ast.Ident{Name: "string"},
+				Args: []ast.Expr{arg},
+			}
+			report.Report(pass, node, "the argument's underlying type is a string, should use a simple conversion instead of fmt.Sprintf",
+				report.FilterGenerated(),
+				report.Fixes(edit.Fix("replace with conversion to string", edit.ReplaceWithNode(pass.Fset, node, replacement))))
+		} else if slice, ok := typ.Underlying().(*types.Slice); ok && slice.Elem() == types.Universe.Lookup("byte").Type() {
+			// Note that we check slice.Elem(), not slice.Elem().Underlying, because of https://github.com/golang/go/issues/23536
+			replacement := &ast.CallExpr{
+				Fun:  &ast.Ident{Name: "string"},
+				Args: []ast.Expr{arg},
+			}
+			report.Report(pass, node, "the argument's underlying type is a slice of bytes, should use a simple conversion instead of fmt.Sprintf",
+				report.FilterGenerated(),
+				report.Fixes(edit.Fix("replace with conversion to string", edit.ReplaceWithNode(pass.Fset, node, replacement))))
 		}
 
-		if typ.Underlying() == types.Universe.Lookup("string").Type() {
-			if typ == types.Universe.Lookup("string").Type() {
-				report.Report(pass, node, "the argument is already a string, there's no need to use fmt.Sprintf",
-					report.FilterGenerated(),
-					report.Fixes(edit.Fix("remove unnecessary call to fmt.Sprintf", edit.ReplaceWithNode(pass.Fset, node, arg))))
-			} else {
-				replacement := &ast.CallExpr{
-					Fun:  &ast.Ident{Name: "string"},
-					Args: []ast.Expr{arg},
-				}
-				report.Report(pass, node, "the argument's underlying type is a string, should use a simple conversion instead of fmt.Sprintf",
-					report.FilterGenerated(),
-					report.Fixes(edit.Fix("replace with conversion to string", edit.ReplaceWithNode(pass.Fset, node, replacement))))
-			}
-		}
 	}
 	code.Preorder(pass, fn, (*ast.CallExpr)(nil))
 	return nil, nil
@@ -1594,6 +1592,7 @@ func CheckSortHelpers(pass *analysis.Pass) (interface{}, error) {
 				return false
 			}
 			call := node.(*ast.CallExpr)
+			// isPermissibleSort guarantees that this type assertion will succeed
 			typeconv := call.Args[knowledge.Arg("sort.Sort.data")].(*ast.CallExpr)
 			sel := typeconv.Fun.(*ast.SelectorExpr)
 			name := code.SelectorName(pass, sel)
@@ -1880,7 +1879,7 @@ var checkSprintLiteralQ = pattern.MustParse(`
 func CheckSprintLiteral(pass *analysis.Pass) (interface{}, error) {
 	// We only flag calls with string literals, not expressions of
 	// type string, because some people use fmt.Sprint(s) as a pattern
-	// for copying strings, which may be useful when extracing a small
+	// for copying strings, which may be useful when extracting a small
 	// substring from a large string.
 	fn := func(node ast.Node) {
 		m, ok := code.Match(pass, checkSprintLiteralQ, node)
@@ -1900,5 +1899,40 @@ func CheckSprintLiteral(pass *analysis.Pass) (interface{}, error) {
 			report.Fixes(edit.Fix("Replace with string literal", edit.ReplaceWithNode(pass.Fset, node, lit))))
 	}
 	code.Preorder(pass, fn, (*ast.CallExpr)(nil))
+	return nil, nil
+}
+
+func CheckSameTypeTypeAssertion(pass *analysis.Pass) (interface{}, error) {
+	fn := func(node ast.Node) {
+		expr := node.(*ast.TypeAssertExpr)
+		if expr.Type == nil {
+			// skip type switches
+			//
+			// TODO(dh): we could flag type switches, too, when a case
+			// statement has the same type as expr.X – however,
+			// depending on the location of that case, it might behave
+			// identically to a default branch. we need to think
+			// carefully about the instances we want to flag. We also
+			// have to take nil interface values into consideration.
+			//
+			// It might make more sense to extend SA4020 to handle
+			// this.
+			return
+		}
+		t1 := pass.TypesInfo.TypeOf(expr.Type)
+		t2 := pass.TypesInfo.TypeOf(expr.X)
+		if types.IsInterface(t1) && types.Identical(t1, t2) {
+			report.Report(pass, expr,
+				fmt.Sprintf("type assertion to the same type: %s already has type %s", report.Render(pass, expr.X), report.Render(pass, expr.Type)),
+				report.FilterGenerated())
+		}
+	}
+
+	// TODO(dh): add suggested fixes. we need different fixes depending on the context:
+	// - assignment with 1 or 2 lhs
+	// - assignment to blank identifiers (as the first, second or both lhs)
+	// - initializers in if statements, with the same variations as above
+
+	code.Preorder(pass, fn, (*ast.TypeAssertExpr)(nil))
 	return nil, nil
 }

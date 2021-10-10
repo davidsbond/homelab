@@ -28,6 +28,11 @@ linters:
     - forbidigo
     - wastedassign
     - cyclop
+    - tagliatelle
+    - promlinter
+    - golint
+    - scopelint
+    - interfacer
 
 issues:
   exclude-use-default: false

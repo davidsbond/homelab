@@ -85,6 +85,7 @@ var Analyzers = lint.InitializeAnalyzers(Docs, map[string]*analysis.Analyzer{
 	"SA1027": makeCallCheckerAnalyzer(checkAtomicAlignment),
 	"SA1028": makeCallCheckerAnalyzer(checkSortSliceRules),
 	"SA1029": makeCallCheckerAnalyzer(checkWithValueKeyRules),
+	"SA1030": makeCallCheckerAnalyzer(checkStrconvRules),
 
 	"SA2000": {
 		Run:      CheckWaitgroupAdd,
@@ -127,6 +128,10 @@ var Analyzers = lint.InitializeAnalyzers(Docs, map[string]*analysis.Analyzer{
 	"SA4004": {
 		Run:      CheckIneffectiveLoop,
 		Requires: []*analysis.Analyzer{inspect.Analyzer},
+	},
+	"SA4005": {
+		Run:      CheckIneffectiveFieldAssignments,
+		Requires: []*analysis.Analyzer{buildir.Analyzer},
 	},
 	"SA4006": {
 		Run:      CheckUnreadVariableValues,
@@ -192,6 +197,22 @@ var Analyzers = lint.InitializeAnalyzers(Docs, map[string]*analysis.Analyzer{
 	"SA4023": {
 		Run:      CheckTypedNilInterface,
 		Requires: []*analysis.Analyzer{buildir.Analyzer, typedness.Analysis, nilness.Analysis},
+	},
+	"SA4024": {
+		Run:      CheckBuiltinZeroComparison,
+		Requires: []*analysis.Analyzer{inspect.Analyzer},
+	},
+	"SA4025": {
+		Run:      CheckIntegerDivisionEqualsZero,
+		Requires: []*analysis.Analyzer{inspect.Analyzer},
+	},
+	"SA4026": {
+		Run:      CheckNegativeZeroFloat,
+		Requires: []*analysis.Analyzer{inspect.Analyzer},
+	},
+	"SA4027": {
+		Run:      CheckIneffectiveURLQueryModification,
+		Requires: []*analysis.Analyzer{inspect.Analyzer},
 	},
 
 	"SA5000": {

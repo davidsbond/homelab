@@ -2,17 +2,18 @@ package report
 
 import (
 	"bytes"
+	"fmt"
 	"go/ast"
-	"go/printer"
+	"go/format"
 	"go/token"
 	"path/filepath"
 	"strconv"
 	"strings"
 
 	"honnef.co/go/tools/analysis/facts"
+	"honnef.co/go/tools/go/ast/astutil"
 
 	"golang.org/x/tools/go/analysis"
-	"golang.org/x/tools/go/ast/astutil"
 )
 
 type Options struct {
@@ -44,7 +45,10 @@ func Fixes(fixes ...analysis.SuggestedFix) Option {
 
 func Related(node Positioner, message string) Option {
 	return func(opts *Options) {
-		pos, end := getRange(node, opts.ShortRange)
+		pos, end, ok := getRange(node, opts.ShortRange)
+		if !ok {
+			return
+		}
 		r := analysis.RelatedInformation{
 			Pos:     pos,
 			End:     end,
@@ -126,21 +130,37 @@ func shortRange(node ast.Node) (pos, end token.Pos) {
 	}
 }
 
-func getRange(node Positioner, short bool) (pos, end token.Pos) {
-	switch node := node.(type) {
+func HasRange(node Positioner) bool {
+	// we don't know if getRange will be called with shortRange set to
+	// true, so make sure that both work.
+	_, _, ok := getRange(node, false)
+	if !ok {
+		return false
+	}
+	_, _, ok = getRange(node, true)
+	return ok
+}
+
+func getRange(node Positioner, short bool) (pos, end token.Pos, ok bool) {
+	switch n := node.(type) {
 	case sourcer:
-		s := node.Source()
-		if short {
-			return shortRange(s)
+		s := n.Source()
+		if s == nil {
+			return 0, 0, false
 		}
-		return s.Pos(), s.End()
+		if short {
+			p, e := shortRange(s)
+			return p, e, true
+		}
+		return s.Pos(), s.End(), true
 	case fullPositioner:
 		if short {
-			return shortRange(node)
+			p, e := shortRange(n)
+			return p, e, true
 		}
-		return node.Pos(), node.End()
+		return n.Pos(), n.End(), true
 	default:
-		return node.Pos(), token.NoPos
+		return n.Pos(), token.NoPos, true
 	}
 }
 
@@ -158,7 +178,10 @@ func Report(pass *analysis.Pass, node Positioner, message string, opts ...Option
 		}
 	}
 
-	pos, end := getRange(node, cfg.ShortRange)
+	pos, end, ok := getRange(node, cfg.ShortRange)
+	if !ok {
+		panic(fmt.Sprintf("no valid position for reporting node %v", node))
+	}
 	d := analysis.Diagnostic{
 		Pos:            pos,
 		End:            end,
@@ -171,7 +194,7 @@ func Report(pass *analysis.Pass, node Positioner, message string, opts ...Option
 
 func Render(pass *analysis.Pass, x interface{}) string {
 	var buf bytes.Buffer
-	if err := printer.Fprint(&buf, pass.Fset, x); err != nil {
+	if err := format.Node(&buf, pass.Fset, x); err != nil {
 		panic(err)
 	}
 	return buf.String()

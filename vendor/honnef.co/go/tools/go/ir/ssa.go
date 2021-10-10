@@ -15,7 +15,7 @@ import (
 	"go/types"
 	"sync"
 
-	"golang.org/x/tools/go/types/typeutil"
+	"honnef.co/go/tools/go/types/typeutil"
 )
 
 type ID int
@@ -388,6 +388,10 @@ type functionBody struct {
 	fakeExits       BlockSet
 	blocksets       [5]BlockSet
 	hasDefer        bool
+
+	// a contiguous block of instructions that will be used by blocks,
+	// to avoid making multiple allocations.
+	scratchInstructions []Instruction
 }
 
 func (fn *Function) results() []*Alloc {
@@ -725,9 +729,8 @@ type ChangeType struct {
 //    - between pointers and unsafe.Pointer.
 //    - between unsafe.Pointer and uintptr.
 //    - from (Unicode) integer to (UTF-8) string.
+//    - from slice to array pointer.
 // A conversion may imply a type name change also.
-//
-// This operation cannot fail dynamically.
 //
 // Conversions of untyped string/number/bool constants to a specific
 // representation are eliminated during IR construction.
