@@ -3,9 +3,8 @@ kind: Kustomization
 namespace: longhorn-system
 
 resources:
-  - namespace.yaml
+  - longhorn.yaml
   - limitrange.yaml
-  - longhorn
 
 configMapGenerator:
   - name: longhorn
