@@ -23,7 +23,7 @@ spec:
             - /etc/jetstack-secure/agent/credentials/credentials.json
             - -p
             - 0h1m0s
-          image: quay.io/jetstack/preflight:v0.1.31
+          image: quay.io/jetstack/preflight:v0.1.32
           name: agent
           resources:
             limits:
