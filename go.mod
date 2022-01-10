@@ -13,7 +13,7 @@ require (
 	github.com/sebdah/markdown-toc v0.0.0-20171116085747-3bb461875c34
 	github.com/stretchr/testify v1.7.0
 	github.com/tmthrgd/go-bindata v0.0.0-20190904063317-a4b65675e0fb
-	github.com/uw-labs/strongbox v0.3.1
+	github.com/uw-labs/strongbox v1.0.0
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	gopkg.in/yaml.v2 v2.4.0
 	k8s.io/api v0.22.2
@@ -111,10 +111,6 @@ require (
 	github.com/jackc/pgtype v1.6.2 // indirect
 	github.com/jackc/pgx/v4 v4.10.1 // indirect
 	github.com/jacobsa/crypto v0.0.0-20190317225127-9f44e2d11115 // indirect
-	github.com/jacobsa/oglematchers v0.0.0-20150720000706-141901ea67cd // indirect
-	github.com/jacobsa/oglemock v0.0.0-20150831005832-e94d794d06ff // indirect
-	github.com/jacobsa/ogletest v0.0.0-20170503003838-80d50a735a11 // indirect
-	github.com/jacobsa/reqtrace v0.0.0-20150505043853-245c9e0234cb // indirect
 	github.com/jgautheron/goconst v1.5.1 // indirect
 	github.com/jingyugao/rowserrcheck v1.1.0 // indirect
 	github.com/jirfag/go-printf-func-name v0.0.0-20200119135958-7558a9eaa5af // indirect
@@ -208,7 +204,7 @@ require (
 	gocloud.dev v0.22.0 // indirect
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
 	golang.org/x/mod v0.4.2 // indirect
-	golang.org/x/net v0.0.0-20210520170846-37e1c6afe023 // indirect
+	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
 	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602 // indirect
 	golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c // indirect
 	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect

@@ -16,28 +16,23 @@ import (
 	"os/exec"
 	"os/user"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/jacobsa/crypto/siv"
 )
 
-const version = "v0.3.1"
-
 var (
-	keyLoader     = keyPair
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+	builtBy = "unknown"
+
+	keyLoader     = key
 	kr            keyRing
 	prefix        = []byte("# STRONGBOX ENCRYPTED RESOURCE ;")
-	defaultPrefix = "# STRONGBOX ENCRYPTED RESOURCE ; See https://github.com/uw-labs/strongbox\n# key-id: %s\n"
+	defaultPrefix = []byte("# STRONGBOX ENCRYPTED RESOURCE ; See https://github.com/uw-labs/strongbox\n")
 
-	// Match lines *not* starting with `#`
-	// this should match ciphertext without the strongbox prefix
-	prefixStripRegex = regexp.MustCompile(`(?m)^[^#]+$`)
-
-	keyIDRegex = regexp.MustCompile(`key-id: (\w+)`)
-
-	errKeyNotFound            = errors.New("key not found")
-	errKeyIDMissingFromHeader = errors.New("strongbox header doesn't contain key-id")
+	errKeyNotFound = errors.New("key not found")
 
 	// flags
 	flagGitConfig = flag.Bool("git-config", false, "Configure git for strongbox use")
@@ -69,13 +64,8 @@ func main() {
 	flag.Usage = usage
 	flag.Parse()
 
-	// Set up keyring file name
-	home := deriveHome()
-
-	kr = &fileKeyRing{fileName: filepath.Join(home, ".strongbox_keyring")}
-
 	if *flagVersion || (flag.NArg() == 1 && flag.Arg(0) == "version") {
-		fmt.Println(version)
+		fmt.Printf("version=%s commit=%s date=%s builtBy=%s\n", version, commit, date, builtBy)
 		return
 	}
 
@@ -84,6 +74,15 @@ func main() {
 		return
 	}
 
+	if *flagDiff != "" {
+		diff(*flagDiff)
+		return
+	}
+
+	// Set up keyring file name
+	home := deriveHome()
+	kr = &fileKeyRing{fileName: filepath.Join(home, ".strongbox_keyring")}
+
 	if *flagGenKey != "" {
 		genKey(*flagGenKey)
 		return
@@ -91,7 +90,7 @@ func main() {
 
 	if *flagDecrypt {
 		if *flagKey == "" {
-			log.Fatalf("Must provide a key when using -decrypt")
+			log.Fatalf("Must provide a `-key` when using -decrypt")
 		}
 		decryptCLI()
 		return
@@ -103,10 +102,6 @@ func main() {
 	}
 	if *flagSmudge != "" {
 		smudge(os.Stdin, os.Stdout, *flagSmudge)
-		return
-	}
-	if *flagDiff != "" {
-		diff(*flagDiff)
 		return
 	}
 }
@@ -224,12 +219,12 @@ func clean(r io.Reader, w io.Writer, filename string) {
 		return
 	}
 	// File is plaintext and needs to be encrypted, get the key, fail on error
-	keyID, key, err := keyLoader(filename)
+	key, err := keyLoader(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	// encrypt the file, fail on error
-	out, err := encrypt(in, key, keyID)
+	out, err := encrypt(in, key)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -256,25 +251,19 @@ func smudge(r io.Reader, w io.Writer, filename string) {
 		return
 	}
 
-	// try to get the key using the header, failing that, try to get the
-	// key using the filename
-	var key []byte
-	key, err = keyFromHeader(in)
+	key, err := keyLoader(filename)
 	if err != nil {
-		_, key, err = keyLoader(filename)
-		if err != nil {
-			// don't log error if its keyNotFound
-			switch err {
-			case errKeyNotFound:
-			default:
-				log.Println(err)
-			}
-			// Couldn't load the key, just copy as is and return
-			if _, err = io.Copy(w, bytes.NewReader(in)); err != nil {
-				log.Println(err)
-			}
-			return
+		// don't log error if its keyNotFound
+		switch err {
+		case errKeyNotFound:
+		default:
+			log.Println(err)
 		}
+		// Couldn't load the key, just copy as is and return
+		if _, err = io.Copy(w, bytes.NewReader(in)); err != nil {
+			log.Println(err)
+		}
+		return
 	}
 
 	out, err := decrypt(in, key)
@@ -287,32 +276,14 @@ func smudge(r io.Reader, w io.Writer, filename string) {
 	}
 }
 
-// keyFromHeader looks through the file content, trying to get key-id value,
-// and look up the key in the keyring
-func keyFromHeader(in []byte) ([]byte, error) {
-	match := keyIDRegex.FindStringSubmatch(string(in))
-	if len(match) != 2 {
-		return []byte{}, errKeyIDMissingFromHeader
-	}
-	decodedKeyID, _ := decode([]byte(match[1]))
-	key, err := kr.Key(decodedKeyID)
-	//log.Printf("DEBUG: found key %s %e", encode(key), err)
-	if err != nil {
-		return []byte{}, err
-	}
-	return key, nil
-}
-
-func encrypt(b []byte, key, keyID []byte) ([]byte, error) {
+func encrypt(b, key []byte) ([]byte, error) {
 	b = compress(b)
 	out, err := siv.Encrypt(nil, key, b, nil)
 	if err != nil {
 		return nil, err
 	}
 	var buf []byte
-	p := fmt.Sprintf(defaultPrefix, encode(keyID))
-	buf = append(buf, []byte(p)...)
-
+	buf = append(buf, defaultPrefix...)
 	b64 := encode(out)
 	for len(b64) > 0 {
 		l := 76
@@ -370,12 +341,13 @@ func decode(encoded []byte) ([]byte, error) {
 }
 
 func decrypt(enc []byte, priv []byte) ([]byte, error) {
-	// strip the prefix (both single line v0.1 and multiline v0.2)
-	ciphertext := prefixStripRegex.Find(enc)
-	if ciphertext == nil {
-		return nil, errors.New("Couldn't split strongbox prefix and ciphertext")
+	// strip prefix and any comment up to end of line
+	spl := bytes.SplitN(enc, []byte("\n"), 2)
+	if len(spl) != 2 {
+		return nil, errors.New("Couldn't split on end of line")
 	}
-	b64decoded, err := decode(ciphertext)
+	b64encoded := spl[1]
+	b64decoded, err := decode(b64encoded)
 	if err != nil {
 		return nil, err
 	}
@@ -387,24 +359,24 @@ func decrypt(enc []byte, priv []byte) ([]byte, error) {
 	return decrypted, nil
 }
 
-// keyPair returns public, private and error
-func keyPair(filename string) ([]byte, []byte, error) {
+// key returns private key and error
+func key(filename string) ([]byte, error) {
 	keyID, err := findKey(filename)
 	if err != nil {
-		return []byte{}, []byte{}, err
+		return []byte{}, err
 	}
 
 	err = kr.Load()
 	if err != nil {
-		return []byte{}, []byte{}, err
+		return []byte{}, err
 	}
 
 	key, err := kr.Key(keyID)
 	if err != nil {
-		return []byte{}, []byte{}, err
+		return []byte{}, err
 	}
 
-	return keyID, key, nil
+	return key, nil
 }
 
 func findKey(filename string) ([]byte, error) {
