@@ -9,7 +9,7 @@ require (
 	github.com/grafana-tools/sdk v0.0.0-20210921191058-888ef9d18611
 	github.com/instrumenta/kubeval v0.16.1
 	github.com/opentracing/opentracing-go v1.2.0
-	github.com/prometheus/client_golang v1.10.0
+	github.com/prometheus/client_golang v1.11.0
 	github.com/sebdah/markdown-toc v0.0.0-20171116085747-3bb461875c34
 	github.com/stretchr/testify v1.7.0
 	github.com/tmthrgd/go-bindata v0.0.0-20190904063317-a4b65675e0fb
@@ -160,7 +160,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/polyfloyd/go-errorlint v0.0.0-20210722154253-910bb7978349 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
-	github.com/prometheus/common v0.18.0 // indirect
+	github.com/prometheus/common v0.26.0 // indirect
 	github.com/prometheus/procfs v0.6.0 // indirect
 	github.com/quasilyte/go-ruleguard v0.3.4 // indirect
 	github.com/quasilyte/regex/syntax v0.0.0-20200407221936-30656e2c4a95 // indirect
