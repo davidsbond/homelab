@@ -11,15 +11,28 @@ It supports use of different keys per directory if wanted. It can cover as many
 or as few files as you wish based on
 [.gitattributes](https://www.git-scm.com/docs/gitattributes)
 
+
+<!-- vim-markdown-toc GFM -->
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [Existing project](#existing-project)
+* [Verification](#verification)
+* [Key rotation](#key-rotation)
+* [Security](#security)
+* [Testing](#testing)
+* [Known issues](#known-issues)
+	* [Clone file ordering](#clone-file-ordering)
+		* [Workaround](#workaround)
+
+<!-- vim-markdown-toc -->
+
 ## Installation
 
 You can obtain a binary from https://github.com/uw-labs/strongbox/releases
 
 Alternatively, assuming you have a working [Go](https://golang.org) installation, you can
 install via `go get github.com/uw-labs/strongbox`
-
-Since the binary version is now included in the strongbox file header, you are
-recommended using a release version.
 
 ## Usage
 
@@ -91,12 +104,6 @@ Compare an entire branch (as it would appear on the remote) to master:
 git diff-index -p master
 ```
 
-### Empty diff due to header metadata
-
-Version 0.3.1 adds key-id metadata to the header. Modifying the header but not
-the plain-text will result in "empty diff". You can see the changes to the
-header only using this command: `git diff-index HEAD -p`
-
 ## Key rotation
 
 To rotate keys, update the `.strongbox-keyid` with the new key id, then `touch`
@@ -110,6 +117,26 @@ deterministic encryption.
 
 ## Testing
 
-Run integration tests
+Run integration tests:
 
-    $ make test
+```
+make test
+```
+
+## Known issues
+
+### Clone file ordering
+
+Given a `.strongbox-keyid` in the root of the repository and an encrypted file
+in the same directory,*and* alphabetically it comes before the key-id file.
+
+Git checks out files alphanumerically, so if the strongboxed file is being
+checked out before the `.strongbox-keyid` is present on disk, strongbox will
+fail to find the decryption key.
+
+Order of files being cloned is dictated by the index.
+
+#### Workaround
+
+Clone repository, let the descryption fail. Delete encrypted files and do `git
+checkout` on the deleted files.
