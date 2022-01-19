@@ -85,7 +85,7 @@ github.com/bkielbasa/cyclop/pkg/analyzer
 # github.com/bombsimon/wsl/v3 v3.3.0
 ## explicit; go 1.12
 github.com/bombsimon/wsl/v3
-# github.com/cespare/xxhash/v2 v2.1.1
+# github.com/cespare/xxhash/v2 v2.1.2
 ## explicit; go 1.11
 github.com/cespare/xxhash/v2
 # github.com/charithe/durationcheck v0.0.8
@@ -422,7 +422,7 @@ github.com/jlaffaye/ftp
 # github.com/jmespath/go-jmespath v0.4.0
 ## explicit; go 1.14
 github.com/jmespath/go-jmespath
-# github.com/json-iterator/go v1.1.11
+# github.com/json-iterator/go v1.1.12
 ## explicit; go 1.12
 github.com/json-iterator/go
 # github.com/julz/importas v0.0.0-20210419104244-841f0c0fe66d
@@ -506,8 +506,8 @@ github.com/mitchellh/mapstructure
 # github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
 ## explicit
 github.com/modern-go/concurrent
-# github.com/modern-go/reflect2 v1.0.1
-## explicit
+# github.com/modern-go/reflect2 v1.0.2
+## explicit; go 1.12
 github.com/modern-go/reflect2
 # github.com/moricho/tparallel v0.2.1
 ## explicit; go 1.15
@@ -560,7 +560,7 @@ github.com/pmezard/go-difflib/difflib
 # github.com/polyfloyd/go-errorlint v0.0.0-20210722154253-910bb7978349
 ## explicit; go 1.13
 github.com/polyfloyd/go-errorlint/errorlint
-# github.com/prometheus/client_golang v1.11.0
+# github.com/prometheus/client_golang v1.12.0
 ## explicit; go 1.13
 github.com/prometheus/client_golang/prometheus
 github.com/prometheus/client_golang/prometheus/internal
@@ -570,12 +570,12 @@ github.com/prometheus/client_golang/prometheus/testutil/promlint
 # github.com/prometheus/client_model v0.2.0
 ## explicit; go 1.9
 github.com/prometheus/client_model/go
-# github.com/prometheus/common v0.26.0
-## explicit; go 1.11
+# github.com/prometheus/common v0.32.1
+## explicit; go 1.13
 github.com/prometheus/common/expfmt
 github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg
 github.com/prometheus/common/model
-# github.com/prometheus/procfs v0.6.0
+# github.com/prometheus/procfs v0.7.3
 ## explicit; go 1.13
 github.com/prometheus/procfs
 github.com/prometheus/procfs/internal/fs
@@ -808,14 +808,14 @@ golang.org/x/net/internal/timeseries
 golang.org/x/net/ipv4
 golang.org/x/net/ipv6
 golang.org/x/net/trace
-# golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602
+# golang.org/x/oauth2 v0.0.0-20210514164344-f6687ab2804c
 ## explicit; go 1.11
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
 # golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 ## explicit
 golang.org/x/sync/errgroup
-# golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c
+# golang.org/x/sys v0.0.0-20220114195835-da31bd327af9
 ## explicit; go 1.17
 golang.org/x/sys/cpu
 golang.org/x/sys/execabs
