@@ -11,7 +11,7 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/prometheus/client_golang v1.12.1
 	github.com/sebdah/markdown-toc v0.0.0-20171116085747-3bb461875c34
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.7.1
 	github.com/tmthrgd/go-bindata v0.0.0-20190904063317-a4b65675e0fb
 	github.com/uw-labs/strongbox v1.0.0
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
