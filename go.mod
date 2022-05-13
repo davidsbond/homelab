@@ -9,7 +9,7 @@ require (
 	github.com/grafana-tools/sdk v0.0.0-20210921191058-888ef9d18611
 	github.com/instrumenta/kubeval v0.16.1
 	github.com/opentracing/opentracing-go v1.2.0
-	github.com/prometheus/client_golang v1.12.1
+	github.com/prometheus/client_golang v1.12.2
 	github.com/sebdah/markdown-toc v0.0.0-20171116085747-3bb461875c34
 	github.com/stretchr/testify v1.7.1
 	github.com/tmthrgd/go-bindata v0.0.0-20190904063317-a4b65675e0fb
